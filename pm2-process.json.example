@@ -1,5 +1,5 @@
 {
-	"name": "fastapi-template",
+	"name": "fastapi-orm-template",
 	"interpreter": "/usr/bin/env",
 	"script": "python",
 	"args": "-u -m app",
