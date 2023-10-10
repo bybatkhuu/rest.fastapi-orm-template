@@ -1,0 +1,21 @@
+name: 3. Create Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  create_release:
+    name: Create Release
+    runs-on: ubuntu-22.04
+    if: {% raw %}${{ github.ref_type == 'tag' }}{% endraw %}
+    permissions:
+      contents: write
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+        name: Create release
+        env:
+          GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
+        run: gh release create ${GITHUB_REF_NAME} --generate-notes

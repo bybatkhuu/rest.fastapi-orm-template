@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  api:
+    image: {{cookiecutter.docker_registry}}/{{cookiecutter.project_slug}}:latest
+    build:
+      context: .
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ:-{{cookiecutter.timezone}}}
+      - TERM=${TERM:-xterm}
+      - ENV=${ENV:-local}
+      - {{cookiecutter.env_prefix}}PORT={% raw %}${{% endraw %}{{cookiecutter.env_prefix}}PORT:-8000}
+    volumes:
+      - "./volumes/storage/{{cookiecutter.project_slug}}/data:/var/lib/{{cookiecutter.project_slug}}"
+      - "./volumes/storage/{{cookiecutter.project_slug}}/logs:/var/log/{{cookiecutter.project_slug}}"
+    ports:
+      - "{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}PORT:-8000}:{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}PORT:-8000}"
+    tty: true
