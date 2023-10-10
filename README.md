@@ -1,6 +1,6 @@
-# FastAPI Template
+# FastAPI ORM Template
 
-This is a FastAPI Template project.
+This is a FastAPI ORM Template project.
 
 ## Features
 
@@ -51,18 +51,18 @@ cd ~/workspaces/projects
 **A.** Clone the repository (for **public**: git + https):
 
 ```sh
-git clone https://github.com/bybatkhuu/rest.fastapi-template.git && \
-    cd rest.fastapi-template
+git clone https://github.com/bybatkhuu/rest.fastapi-orm-template.git && \
+    cd rest.fastapi-orm-template
 ```
 
 **B.** Clone the repository (for **development**: git + ssh key):
 
 ```sh
-git clone git@github.com:bybatkhuu/rest.fastapi-template.git && \
-    cd rest.fastapi-template
+git clone git@github.com:bybatkhuu/rest.fastapi-orm-template.git && \
+    cd rest.fastapi-orm-template
 ```
 
-**C.** Or download source code: <https://github.com/bybatkhuu/rest.fastapi-template/releases>
+**C.** Or download source code: <https://github.com/bybatkhuu/rest.fastapi-orm-template/releases>
 
 ### 3. Install python dependencies
 
@@ -189,7 +189,7 @@ nano ./pm2-process.json
 
 ## 2. Start PM2 process:
 pm2 start ./pm2-process.json && \
-    pm2 logs --lines 50 fastapi-template
+    pm2 logs --lines 50 fastapi-orm-template
 
 
 ## 3. Stop PM2 process:
@@ -265,9 +265,9 @@ DEBUG=false
 
 
 ## -- API configs -- ##
-FASTAPI_TEMPLATE_PORT=8000
-FASTAPI_TEMPLATE_DATA_DIR="/var/lib/fastapi-template"
-FASTAPI_TEMPLATE_LOGS_DIR="/var/log/fastapi-template"
+FOT_PORT=8000
+FOT_DATA_DIR="/var/lib/fastapi-orm-template"
+FOT_LOGS_DIR="/var/log/fastapi-orm-template"
 
 
 ## -- Docker build args -- ##
@@ -289,7 +289,7 @@ For example as in [**`docker-compose.override.yml`**](templates/docker-compose/d
 ```yml
     command: ["/bin/bash"]
     command: ["-b", "pwd && ls -al && /bin/bash"]
-    command: ["-b", "sleep 1 && uvicorn main:app --host=0.0.0.0 --port=${FASTAPI_TEMPLATE_PORT:-8000} --no-server-header --proxy-headers --forwarded-allow-ips='*' --no-access-log"]
+    command: ["-b", "sleep 1 && uvicorn main:app --host=0.0.0.0 --port=${FOT_PORT:-8000} --no-server-header --proxy-headers --forwarded-allow-ips='*' --no-access-log"]
 ```
 
 ## Documentation

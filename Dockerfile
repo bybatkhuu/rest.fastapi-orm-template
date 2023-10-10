@@ -1,9 +1,9 @@
 ARG BASE_IMAGE=debian:12.1-slim
 ARG DEBIAN_FRONTEND=noninteractive
 
-ARG FASTAPI_TEMPLATE_APP_DIR="/app/fastapi-template"
-ARG FASTAPI_TEMPLATE_DATA_DIR="/var/lib/fastapi-template"
-ARG FASTAPI_TEMPLATE_LOGS_DIR="/var/log/fastapi-template"
+ARG FOT_APP_DIR="/app/fastapi-orm-template"
+ARG FOT_DATA_DIR="/var/lib/fastapi-orm-template"
+ARG FOT_LOGS_DIR="/var/log/fastapi-orm-template"
 
 
 # Here is the builder image
@@ -66,24 +66,24 @@ RUN	_BUILD_TARGET_ARCH=$(uname -m) && \
 FROM ${BASE_IMAGE} as base
 
 ARG DEBIAN_FRONTEND
-ARG FASTAPI_TEMPLATE_APP_DIR
-ARG FASTAPI_TEMPLATE_DATA_DIR
-ARG FASTAPI_TEMPLATE_LOGS_DIR
+ARG FOT_APP_DIR
+ARG FOT_DATA_DIR
+ARG FOT_LOGS_DIR
 
 # CHANGEME: Change hashed password:
 ARG HASH_PASSWORD="\$1\$K4Iyj0KF\$SyXMbO1NTSeKzng1TBzHt."
 ARG UID=1000
 ARG GID=11000
-ARG USER=ft-user
-ARG GROUP=ft-group
+ARG USER=fot-user
+ARG GROUP=fot-group
 
 ENV UID=${UID} \
 	GID=${GID} \
 	USER=${USER} \
 	GROUP=${GROUP} \
-	FASTAPI_TEMPLATE_APP_DIR=${FASTAPI_TEMPLATE_APP_DIR} \
-	FASTAPI_TEMPLATE_DATA_DIR=${FASTAPI_TEMPLATE_DATA_DIR} \
-	FASTAPI_TEMPLATE_LOGS_DIR=${FASTAPI_TEMPLATE_LOGS_DIR}
+	FOT_APP_DIR=${FOT_APP_DIR} \
+	FOT_DATA_DIR=${FOT_DATA_DIR} \
+	FOT_LOGS_DIR=${FOT_LOGS_DIR}
 
 ENV	PYTHONIOENCODING=utf-8 \
 	PATH=/opt/conda/bin:${PATH}
@@ -122,12 +122,12 @@ RUN rm -rfv /var/lib/apt/lists/* /var/cache/apt/archives/* /tmp/* /root/.cache/*
 	echo -e "alias ll='ls -alhF --group-directories-first --color=auto'\n" >> /home/${USER}/.bashrc && \
 	echo ". /opt/conda/etc/profile.d/conda.sh" >> /home/${USER}/.bashrc && \
 	echo "conda activate base" >> /home/${USER}/.bashrc && \
-	mkdir -pv ${FASTAPI_TEMPLATE_APP_DIR} ${FASTAPI_TEMPLATE_DATA_DIR} ${FASTAPI_TEMPLATE_LOGS_DIR} && \
-	chown -Rc "${USER}:${GROUP}" ${FASTAPI_TEMPLATE_APP_DIR} ${FASTAPI_TEMPLATE_DATA_DIR} ${FASTAPI_TEMPLATE_LOGS_DIR} && \
-	find ${FASTAPI_TEMPLATE_APP_DIR} ${FASTAPI_TEMPLATE_DATA_DIR} -type d -exec chmod -c 770 {} + && \
-	find ${FASTAPI_TEMPLATE_APP_DIR} ${FASTAPI_TEMPLATE_DATA_DIR} -type d -exec chmod -c ug+s {} + && \
-	find ${FASTAPI_TEMPLATE_LOGS_DIR} -type d -exec chmod -c 775 {} + && \
-	find ${FASTAPI_TEMPLATE_LOGS_DIR} -type d -exec chmod -c +s {} + && \
+	mkdir -pv ${FOT_APP_DIR} ${FOT_DATA_DIR} ${FOT_LOGS_DIR} && \
+	chown -Rc "${USER}:${GROUP}" ${FOT_APP_DIR} ${FOT_DATA_DIR} ${FOT_LOGS_DIR} && \
+	find ${FOT_APP_DIR} ${FOT_DATA_DIR} -type d -exec chmod -c 770 {} + && \
+	find ${FOT_APP_DIR} ${FOT_DATA_DIR} -type d -exec chmod -c ug+s {} + && \
+	find ${FOT_LOGS_DIR} -type d -exec chmod -c 775 {} + && \
+	find ${FOT_LOGS_DIR} -type d -exec chmod -c +s {} + && \
 	rm -rfv /var/lib/apt/lists/* /var/cache/apt/archives/* /tmp/* /root/.cache/* /home/${USER}/.cache/*
 
 ENV LANG=en_US.UTF-8 \
@@ -141,12 +141,12 @@ COPY --from=builder --chown=${UID}:${GID} /opt /opt
 # hadolint ignore=DL3006
 FROM base as app
 
-WORKDIR ${FASTAPI_TEMPLATE_APP_DIR}
-COPY --chown=${UID}:${GID} ./app ${FASTAPI_TEMPLATE_APP_DIR}
+WORKDIR ${FOT_APP_DIR}
+COPY --chown=${UID}:${GID} ./app ${FOT_APP_DIR}
 COPY --chown=${UID}:${GID} --chmod=770 ./scripts/docker/*.sh /usr/local/bin/
 
-# VOLUME ${FASTAPI_TEMPLATE_DATA_DIR}
+# VOLUME ${FOT_DATA_DIR}
 
 USER ${UID}:${GID}
 ENTRYPOINT ["docker-entrypoint.sh"]
-# CMD ["-b", "sleep 1 && uvicorn main:app --host=0.0.0.0 --port='${FASTAPI_TEMPLATE_PORT:-8000}' --no-server-header --proxy-headers --forwarded-allow-ips='*' --no-access-log"]
+# CMD ["-b", "sleep 1 && uvicorn main:app --host=0.0.0.0 --port='${FOT_PORT:-8000}' --no-server-header --proxy-headers --forwarded-allow-ips='*' --no-access-log"]

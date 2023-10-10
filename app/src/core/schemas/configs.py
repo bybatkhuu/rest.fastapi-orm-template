@@ -12,13 +12,13 @@ from .base import FrozenBaseConfig, BaseConfig
 from __version__ import __version__
 
 
-_ENV_PREFIX = "FASTAPI_TEMPLATE_"
+_ENV_PREFIX = "FOT_"
 
 
 # App config schema:
 class AppConfig(FrozenBaseConfig):
     name: constr(strip_whitespace=True) = Field(
-        default="FastAPI Template",
+        default="FastAPI ORM Template",
         min_length=2,
         max_length=127,
     )
@@ -40,7 +40,7 @@ class AppConfig(FrozenBaseConfig):
     behind_cf_proxy: bool = Field(default=False)
     gzip_min_size: int = Field(default=512, ge=0, le=10_485_760)
     data_dir: constr(strip_whitespace=True) = Field(
-        default="/var/lib/fastapi-template",
+        default="/var/lib/fastapi-orm-template",
         min_length=2,
         max_length=1023,
         env=f"{_ENV_PREFIX}DATA_DIR",
