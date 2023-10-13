@@ -1,72 +1,52 @@
 # -*- coding: utf-8 -*-
 
 import os
+from urllib.parse import quote_plus
 from typing import List, Dict, Any, Optional
 
-from pydantic import Field, constr, root_validator, validator
+from pydantic import Field, constr, root_validator, validator, PostgresDsn, SecretStr
 
 from beans_logging import LoggerConfigPM
 
-from src.core.constants.base import EnvEnum, CORSMethodEnum
+from src.core.constants.base import (
+    EnvEnum,
+    CORSMethodEnum,
+    ENV_PREFIX,
+    ENV_PREFIX_APP,
+    ENV_PREFIX_DB,
+)
 from .base import FrozenBaseConfig, BaseConfig
 from __version__ import __version__
 
 
-_ENV_PREFIX = "FOT_"
+class RoutesConfig(BaseConfig):
+    pass
 
 
-# App config schema:
-class AppConfig(FrozenBaseConfig):
-    name: constr(strip_whitespace=True) = Field(
-        default="FastAPI ORM Template",
-        min_length=2,
-        max_length=127,
-    )
-    bind_host: constr(strip_whitespace=True) = Field(
-        default="0.0.0.0", min_length=2, max_length=127
-    )
-    port: int = Field(default=8000, ge=80, lt=65536, env=f"{_ENV_PREFIX}PORT")
-    tz: constr(strip_whitespace=True) = Field(
-        default="UTC", min_length=2, max_length=127, env="TZ"
-    )
+class ApiConfig(FrozenBaseConfig):
     version: constr(strip_whitespace=True) = Field(
-        default=__version__, min_length=3, max_length=31
-    )
-    api_version: constr(strip_whitespace=True) = Field(
         default="v1", min_length=1, max_length=15
     )
-    api_prefix: constr(strip_whitespace=True) = Field(default="", max_length=127)
-    behind_proxy: bool = Field(default=True)
-    behind_cf_proxy: bool = Field(default=False)
-    gzip_min_size: int = Field(default=512, ge=0, le=10_485_760)
-    data_dir: constr(strip_whitespace=True) = Field(
-        default="/var/lib/fastapi-orm-template",
-        min_length=2,
-        max_length=1023,
-        env=f"{_ENV_PREFIX}DATA_DIR",
-    )
+    prefix: constr(strip_whitespace=True) = Field(default="", max_length=127)
+    routes: RoutesConfig = Field(default_factory=RoutesConfig)
 
-    @validator("api_prefix", always=True)
-    def _check_api_prefix(cls, val: Any, values: dict):
-        if (
-            isinstance(val, str)
-            and ("{api_version}" in val)
-            and ("api_version" in values)
-        ):
-            val = val.format(api_version=values["api_version"])
+    @validator("prefix", always=True)
+    def _check_prefix(cls, val: Any, values: Dict[str, Any]) -> str:
+        if val and isinstance(val, str) and ("{api_version}" in val):
+            val = val.format(api_version=values["version"])
         return val
 
     class Config:
-        env_prefix = f"{_ENV_PREFIX}APP_"
+        env_prefix = f"{ENV_PREFIX}API_"
 
 
 class CorsConfig(FrozenBaseConfig):
     allow_origins: List[
         constr(strip_whitespace=True, min_length=1, max_length=253)
     ] = Field(default=["*"])
-    allow_origin_regex: Optional[
-        constr(strip_whitespace=True, min_length=1, max_length=253)
-    ] = Field(default=None)
+    allow_origin_regex: Optional[constr(strip_whitespace=True)] = Field(
+        default=None, min_length=1, max_length=253
+    )
     allow_headers: List[
         constr(strip_whitespace=True, min_length=1, max_length=127)
     ] = Field(default=["*"])
@@ -78,20 +58,7 @@ class CorsConfig(FrozenBaseConfig):
     max_age: int = Field(default=600, ge=0, le=86_400)
 
     class Config:
-        env_prefix = f"{_ENV_PREFIX}SECURE_CORS_"
-
-
-class SecureConfig(FrozenBaseConfig):
-    allowed_hosts: List[
-        constr(strip_whitespace=True, min_length=1, max_length=253)
-    ] = Field(default=["*"])
-    forwarded_allow_ips: List[
-        constr(strip_whitespace=True, min_length=1, max_length=253)
-    ] = Field(default=["*"])
-    cors: CorsConfig = Field(default_factory=CorsConfig)
-
-    class Config:
-        env_prefix = f"{_ENV_PREFIX}SECURE_"
+        env_prefix = f"{ENV_PREFIX_APP}CORS_"
 
 
 class DevConfig(BaseConfig):
@@ -104,71 +71,236 @@ class DevConfig(BaseConfig):
     ] = Field(default=None)
 
     class Config:
-        env_prefix = f"{_ENV_PREFIX}DEV_"
+        env_prefix = f"{ENV_PREFIX_APP}DEV_"
 
 
 class FrozenDevConfig(DevConfig):
+    @root_validator(skip_on_failure=True)
+    def _check_all(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+        if not values["reload"]:
+            values["reload_includes"] = None
+            values["reload_excludes"] = None
+        return values
+
     class Config:
         frozen = True
-
-    @root_validator(skip_on_failure=True)
-    def _check_reload(cls, values: dict):
-        if "reload" in values:
-            if not values["reload"]:
-                values["reload_includes"] = None
-                values["reload_excludes"] = None
-        return values
 
 
 class DocsConfig(BaseConfig):
     enabled: bool = Field(default=True)
-    openapi_url: Optional[
-        constr(strip_whitespace=True, min_length=8, max_length=127)
-    ] = Field(default="/openapi.json")
-    docs_url: Optional[
-        constr(strip_whitespace=True, min_length=5, max_length=127)
-    ] = Field(default="/docs")
-    redoc_url: Optional[
-        constr(strip_whitespace=True, min_length=6, max_length=127)
-    ] = Field(default="/redoc")
-    swagger_ui_oauth2_redirect_url: Optional[
-        constr(strip_whitespace=True, min_length=12, max_length=127)
-    ] = Field(default="/docs/oauth2-redirect")
-    summary: Optional[
-        constr(strip_whitespace=True, min_length=1, max_length=127)
-    ] = Field(default=None)
+    openapi_url: Optional[constr(strip_whitespace=True)] = Field(
+        default="/openapi.json", min_length=8, max_length=127
+    )
+    docs_url: Optional[constr(strip_whitespace=True)] = Field(
+        default="/docs", min_length=5, max_length=127
+    )
+    redoc_url: Optional[constr(strip_whitespace=True)] = Field(
+        default="/redoc", min_length=6, max_length=127
+    )
+    swagger_ui_oauth2_redirect_url: Optional[constr(strip_whitespace=True)] = Field(
+        default="/docs/oauth2-redirect", min_length=12, max_length=127
+    )
+    summary: Optional[constr(strip_whitespace=True)] = Field(
+        default=None, min_length=2, max_length=127
+    )
     description: str = Field(default="", max_length=8192)
-    terms_of_service: Optional[
-        constr(strip_whitespace=True, min_length=1, max_length=255)
-    ] = Field(default=None)
+    terms_of_service: Optional[constr(strip_whitespace=True)] = Field(
+        default=None, min_length=1, max_length=255
+    )
     contact: Optional[Dict[str, Any]] = Field(default=None)
     license_info: Optional[Dict[str, Any]] = Field(default=None)
     openapi_tags: Optional[List[Dict[str, Any]]] = Field(default=None)
     swagger_ui_parameters: Optional[Dict[str, Any]] = Field(default=None)
 
-    class Config:
-        env_prefix = f"{_ENV_PREFIX}DOCS_"
-
     @validator("description", always=True)
-    def _check_description(cls, val: Any):
-        _desc_path = "./assets/description.md"
-        if (not val) and os.path.isfile(_desc_path):
-            with open(_desc_path, "r") as _file:
+    def _check_description(cls, val: Any) -> str:
+        _desc_file_path = "./assets/description.md"
+        if (not val) and os.path.isfile(_desc_file_path):
+            with open(_desc_file_path, "r") as _file:
                 val = _file.read()
         return val
 
     @root_validator(skip_on_failure=True)
-    def _check_enabled(cls, values: dict):
-        if "enabled" in values:
-            if not values["enabled"]:
-                values["openapi_url"] = None
-                values["docs_url"] = None
-                values["redoc_url"] = None
-                values["swagger_ui_oauth2_redirect_url"] = None
+    def _check_all(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+        if not values["enabled"]:
+            values["openapi_url"] = None
+            values["docs_url"] = None
+            values["redoc_url"] = None
+            values["swagger_ui_oauth2_redirect_url"] = None
         return values
+
+    class Config:
+        env_prefix = f"{ENV_PREFIX_APP}DOCS_"
 
 
 class FrozenDocsConfig(DocsConfig):
+    class Config:
+        frozen = True
+
+
+class AppConfig(BaseConfig):
+    name: constr(strip_whitespace=True) = Field(
+        default="FastAPI ORM Template",
+        min_length=2,
+        max_length=127,
+    )
+    bind_host: constr(strip_whitespace=True) = Field(
+        default="0.0.0.0", min_length=2, max_length=127
+    )
+    port: int = Field(default=8000, ge=80, lt=65536)
+    behind_proxy: bool = Field(default=True)
+    behind_cf_proxy: bool = Field(default=False)
+    gzip_min_size: int = Field(default=512, ge=0, le=10_485_760)  # 512 bytes
+    allowed_hosts: List[
+        constr(strip_whitespace=True, min_length=1, max_length=253)
+    ] = Field(default=["*"])
+    forwarded_allow_ips: List[
+        constr(strip_whitespace=True, min_length=1, max_length=253)
+    ] = Field(default=["*"])
+    cors: CorsConfig = Field(default_factory=CorsConfig)
+    dev: DevConfig = Field(default_factory=DevConfig)
+    docs: DocsConfig = Field(default_factory=DocsConfig)
+
+    class Config:
+        env_prefix = f"{ENV_PREFIX_APP}"
+
+
+class FrozenAppConfig(AppConfig):
+    class Config:
+        frozen = True
+
+
+class PathsConfig(FrozenBaseConfig):
+    storage_dir: constr(strip_whitespace=True) = Field(
+        default="/var/lib/fastapi-orm-template",
+        min_length=2,
+        max_length=1023,
+        env=f"{ENV_PREFIX_APP}STORAGE_DIR",
+    )
+    data_dir: constr(strip_whitespace=True) = Field(
+        default="{storage_dir}/data",
+        min_length=2,
+        max_length=1023,
+        env=f"{ENV_PREFIX_APP}DATA_DIR",
+    )
+    uploads_dir: constr(strip_whitespace=True) = Field(
+        default="{storage_dir}/uploads", min_length=2, max_length=1023
+    )
+    models_dir: constr(strip_whitespace=True) = Field(
+        default="{storage_dir}/models",
+        min_length=2,
+        max_length=1023,
+        env=f"{ENV_PREFIX_APP}MODELS_DIR",
+    )
+
+    @root_validator(skip_on_failure=True)
+    def _check_all(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+        _storage_dir = values["storage_dir"]
+
+        if "{storage_dir}" in values["data_dir"]:
+            values["data_dir"] = values["data_dir"].format(storage_dir=_storage_dir)
+
+        if "{storage_dir}" in values["uploads_dir"]:
+            values["uploads_dir"] = values["uploads_dir"].format(
+                storage_dir=_storage_dir
+            )
+
+        if "{storage_dir}" in values["models_dir"]:
+            values["models_dir"] = values["models_dir"].format(storage_dir=_storage_dir)
+
+        return values
+
+    class Config:
+        env_prefix = f"{ENV_PREFIX_APP}PATHS_"
+
+
+class DbConfig(BaseConfig):
+    dialect: constr(strip_whitespace=True) = Field(
+        default="postgresql", min_length=2, max_length=31
+    )
+    driver: constr(strip_whitespace=True) = Field(
+        default="psycopg", min_length=2, max_length=31
+    )
+
+    host: constr(strip_whitespace=True) = Field(
+        "localhost", min_length=2, max_length=127
+    )
+    port: int = Field(default=5432, ge=1024, le=65535)
+    username: constr(strip_whitespace=True) = Field(
+        default="fot_user", min_length=2, max_length=127
+    )
+    password: SecretStr = Field(default="fot_password1", min_length=8, max_length=255)
+    database: constr(strip_whitespace=True) = Field(
+        default="fot_db", min_length=2, max_length=127
+    )
+    dsn: Optional[PostgresDsn] = Field(default=None)
+
+    max_try_connect: int = Field(default=3, ge=1, le=100)
+    wait_seconds_try_connect: int = Field(default=10, ge=1, le=600)
+    echo_sql: bool = Field(default=False)
+    echo_pool: bool = Field(default=False)
+    pool_size: int = Field(default=10, ge=0, le=1000)  # 0 means no limit
+    max_overflow: int = Field(
+        default=10, ge=0, le=1000
+    )  # pool_size + max_overflow = max number of pools allowed
+    pool_recycle: int = Field(
+        default=10_800, ge=-1, le=86_400
+    )  # 3 hours, -1 means no timeout
+    pool_timeout: int = Field(default=30, ge=0, le=3600)  # 30 seconds
+    select_limit: int = Field(default=100, ge=1, le=100_000)
+    max_select_limit: int = Field(default=100_000, ge=1, le=10_000_000)
+
+    read_host: Optional[constr(strip_whitespace=True)] = Field(
+        default=None, min_length=2, max_length=127
+    )
+    read_port: Optional[int] = Field(default=None, ge=1024, le=65535)
+    read_username: Optional[constr(strip_whitespace=True)] = Field(
+        default=None, min_length=2, max_length=127
+    )
+    read_password: Optional[SecretStr] = Field(
+        default=None, min_length=8, max_length=255
+    )
+    read_database: Optional[constr(strip_whitespace=True)] = Field(
+        default=None, min_length=2, max_length=127
+    )
+    read_dsn: Optional[PostgresDsn] = Field(default=None)
+
+    @root_validator(skip_on_failure=True)
+    def _check_all(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+        if not values["dsn"]:
+            _encoded_password = quote_plus(values["password"].get_secret_value())
+            values[
+                "dsn"
+            ] = f"{values['dialect']}+{values['driver']}://{values['username']}:{_encoded_password}@{values['host']}:{values['port']}/{values['database']}"
+
+        if not values["read_host"]:
+            values["read_host"] = values["host"]
+
+        if not values["read_port"]:
+            values["read_port"] = values["port"]
+
+        if not values["read_username"]:
+            values["read_username"] = values["username"]
+
+        if not values["read_password"]:
+            values["read_password"] = values["password"]
+
+        if not values["read_database"]:
+            values["read_database"] = values["database"]
+
+        if not values["read_dsn"]:
+            _encoded_password = quote_plus(values["read_password"].get_secret_value())
+            values[
+                "read_dsn"
+            ] = f"{values['dialect']}+{values['driver']}://{values['read_username']}:{_encoded_password}@{values['read_host']}:{values['read_port']}/{values['read_database']}"
+
+        return values
+
+    class Config:
+        env_prefix = f"{ENV_PREFIX_DB}"
+
+
+class FrozenDbConfig(DbConfig):
     class Config:
         frozen = True
 
@@ -177,66 +309,88 @@ class FrozenDocsConfig(DocsConfig):
 class ConfigSchema(FrozenBaseConfig):
     env: EnvEnum = Field(default=EnvEnum.LOCAL, env="ENV")
     debug: bool = Field(default=False, env="DEBUG")
+    tz: constr(strip_whitespace=True) = Field(
+        default="UTC", min_length=2, max_length=127, env="TZ"
+    )
+    version: constr(strip_whitespace=True) = Field(
+        default=__version__, min_length=3, max_length=31
+    )
+    api: ApiConfig = Field(default_factory=ApiConfig)
     app: AppConfig = Field(default_factory=AppConfig)
-    secure: SecureConfig = Field(default_factory=SecureConfig)
-    dev: DevConfig = Field(default_factory=DevConfig)
-    docs: DocsConfig = Field(default_factory=DocsConfig)
+    paths: PathsConfig = Field(default_factory=PathsConfig)
+    db: DbConfig = Field(default_factory=DbConfig)
     logger: LoggerConfigPM = Field(default_factory=LoggerConfigPM)
 
-    class Config:
-        env_prefix = f"{_ENV_PREFIX}"
-        env_nested_delimiter = "__"
-
-    @validator("docs", always=True)
-    def _check_docs_url_prefix(cls, val: DocsConfig, values: dict):
-        if val.enabled:
-            if "{api_prefix}" in val.openapi_url:
-                val.openapi_url = val.openapi_url.format(
-                    api_prefix=values["app"].api_prefix
-                )
-
-            if "{api_prefix}" in val.docs_url:
-                val.docs_url = val.docs_url.format(api_prefix=values["app"].api_prefix)
-
-            if "{api_prefix}" in val.redoc_url:
-                val.redoc_url = val.redoc_url.format(
-                    api_prefix=values["app"].api_prefix
-                )
-
-            if "{api_prefix}" in val.swagger_ui_oauth2_redirect_url:
-                val.swagger_ui_oauth2_redirect_url = (
-                    val.swagger_ui_oauth2_redirect_url.format(
-                        api_prefix=values["app"].api_prefix
-                    )
-                )
-
-        val = FrozenDocsConfig(**val.dict())
+    @validator("version", always=True)
+    def _check_version(cls, val: Any) -> str:
+        val = __version__
         return val
 
-    @validator("dev", always=True)
-    def _check_dev_reload(cls, val: DevConfig, values: dict):
+    @validator("app", always=True)
+    def _check_app(cls, val: AppConfig, values: Dict[str, Any]) -> FrozenAppConfig:
+        _dev = val.dev
         if values["env"] == EnvEnum.DEVELOPMENT:
-            val.reload = True
+            _dev.reload = True
+        _dev = FrozenDevConfig(**_dev.dict())
 
-        val = FrozenDevConfig(**val.dict())
+        _docs = val.docs
+        _api = values["api"]
+        if _docs.enabled:
+            if "{api_prefix}" in _docs.openapi_url:
+                _docs.openapi_url = _docs.openapi_url.format(api_prefix=_api.prefix)
+
+            if "{api_prefix}" in _docs.docs_url:
+                _docs.docs_url = _docs.docs_url.format(api_prefix=_api.prefix)
+
+            if "{api_prefix}" in _docs.redoc_url:
+                _docs.redoc_url = _docs.redoc_url.format(api_prefix=_api.prefix)
+
+            if "{api_prefix}" in _docs.swagger_ui_oauth2_redirect_url:
+                _docs.swagger_ui_oauth2_redirect_url = (
+                    _docs.swagger_ui_oauth2_redirect_url.format(api_prefix=_api.prefix)
+                )
+        _docs = FrozenDocsConfig(**_docs.dict())
+
+        val = FrozenAppConfig(dev=_dev, docs=_docs, **val.dict(exclude={"dev", "docs"}))
+        return val
+
+    @validator("db", always=True)
+    def _check_db(cls, val: DbConfig, values: Dict[str, Any]) -> FrozenDbConfig:
+        if values["debug"]:
+            val.echo_sql = True
+            val.echo_pool = True
+
+        val = FrozenDbConfig(
+            password=val.password.get_secret_value(),
+            read_password=val.read_password.get_secret_value(),
+            **val.dict(exclude={"password", "read_password"}),
+        )
         return val
 
     @validator("logger", always=True)
-    def _check_logger(cls, val: LoggerConfigPM, values: dict):
+    def _check_logger(
+        cls, val: LoggerConfigPM, values: Dict[str, Any]
+    ) -> LoggerConfigPM:
         # val.app_name = (
-        #     values["app"].name.strip().lower().replace(" ", "-").replace("_", "-")
+        #     values["name"].lower().strip().replace(" ", "-").replace("_", "-")
         # ).replace(".", "-")
-        if f"{_ENV_PREFIX}LOGS_DIR" in os.environ:
-            val.file.logs_dir = os.getenv(f"{_ENV_PREFIX}LOGS_DIR")
+        if f"{ENV_PREFIX_APP}LOGS_DIR" in os.environ:
+            val.file.logs_dir = os.getenv(f"{ENV_PREFIX_APP}LOGS_DIR")
         return val
+
+    class Config:
+        env_prefix = f"{ENV_PREFIX}"
+        env_nested_delimiter = "__"
 
 
 __all__ = [
     "ConfigSchema",
+    "ApiConfig",
     "AppConfig",
-    "SecureConfig",
     "CorsConfig",
     "DevConfig",
     "DocsConfig",
+    "PathsConfig",
+    "DbConfig",
     "LoggerConfigPM",
 ]

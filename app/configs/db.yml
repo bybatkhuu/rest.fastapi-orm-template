@@ -1,0 +1,25 @@
+db:
+  dialect: postgresql
+  driver: psycopg
+  host: localhost
+  port: 5432
+  username: fot_user
+  password: "fot_password1"
+  database: fot_db
+  # dsn: "postgresql+psycopg://fot_user:fot_password1@localhost:5432/fot_db"
+  max_try_connect: 3
+  wait_seconds_try_connect: 10
+  echo_sql: false
+  echo_pool: false
+  pool_size: 10 # 0 means no limit
+  max_overflow: 10 # pool_size + max_overflow = max number of pools allowed
+  pool_recycle: 10800 # 3 hours, -1 means no timeout
+  pool_timeout: 30 # 30 seconds
+  select_limit: 100
+  max_select_limit: 100000
+  # read_host: localhost
+  # read_port: 5432
+  # read_username: fot_user
+  # read_password: "fot_password1"
+  # read_database: fot_db
+  # read_dsn: "postgresql+psycopg://fot_user:fot_password1@localhost:5432/fot_db"

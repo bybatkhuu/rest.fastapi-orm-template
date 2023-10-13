@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
+import os
 from typing import Dict, Any
 
 from onion_config import ConfigLoader
 from beans_logging import logger
 
+from src.core.constants.base import EnvEnum, ENV_PREFIX_DB
 from src.core.schemas.configs import ConfigSchema
 
 
@@ -18,7 +20,36 @@ def _pre_load_hook(config_data: Dict[str, Any]) -> Dict[str, Any]:
         Dict[str, Any]: Modified config data.
     """
 
-    # Modify config_data here...
+    try:
+        _is_operation_env = False
+        if ("env" in config_data) and (
+            (config_data["env"] == EnvEnum.STAGING)
+            or (config_data["env"] == EnvEnum.PRODUCTION)
+        ):
+            _is_operation_env = True
+
+        if (os.getenv("ENV") == EnvEnum.STAGING) or (
+            os.getenv("ENV") == EnvEnum.PRODUCTION
+        ):
+            _is_operation_env = True
+
+        if (
+            _is_operation_env
+            and (not os.getenv(f"{ENV_PREFIX_DB}DSN"))
+            and (
+                not os.getenv(f"{ENV_PREFIX_DB}HOST")
+                or not os.getenv(f"{ENV_PREFIX_DB}PORT")
+                or not os.getenv(f"{ENV_PREFIX_DB}USERNAME")
+                or not os.getenv(f"{ENV_PREFIX_DB}PASSWORD")
+                or not os.getenv(f"{ENV_PREFIX_DB}DATABASE")
+            )
+        ):
+            raise KeyError(
+                f"Missing required '{ENV_PREFIX_DB}*' environment variables for staging/production environment!"
+            )
+    except Exception:
+        logger.exception(f"Error occured while pre-loading config:")
+        exit(2)
 
     return config_data
 

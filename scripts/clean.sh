@@ -62,13 +62,16 @@ main()
 	find . -type d -name "__pycache__" -exec rm -rfv {} + || exit 2
 	find . -type d -name ".benchmarks" -exec rm -rfv {} + || exit 2
 	find . -type d -name ".pytest_cache" -exec rm -rfv {} + || exit 2
-	find . -type d -name ".git" -prune -o -type d -name "logs" -exec rm -rfv {} + || exit 2
+	# find . -type d -name ".git" -prune -o -type d -name "logs" -exec rm -rfv {} + || exit 2
 
 	rm -rfv "./${PROJECT_SLUG}" || exit 2
-	# rm -rfv "./volumes/storage/${PROJECT_SLUG}/logs" || exit 2
+	rm -rfv "./volumes/storage/${PROJECT_SLUG}/logs" || exit 2
 
 	if [ "${_IS_ALL}" == true ]; then
 		rm -rfv "./volumes/storage/${PROJECT_SLUG}/data" || exit 2
+		rm -rfv "./volumes/storage/postgresql/data" || exit 2
+		rm -rfv "./volumes/storage/postgresql/logs/*" || exit 2
+		rm -rfv "./volumes/pgadmin" || exit 2
 		rm -rfv ./volumes/backups || exit 2
 		rm -rf ./volumes/.vscode-server/* || exit 2
 	fi
