@@ -2,6 +2,8 @@ version: "3.8"
 
 services:
   db:
+    environment:
+      PGPORT: ${FOT_DB_PORT:-5432}
     # volumes:
     #   - "./volumes/storage/postgresql/conf.d:/etc/postgresql"
     #   - "./volumes/storage/postgresql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d"
@@ -13,7 +15,7 @@ services:
     #       cpus: "1.0"
     #       memory: 1G
     ports:
-        - "${FOT_DB_PORT}:${FOT_DB_PORT}"
+        - "${FOT_DB_PORT:-5432}:${FOT_DB_PORT:-5432}"
 
   # db_gui:
   #   image: dpage/pgadmin4:latest

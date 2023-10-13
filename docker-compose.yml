@@ -5,7 +5,6 @@ services:
     image: postgres:14.9-bookworm
     restart: unless-stopped
     environment:
-      PGPORT: ${FOT_DB_PORT:-5432}
       POSTGRES_USER: ${FOT_DB_USERNAME:-fot_user}
       POSTGRES_PASSWORD: "${FOT_DB_PASSWORD:-fot_password1}"
       POSTGRES_DB: ${FOT_DB_DATABASE:-fot_db}

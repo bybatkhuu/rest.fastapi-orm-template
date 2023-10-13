@@ -259,7 +259,6 @@ You can use the following environment variables to configure:
 
 ```sh
 ## --- Environment variable --- ##
-## --- Environment variable --- ##
 ENV=local
 DEBUG=false
 # TZ=Asia/Seoul
