@@ -321,9 +321,8 @@ docker-compose.override.yaml
 
 # Specific directories:
 volumes/**
-volumes/storage/postgresql/data
 
 
 # Includes:
-!volumes/**/
-!volumes/**/*.gitkeep
+#!volumes/**/
+#!volumes/**/*.gitkeep
