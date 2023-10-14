@@ -282,8 +282,8 @@ FOT_DB_DATABASE=fot_db
 
 ## -- APP configs -- ##
 FOT_APP_PORT=8000
-FOT_APP_DATA_DIR="/var/lib/fastapi-orm-template/data"
 FOT_APP_LOGS_DIR="/var/log/fastapi-orm-template"
+FOT_APP_DATA_DIR="/var/lib/fastapi-orm-template/data"
 
 
 ## -- Docker build args -- ##
