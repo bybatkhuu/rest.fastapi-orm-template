@@ -71,7 +71,6 @@ main()
 		rm -rfv "./volumes/storage/${PROJECT_SLUG}/data" || exit 2
 		rm -rfv "./volumes/storage/postgresql/data" || exit 2
 		rm -rfv "./volumes/storage/postgresql/logs/*" || exit 2
-		rm -rfv "./volumes/pgadmin" || exit 2
 		rm -rfv ./volumes/backups || exit 2
 		rm -rf ./volumes/.vscode-server/* || exit 2
 	fi
