@@ -6,6 +6,7 @@ services:
     hostname: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_HOST:-db}
     restart: unless-stopped
     environment:
+      PGPORT: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_PORT:-5432}
       POSTGRES_USER: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_USERNAME:-{{cookiecutter.project_abbr}}_user}
       POSTGRES_PASSWORD: "{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_PASSWORD:-{{cookiecutter.project_abbr}}_password1}"
       POSTGRES_DB: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_DATABASE:-{{cookiecutter.project_abbr}}_db}
@@ -23,7 +24,7 @@ services:
       TERM: ${TERM:-xterm}
       TZ: ${TZ:-{{cookiecutter.timezone}}}
       ENV: ${ENV:-local}
-      {{cookiecutter.env_prefix}}APP_PORT: ${{{cookiecutter.env_prefix}}APP_PORT:-8000}
+      {{cookiecutter.env_prefix}}APP_PORT: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}APP_PORT:-8000}
     volumes:
       - "./volumes/storage/{{cookiecutter.project_slug}}/logs:/var/log/{{cookiecutter.project_slug}}"
       - "./volumes/storage/{{cookiecutter.project_slug}}/data:/var/lib/{{cookiecutter.project_slug}}"

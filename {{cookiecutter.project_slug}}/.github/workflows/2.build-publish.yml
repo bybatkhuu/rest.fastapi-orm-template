@@ -40,8 +40,8 @@ jobs:
         name: Login to docker hub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          username: {% raw %}${{ secrets.DOCKERHUB_USERNAME }}{% endraw %}
+          password: {% raw %}${{ secrets.DOCKERHUB_TOKEN }}{% endraw %}
       -
         name: Set version
         run: echo "_VERSION=$(./scripts/get-version.sh)" >> ${GITHUB_ENV}
@@ -51,12 +51,12 @@ jobs:
         with:
           context: .
           load: true
-          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/fastapi-orm-template:cache-latest
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/fastapi-orm-template:test
+          cache-from: type=registry,ref={% raw %}${{ secrets.DOCKERHUB_USERNAME }}{% endraw %}/fastapi-orm-template:cache-latest
+          tags: {% raw %}${{ secrets.DOCKERHUB_USERNAME }}{% endraw %}/fastapi-orm-template:test
       -
         name: Test docker image
         run: |
-          docker run --rm -dt -p 8000:8000 ${{ secrets.DOCKERHUB_USERNAME }}/fastapi-orm-template:test
+          docker run --rm -dt -p 8000:8000 {% raw %}${{ secrets.DOCKERHUB_USERNAME }}{% endraw %}/fastapi-orm-template:test
           sleep 3
           curl -s http://localhost:8000/api/v1/health | grep "OK"
       -
@@ -65,14 +65,14 @@ jobs:
         with:
           context: .
           platforms: linux/amd64,linux/arm64
-          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/fastapi-orm-template:cache-latest
-          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/fastapi-orm-template:cache-latest,mode=max
+          cache-from: type=registry,ref={% raw %}${{ secrets.DOCKERHUB_USERNAME }}{% endraw %}/fastapi-orm-template:cache-latest
+          cache-to: type=registry,ref={% raw %}${{ secrets.DOCKERHUB_USERNAME }}{% endraw %}/fastapi-orm-template:cache-latest,mode=max
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/fastapi-orm-template:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/fastapi-orm-template:${{ env._VERSION }}
+            {% raw %}${{ secrets.DOCKERHUB_USERNAME }}{% endraw %}/fastapi-orm-template:latest
+            {% raw %}${{ secrets.DOCKERHUB_USERNAME }}{% endraw %}/fastapi-orm-template:{% raw %}${{ env._VERSION }}{% endraw %}
           push: true
       -
         name: Trigger release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
         run: gh workflow run 3.create-release.yml -r v$(./scripts/get-version.sh)
