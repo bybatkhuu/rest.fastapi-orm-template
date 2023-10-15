@@ -2,9 +2,8 @@ ARG BASE_IMAGE=debian:12.1-slim
 ARG DEBIAN_FRONTEND=noninteractive
 
 ARG FOT_APP_DIR="/app"
-ARG FOT_APP_HOME_DIR="${FOT_APP_DIR}/fastapi-orm-template"
-ARG FOT_APP_STORAGE_DIR="/var/lib/fastapi-orm-template"
-ARG FOT_APP_DATA_DIR="${FOT_APP_STORAGE_DIR}/data"
+ARG FOT_APP_HOME="${FOT_APP_DIR}/fastapi-orm-template"
+ARG FOT_APP_DATA_DIR="/var/lib/fastapi-orm-template"
 ARG FOT_APP_LOGS_DIR="/var/log/fastapi-orm-template"
 
 
@@ -69,8 +68,7 @@ FROM ${BASE_IMAGE} as base
 
 ARG DEBIAN_FRONTEND
 ARG FOT_APP_DIR
-ARG FOT_APP_HOME_DIR
-ARG FOT_APP_STORAGE_DIR
+ARG FOT_APP_HOME
 ARG FOT_APP_DATA_DIR
 ARG FOT_APP_LOGS_DIR
 
@@ -86,8 +84,7 @@ ENV UID=${UID} \
 	USER=${USER} \
 	GROUP=${GROUP} \
 	FOT_APP_DIR=${FOT_APP_DIR} \
-	FOT_APP_HOME_DIR=${FOT_APP_HOME_DIR} \
-	FOT_APP_STORAGE_DIR=${FOT_APP_STORAGE_DIR} \
+	FOT_APP_HOME=${FOT_APP_HOME} \
 	FOT_APP_DATA_DIR=${FOT_APP_DATA_DIR} \
 	FOT_APP_LOGS_DIR=${FOT_APP_LOGS_DIR}
 
@@ -128,10 +125,10 @@ RUN rm -rfv /var/lib/apt/lists/* /var/cache/apt/archives/* /tmp/* /root/.cache/*
 	echo -e "alias ll='ls -alhF --group-directories-first --color=auto'\n" >> /home/${USER}/.bashrc && \
 	echo ". /opt/conda/etc/profile.d/conda.sh" >> /home/${USER}/.bashrc && \
 	echo "conda activate base" >> /home/${USER}/.bashrc && \
-	mkdir -pv ${FOT_APP_HOME_DIR} ${FOT_APP_DATA_DIR} ${FOT_APP_LOGS_DIR} && \
-	chown -Rc "${USER}:${GROUP}" ${FOT_APP_DIR} ${FOT_APP_STORAGE_DIR} ${FOT_APP_LOGS_DIR} && \
-	find ${FOT_APP_DIR} ${FOT_APP_STORAGE_DIR} -type d -exec chmod -c 770 {} + && \
-	find ${FOT_APP_DIR} ${FOT_APP_STORAGE_DIR} -type d -exec chmod -c ug+s {} + && \
+	mkdir -pv ${FOT_APP_HOME} ${FOT_APP_DATA_DIR} ${FOT_APP_LOGS_DIR} && \
+	chown -Rc "${USER}:${GROUP}" ${FOT_APP_DIR} ${FOT_APP_DATA_DIR} ${FOT_APP_LOGS_DIR} && \
+	find ${FOT_APP_DIR} ${FOT_APP_DATA_DIR} -type d -exec chmod -c 770 {} + && \
+	find ${FOT_APP_DIR} ${FOT_APP_DATA_DIR} -type d -exec chmod -c ug+s {} + && \
 	find ${FOT_APP_LOGS_DIR} -type d -exec chmod -c 775 {} + && \
 	find ${FOT_APP_LOGS_DIR} -type d -exec chmod -c +s {} + && \
 	rm -rfv /var/lib/apt/lists/* /var/cache/apt/archives/* /tmp/* /root/.cache/* /home/${USER}/.cache/*
@@ -147,11 +144,11 @@ COPY --from=builder --chown=${UID}:${GID} /opt /opt
 # hadolint ignore=DL3006
 FROM base as app
 
-WORKDIR ${FOT_APP_HOME_DIR}
-COPY --chown=${UID}:${GID} ./app ${FOT_APP_HOME_DIR}
+WORKDIR ${FOT_APP_HOME}
+COPY --chown=${UID}:${GID} ./app ${FOT_APP_HOME}
 COPY --chown=${UID}:${GID} --chmod=770 ./scripts/docker/*.sh /usr/local/bin/
 
-# VOLUME ${FOT_APP_STORAGE_DIR}
+# VOLUME ${FOT_APP_DATA_DIR}
 
 USER ${UID}:${GID}
 ENTRYPOINT ["docker-entrypoint.sh"]

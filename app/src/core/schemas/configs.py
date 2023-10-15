@@ -112,6 +112,11 @@ class DocsConfig(BaseConfig):
     openapi_tags: Optional[List[Dict[str, Any]]] = Field(default=None)
     swagger_ui_parameters: Optional[Dict[str, Any]] = Field(default=None)
 
+    class Config:
+        env_prefix = f"{ENV_PREFIX_APP}DOCS_"
+
+
+class FrozenDocsConfig(DocsConfig):
     @validator("description", always=True)
     def _check_description(cls, val: Any) -> str:
         _desc_file_path = "./assets/description.md"
@@ -130,11 +135,6 @@ class DocsConfig(BaseConfig):
         return values
 
     class Config:
-        env_prefix = f"{ENV_PREFIX_APP}DOCS_"
-
-
-class FrozenDocsConfig(DocsConfig):
-    class Config:
         frozen = True
 
 
@@ -144,13 +144,16 @@ class AppConfig(BaseConfig):
         min_length=2,
         max_length=127,
     )
+    slug: constr(strip_whitespace=True) = Field(
+        default="fastapi-orm-template", min_length=2, max_length=127
+    )
     bind_host: constr(strip_whitespace=True) = Field(
         default="0.0.0.0", min_length=2, max_length=127
     )
     port: int = Field(default=8000, ge=80, lt=65536)
+    gzip_min_size: int = Field(default=512, ge=0, le=10_485_760)  # 512 bytes
     behind_proxy: bool = Field(default=True)
     behind_cf_proxy: bool = Field(default=False)
-    gzip_min_size: int = Field(default=512, ge=0, le=10_485_760)  # 512 bytes
     allowed_hosts: List[
         constr(strip_whitespace=True, min_length=1, max_length=253)
     ] = Field(default=["*"])
@@ -170,48 +173,38 @@ class FrozenAppConfig(AppConfig):
         frozen = True
 
 
-class PathsConfig(FrozenBaseConfig):
-    storage_dir: constr(strip_whitespace=True) = Field(
-        default="/var/lib/fastapi-orm-template",
-        min_length=2,
-        max_length=1023,
-        env=f"{ENV_PREFIX_APP}STORAGE_DIR",
-    )
+class PathsConfig(BaseConfig):
     data_dir: constr(strip_whitespace=True) = Field(
-        default="{storage_dir}/data",
+        default="/var/lib/{app_slug}",
         min_length=2,
         max_length=1023,
         env=f"{ENV_PREFIX_APP}DATA_DIR",
     )
     uploads_dir: constr(strip_whitespace=True) = Field(
-        default="{storage_dir}/uploads", min_length=2, max_length=1023
+        default="{data_dir}/uploads", min_length=2, max_length=1023
     )
     models_dir: constr(strip_whitespace=True) = Field(
-        default="{storage_dir}/models",
+        default="{data_dir}/models",
         min_length=2,
         max_length=1023,
         env=f"{ENV_PREFIX_APP}MODELS_DIR",
     )
 
+    class Config:
+        env_prefix = f"{ENV_PREFIX_APP}PATHS_"
+
+
+class FrozenPathsConfig(PathsConfig):
     @root_validator(skip_on_failure=True)
     def _check_all(cls, values: Dict[str, Any]) -> Dict[str, Any]:
-        _storage_dir = values["storage_dir"]
-
-        if "{storage_dir}" in values["data_dir"]:
-            values["data_dir"] = values["data_dir"].format(storage_dir=_storage_dir)
-
-        if "{storage_dir}" in values["uploads_dir"]:
-            values["uploads_dir"] = values["uploads_dir"].format(
-                storage_dir=_storage_dir
-            )
-
-        if "{storage_dir}" in values["models_dir"]:
-            values["models_dir"] = values["models_dir"].format(storage_dir=_storage_dir)
+        for _key, _val in values.items():
+            if isinstance(_val, str) and ("{data_dir}" in _val):
+                values[_key] = _val.format(data_dir=values["data_dir"])
 
         return values
 
     class Config:
-        env_prefix = f"{ENV_PREFIX_APP}PATHS_"
+        frozen = True
 
 
 class DbConfig(BaseConfig):
@@ -221,20 +214,10 @@ class DbConfig(BaseConfig):
     driver: constr(strip_whitespace=True) = Field(
         default="psycopg", min_length=2, max_length=31
     )
-
-    host: constr(strip_whitespace=True) = Field(
-        "localhost", min_length=2, max_length=127
+    dsn_url: PostgresDsn = Field(
+        default="postgresql+psycopg://fot_user:fot_password1@localhost:5432/fot_db"
     )
-    port: int = Field(default=5432, ge=1024, le=65535)
-    username: constr(strip_whitespace=True) = Field(
-        default="fot_user", min_length=2, max_length=127
-    )
-    password: SecretStr = Field(default="fot_password1", min_length=8, max_length=255)
-    database: constr(strip_whitespace=True) = Field(
-        default="fot_db", min_length=2, max_length=127
-    )
-    dsn: Optional[PostgresDsn] = Field(default=None)
-
+    read_dsn_url: Optional[PostgresDsn] = Field(default=None)
     max_try_connect: int = Field(default=3, ge=1, le=100)
     wait_seconds_try_connect: int = Field(default=10, ge=1, le=600)
     echo_sql: bool = Field(default=False)
@@ -250,57 +233,42 @@ class DbConfig(BaseConfig):
     select_limit: int = Field(default=100, ge=1, le=100_000)
     max_select_limit: int = Field(default=100_000, ge=1, le=10_000_000)
 
-    read_host: Optional[constr(strip_whitespace=True)] = Field(
-        default=None, min_length=2, max_length=127
-    )
-    read_port: Optional[int] = Field(default=None, ge=1024, le=65535)
-    read_username: Optional[constr(strip_whitespace=True)] = Field(
-        default=None, min_length=2, max_length=127
-    )
-    read_password: Optional[SecretStr] = Field(
-        default=None, min_length=8, max_length=255
-    )
-    read_database: Optional[constr(strip_whitespace=True)] = Field(
-        default=None, min_length=2, max_length=127
-    )
-    read_dsn: Optional[PostgresDsn] = Field(default=None)
-
-    @root_validator(skip_on_failure=True)
-    def _check_all(cls, values: Dict[str, Any]) -> Dict[str, Any]:
-        if not values["dsn"]:
-            _encoded_password = quote_plus(values["password"].get_secret_value())
-            values[
-                "dsn"
-            ] = f"{values['dialect']}+{values['driver']}://{values['username']}:{_encoded_password}@{values['host']}:{values['port']}/{values['database']}"
-
-        if not values["read_host"]:
-            values["read_host"] = values["host"]
-
-        if not values["read_port"]:
-            values["read_port"] = values["port"]
-
-        if not values["read_username"]:
-            values["read_username"] = values["username"]
-
-        if not values["read_password"]:
-            values["read_password"] = values["password"]
-
-        if not values["read_database"]:
-            values["read_database"] = values["database"]
-
-        if not values["read_dsn"]:
-            _encoded_password = quote_plus(values["read_password"].get_secret_value())
-            values[
-                "read_dsn"
-            ] = f"{values['dialect']}+{values['driver']}://{values['read_username']}:{_encoded_password}@{values['read_host']}:{values['read_port']}/{values['read_database']}"
-
-        return values
-
     class Config:
         env_prefix = f"{ENV_PREFIX_DB}"
 
 
 class FrozenDbConfig(DbConfig):
+    @root_validator(skip_on_failure=True)
+    def _check_all(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+        if (f"{ENV_PREFIX_DB}DSN_URL" not in os.environ) and (
+            (f"{ENV_PREFIX_DB}HOST" in os.environ)
+            and (f"{ENV_PREFIX_DB}PORT" in os.environ)
+            and (f"{ENV_PREFIX_DB}USERNAME" in os.environ)
+            and (f"{ENV_PREFIX_DB}PASSWORD" in os.environ)
+            and (f"{ENV_PREFIX_DB}DATABASE" in os.environ)
+        ):
+            _encoded_password = quote_plus(os.getenv(f"{ENV_PREFIX_DB}PASSWORD"))
+            values[
+                "dsn_url"
+            ] = f'{values["dialect"]}+{values["driver"]}://{os.getenv(f"{ENV_PREFIX_DB}USERNAME")}:{_encoded_password}@{os.getenv(f"{ENV_PREFIX_DB}HOST")}:{os.getenv(f"{ENV_PREFIX_DB}PORT")}/{os.getenv(f"{ENV_PREFIX_DB}DATABASE")}'
+
+        if (f"{ENV_PREFIX_DB}READ_DSN_URL" not in os.environ) and (
+            (f"{ENV_PREFIX_DB}READ_HOST" in os.environ)
+            and (f"{ENV_PREFIX_DB}READ_PORT" in os.environ)
+            and (f"{ENV_PREFIX_DB}READ_USERNAME" in os.environ)
+            and (f"{ENV_PREFIX_DB}READ_PASSWORD" in os.environ)
+            and (f"{ENV_PREFIX_DB}READ_DATABASE" in os.environ)
+        ):
+            _encoded_password = quote_plus(os.getenv(f"{ENV_PREFIX_DB}READ_PASSWORD"))
+            values[
+                "read_dsn_url"
+            ] = f'{values["dialect"]}+{values["driver"]}://{os.getenv(f"{ENV_PREFIX_DB}READ_USERNAME")}:{_encoded_password}@{os.getenv(f"{ENV_PREFIX_DB}READ_HOST")}:{os.getenv(f"{ENV_PREFIX_DB}READ_PORT")}/{os.getenv(f"{ENV_PREFIX_DB}READ_DATABASE")}'
+
+        if not values["read_dsn_url"]:
+            values["read_dsn_url"] = values["dsn_url"]
+
+        return values
+
     class Config:
         frozen = True
 
@@ -354,26 +322,34 @@ class ConfigSchema(FrozenBaseConfig):
         val = FrozenAppConfig(dev=_dev, docs=_docs, **val.dict(exclude={"dev", "docs"}))
         return val
 
+    @validator("paths", always=True)
+    def _check_paths(
+        cls, val: PathsConfig, values: Dict[str, Any]
+    ) -> FrozenPathsConfig:
+        if "{app_slug}" in val.data_dir:
+            val.data_dir = val.data_dir.format(app_slug=values["app"].slug)
+
+        val = FrozenPathsConfig(**val.dict())
+        return val
+
     @validator("db", always=True)
     def _check_db(cls, val: DbConfig, values: Dict[str, Any]) -> FrozenDbConfig:
         if values["debug"]:
             val.echo_sql = True
             val.echo_pool = True
 
-        val = FrozenDbConfig(
-            password=val.password.get_secret_value(),
-            read_password=val.read_password.get_secret_value(),
-            **val.dict(exclude={"password", "read_password"}),
-        )
+        val = FrozenDbConfig(**val.dict())
         return val
 
     @validator("logger", always=True)
     def _check_logger(
         cls, val: LoggerConfigPM, values: Dict[str, Any]
     ) -> LoggerConfigPM:
-        # val.app_name = (
-        #     values["name"].lower().strip().replace(" ", "-").replace("_", "-")
-        # ).replace(".", "-")
+        if not val.app_name:
+            val.app_name = values["app"].slug
+        elif "{app_slug}" in val.app_name:
+            val.app_name = val.app_name.format(app_slug=values["app"].slug)
+
         if f"{ENV_PREFIX_APP}LOGS_DIR" in os.environ:
             val.file.logs_dir = os.getenv(f"{ENV_PREFIX_APP}LOGS_DIR")
         return val

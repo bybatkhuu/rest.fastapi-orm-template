@@ -1,5 +1,4 @@
 paths:
-  storage_dir: "/var/lib/fastapi-orm-template"
-  data_dir: "{storage_dir}/data"
-  uploads_dir: "{storage_dir}/uploads"
-  models_dir: "{storage_dir}/models"
+  data_dir: "/var/lib/{app_slug}"
+  uploads_dir: "{data_dir}/uploads"
+  models_dir: "{data_dir}/models"

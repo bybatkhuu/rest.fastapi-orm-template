@@ -13,14 +13,14 @@ _doStart()
 
 main()
 {
-	sudo chown -Rc "${USER}:${GROUP}" "${FOT_APP_DIR}" "${FOT_APP_STORAGE_DIR}" "${FOT_APP_LOGS_DIR}" || exit 2
-	find "${FOT_APP_DIR}" "${FOT_APP_STORAGE_DIR}" -type d -exec chmod 770 {} + || exit 2
-	find "${FOT_APP_DIR}" "${FOT_APP_STORAGE_DIR}" -type f -exec chmod 660 {} + || exit 2
-	find "${FOT_APP_DIR}" "${FOT_APP_STORAGE_DIR}" -type d -exec chmod ug+s {} + || exit 2
+	sudo chown -Rc "${USER}:${GROUP}" "${FOT_APP_DIR}" "${FOT_APP_DATA_DIR}" "${FOT_APP_LOGS_DIR}" || exit 2
+	find "${FOT_APP_DIR}" "${FOT_APP_DATA_DIR}" -type d -exec chmod 770 {} + || exit 2
+	find "${FOT_APP_DIR}" "${FOT_APP_DATA_DIR}" -type f -exec chmod 660 {} + || exit 2
+	find "${FOT_APP_DIR}" "${FOT_APP_DATA_DIR}" -type d -exec chmod ug+s {} + || exit 2
 	find "${FOT_APP_LOGS_DIR}" -type d -exec chmod 775 {} + || exit 2
 	find "${FOT_APP_LOGS_DIR}" -type f -exec chmod 664 {} + || exit 2
 	find "${FOT_APP_LOGS_DIR}" -type d -exec chmod +s {} + || exit 2
-	chmod ug+x "${FOT_APP_HOME_DIR}/main.py" || exit 2
+	chmod ug+x "${FOT_APP_HOME}/main.py" || exit 2
 	echo "${USER} ALL=(ALL) ALL" | sudo tee -a "/etc/sudoers.d/${USER}" > /dev/null || exit 2
 	echo ""
 
