@@ -6,6 +6,7 @@ This is a {{cookiecutter.project_name}} project.
 
 - FastAPI
 - REST API
+- ORM (SQLAlchemy)
 - Web service
 - Microservice
 - Template
