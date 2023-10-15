@@ -42,7 +42,7 @@ services:
     environment:
       NVIDIA_VISIBLE_DEVICES: ${NVIDIA_VISIBLE_DEVICES:-all}
       CUDA_VISIBLE_DEVICES: ${CUDA_VISIBLE_DEVICES:-all}
-      # DEBUG: ${DEBUG:-false}
+    #   DEBUG: ${DEBUG:-false}
     # deploy:
     #   replicas: 0
     #   resources:

@@ -39,8 +39,8 @@ services:
     #   - .env
     environment:
       DEBUG: ${DEBUG:-false}
-    #   {{cookiecutter.env_prefix}}APP_LOGS_DIR: "/var/log/{{cookiecutter.project_slug}}"
-    #   {{cookiecutter.env_prefix}}APP_DATA_DIR: "/var/lib/{{cookiecutter.project_slug}}"
+      # {{cookiecutter.env_prefix}}APP_LOGS_DIR: "/var/log/{{cookiecutter.project_slug}}"
+      # {{cookiecutter.env_prefix}}APP_DATA_DIR: "/var/lib/{{cookiecutter.project_slug}}"
     volumes:
       - "./scripts/docker/docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh"
       - "./app:/app/{{cookiecutter.project_slug}}"
