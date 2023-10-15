@@ -16,7 +16,7 @@ class LinksResPM(ExtraBaseModel):
         alias="self",
         title="Self link",
         description="Link to the current resource.",
-        examples=["https://api.example.com/v1/ping"],
+        examples=["https://api.{{cookiecutter.domain}}/v1/ping"],
     )
 
 
@@ -36,12 +36,12 @@ class MetaResPM(ExtraBaseModel):
         examples=["GET"],
     )
     api_version: constr(strip_whitespace=True) = Field(
-        default=config.app.api_version,
+        default=config.api.version,
         min_length=1,
         max_length=15,
         title="API version",
         description="Current API version.",
-        examples=[config.app.api_version],
+        examples=[config.api.version],
     )
     version: constr(strip_whitespace=True) = Field(
         default=__version__,

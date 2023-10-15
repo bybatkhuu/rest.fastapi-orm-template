@@ -1,19 +1,32 @@
 version: "3.8"
 
 services:
+  db:
+    image: postgres:14.9-bookworm
+    hostname: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_HOST:-db}
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_USERNAME:-{{cookiecutter.project_abbr}}_user}
+      POSTGRES_PASSWORD: "{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_PASSWORD:-{{cookiecutter.project_abbr}}_password1}"
+      POSTGRES_DB: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_DATABASE:-{{cookiecutter.project_abbr}}_db}
+    volumes:
+      - "./volumes/storage/postgresql/data:/var/lib/postgresql/data"
+
   api:
     image: {{cookiecutter.docker_registry}}/{{cookiecutter.project_slug}}:latest
     build:
       context: .
+    depends_on:
+      - db
     restart: unless-stopped
     environment:
-      - TZ=${TZ:-{{cookiecutter.timezone}}}
-      - TERM=${TERM:-xterm}
-      - ENV=${ENV:-local}
-      - {{cookiecutter.env_prefix}}PORT={% raw %}${{% endraw %}{{cookiecutter.env_prefix}}PORT:-8000}
+      TERM: ${TERM:-xterm}
+      TZ: ${TZ:-{{cookiecutter.timezone}}}
+      ENV: ${ENV:-local}
+      {{cookiecutter.env_prefix}}APP_PORT: ${{{cookiecutter.env_prefix}}APP_PORT:-8000}
     volumes:
-      - "./volumes/storage/{{cookiecutter.project_slug}}/data:/var/lib/{{cookiecutter.project_slug}}"
       - "./volumes/storage/{{cookiecutter.project_slug}}/logs:/var/log/{{cookiecutter.project_slug}}"
+      - "./volumes/storage/{{cookiecutter.project_slug}}/data:/var/lib/{{cookiecutter.project_slug}}"
     ports:
-      - "{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}PORT:-8000}:{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}PORT:-8000}"
+      - "{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}APP_PORT:-8000}:{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}APP_PORT:-8000}"
     tty: true
