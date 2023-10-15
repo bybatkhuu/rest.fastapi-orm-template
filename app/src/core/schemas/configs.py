@@ -169,6 +169,19 @@ class AppConfig(BaseConfig):
 
 
 class FrozenAppConfig(AppConfig):
+    @validator("slug", always=True)
+    def _check_slug(cls, val: Any, values: Dict[str, Any]) -> str:
+        if not val:
+            val = (
+                values["name"]
+                .lower()
+                .strip()
+                .replace(" ", "-")
+                .replace("_", "-")
+                .replace(".", "-")
+            )
+        return val
+
     class Config:
         frozen = True
 
