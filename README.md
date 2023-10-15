@@ -1,4 +1,4 @@
-# FastAPI Template (Cookiecutter)
+# FastAPI ORM Template (Cookiecutter)
 
 This is a cookiecutter template for FastAPI projects.
 
@@ -7,6 +7,7 @@ This is a cookiecutter template for FastAPI projects.
 - Cookiecutter
 - FastAPI
 - REST API
+- ORM (SQLAlchemy)
 - Web service
 - Microservice
 - Template
@@ -52,16 +53,16 @@ export _REPO_OWNER=username
 **A.** Clone the repository (for **public**: git + https):
 
 ```sh
-git clone https://github.com/${_REPO_OWNER}/rest.fastapi-template.git && \
-    cd rest.fastapi-template && \
+git clone https://github.com/${_REPO_OWNER}/rest.fastapi-orm-template.git && \
+    cd rest.fastapi-orm-template && \
     git checkout cookiecutter
 ```
 
 **B.** Clone the repository (for **development**: git + ssh key):
 
 ```sh
-git clone git@github.com:${_REPO_OWNER}/rest.fastapi-template.git && \
-    cd rest.fastapi-template && \
+git clone git@github.com:${_REPO_OWNER}/rest.fastapi-orm-template.git && \
+    cd rest.fastapi-orm-template && \
     git checkout cookiecutter
 ```
 
@@ -90,7 +91,7 @@ cookiecutter -f .
 ```bash
 cd [PROJECT_NAME]
 # For example:
-cd fastapi-template
+cd fastapi-orm-template
 
 # Start:
 ./compose.sh start -l

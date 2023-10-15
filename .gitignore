@@ -910,7 +910,7 @@ archive/
 results/
 extra_configs/
 pythonpath/
-fastapi-template/
+fastapi-orm-template/
 .benchmarks/
 .temp/
 .temp.*/
@@ -927,7 +927,7 @@ archive
 results
 extra_configs
 pythonpath
-fastapi-template
+fastapi-orm-template
 pm2-process.json
 sample.py
 example.py
