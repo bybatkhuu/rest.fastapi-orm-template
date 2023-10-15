@@ -164,11 +164,6 @@ class AppConfig(BaseConfig):
     dev: DevConfig = Field(default_factory=DevConfig)
     docs: DocsConfig = Field(default_factory=DocsConfig)
 
-    class Config:
-        env_prefix = f"{ENV_PREFIX_APP}"
-
-
-class FrozenAppConfig(AppConfig):
     @validator("slug", always=True)
     def _check_slug(cls, val: Any, values: Dict[str, Any]) -> str:
         if not val:
@@ -183,6 +178,11 @@ class FrozenAppConfig(AppConfig):
         return val
 
     class Config:
+        env_prefix = f"{ENV_PREFIX_APP}"
+
+
+class FrozenAppConfig(AppConfig):
+    class Config:
         frozen = True
 
 
@@ -196,12 +196,12 @@ class PathsConfig(BaseConfig):
     uploads_dir: constr(strip_whitespace=True) = Field(
         default="{data_dir}/uploads", min_length=2, max_length=1023
     )
-    models_dir: constr(strip_whitespace=True) = Field(
-        default="{data_dir}/models",
-        min_length=2,
-        max_length=1023,
-        env=f"{ENV_PREFIX_APP}MODELS_DIR",
-    )
+    # models_dir: constr(strip_whitespace=True) = Field(
+    #     default="{data_dir}/models",
+    #     min_length=2,
+    #     max_length=1023,
+    #     env=f"{ENV_PREFIX_APP}MODELS_DIR",
+    # )
 
     class Config:
         env_prefix = f"{ENV_PREFIX_APP}PATHS_"

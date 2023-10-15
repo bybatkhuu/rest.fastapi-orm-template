@@ -1,6 +1,6 @@
 env: local
 debug: false
-tz: "{{cookiecutter.timezone}}"
+tz: "UTC"
 
 app:
   name: "{{cookiecutter.project_name}}"
