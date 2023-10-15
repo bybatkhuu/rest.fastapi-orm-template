@@ -270,20 +270,20 @@ FOT_DB_PORT=5432
 FOT_DB_USERNAME=fot_user
 FOT_DB_PASSWORD="fot_password1"
 FOT_DB_DATABASE=fot_db
-# FOT_DB_DSN="postgresql+psycopg://fot_user:fot_password1@db:5432/fot_db"
+# FOT_DB_DSN_URL="postgresql+psycopg://fot_user:fot_password1@db:5432/fot_db"
 
 # FOT_DB_READ_HOST=db
 # FOT_DB_READ_PORT=5432
 # FOT_DB_READ_USERNAME=fot_user
 # FOT_DB_READ_PASSWORD="fot_password1"
 # FOT_DB_READ_DATABASE=fot_db
-# FOT_DB_READ_DSN="postgresql+psycopg://fot_user:fot_password1@db:5432/fot_db"
+# FOT_DB_READ_DSN_URL="postgresql+psycopg://fot_user:fot_password1@db:5432/fot_db"
 
 
 ## -- APP configs -- ##
 FOT_APP_PORT=8000
 FOT_APP_LOGS_DIR="/var/log/fastapi-orm-template"
-FOT_APP_DATA_DIR="/var/lib/fastapi-orm-template/data"
+FOT_APP_DATA_DIR="/var/lib/fastapi-orm-template"
 
 
 ## -- Docker build args -- ##
