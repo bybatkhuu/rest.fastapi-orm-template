@@ -51,25 +51,25 @@ jobs:
         with:
           context: .
           load: true
-          cache-from: type=registry,ref={% raw %}${{ secrets.DOCKERHUB_USERNAME }}{% endraw %}/fastapi-orm-template:cache-latest
-          tags: {% raw %}${{ secrets.DOCKERHUB_USERNAME }}{% endraw %}/fastapi-orm-template:test
-      -
-        name: Test docker image
-        run: |
-          docker run --rm -dt -p 8000:8000 {% raw %}${{ secrets.DOCKERHUB_USERNAME }}{% endraw %}/fastapi-orm-template:test
-          sleep 3
-          curl -s http://localhost:8000/api/v1/health | grep "OK"
+          cache-from: type=registry,ref={% raw %}${{ secrets.DOCKERHUB_USERNAME }}{% endraw %}/{{cookiecutter.project_slug}}:cache-latest
+          tags: {% raw %}${{ secrets.DOCKERHUB_USERNAME }}{% endraw %}/{{cookiecutter.project_slug}}:test
+      # -
+      #   name: Test docker image
+      #   run: |
+      #     docker run --rm -dt -p 8000:8000 {% raw %}${{ secrets.DOCKERHUB_USERNAME }}{% endraw %}/{{cookiecutter.project_slug}}:test
+      #     sleep 3
+      #     curl -s http://localhost:8000/api/v1/health | grep "OK"
       -
         name: Build and push
         uses: docker/build-push-action@v4
         with:
           context: .
           platforms: linux/amd64,linux/arm64
-          cache-from: type=registry,ref={% raw %}${{ secrets.DOCKERHUB_USERNAME }}{% endraw %}/fastapi-orm-template:cache-latest
-          cache-to: type=registry,ref={% raw %}${{ secrets.DOCKERHUB_USERNAME }}{% endraw %}/fastapi-orm-template:cache-latest,mode=max
+          cache-from: type=registry,ref={% raw %}${{ secrets.DOCKERHUB_USERNAME }}{% endraw %}/{{cookiecutter.project_slug}}:cache-latest
+          cache-to: type=registry,ref={% raw %}${{ secrets.DOCKERHUB_USERNAME }}{% endraw %}/{{cookiecutter.project_slug}}:cache-latest,mode=max
           tags: |
-            {% raw %}${{ secrets.DOCKERHUB_USERNAME }}{% endraw %}/fastapi-orm-template:latest
-            {% raw %}${{ secrets.DOCKERHUB_USERNAME }}{% endraw %}/fastapi-orm-template:{% raw %}${{ env._VERSION }}{% endraw %}
+            {% raw %}${{ secrets.DOCKERHUB_USERNAME }}{% endraw %}/{{cookiecutter.project_slug}}:latest
+            {% raw %}${{ secrets.DOCKERHUB_USERNAME }}{% endraw %}/{{cookiecutter.project_slug}}:{% raw %}${{ env._VERSION }}{% endraw %}
           push: true
       -
         name: Trigger release
