@@ -1,6 +1,6 @@
 env: local
 debug: false
-tz: "Asia/Seoul"
+tz: "UTC"
 
 app:
   name: "FastAPI ORM Template"
