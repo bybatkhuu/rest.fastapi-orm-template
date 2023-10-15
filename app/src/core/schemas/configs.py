@@ -4,7 +4,7 @@ import os
 from urllib.parse import quote_plus
 from typing import List, Dict, Any, Optional
 
-from pydantic import Field, constr, root_validator, validator, PostgresDsn, SecretStr
+from pydantic import Field, constr, root_validator, validator, PostgresDsn
 
 from beans_logging import LoggerConfigPM
 
