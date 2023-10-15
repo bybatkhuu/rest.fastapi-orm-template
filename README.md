@@ -6,6 +6,7 @@ This is a FastAPI ORM Template project.
 
 - FastAPI
 - REST API
+- ORM (SQLAlchemy)
 - Web service
 - Microservice
 - Template
