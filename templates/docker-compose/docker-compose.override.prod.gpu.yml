@@ -37,12 +37,11 @@ services:
   api:
     image: bybatkhuu/fastapi-orm-template:latest-gpu
     runtime: nvidia
-    # env_file:
-    #   - .env
+    env_file:
+      - .env
     environment:
       NVIDIA_VISIBLE_DEVICES: ${NVIDIA_VISIBLE_DEVICES:-all}
       CUDA_VISIBLE_DEVICES: ${CUDA_VISIBLE_DEVICES:-all}
-    #   DEBUG: ${DEBUG:-false}
     # deploy:
     #   replicas: 0
     #   resources:

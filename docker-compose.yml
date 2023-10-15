@@ -26,8 +26,8 @@ services:
       ENV: ${ENV:-local}
       FOT_APP_PORT: ${FOT_APP_PORT:-8000}
     volumes:
-      - "./volumes/storage/fastapi-orm-template/logs:/var/log/fastapi-orm-template"
-      - "./volumes/storage/fastapi-orm-template/data:/var/lib/fastapi-orm-template"
+      - "./volumes/storage/fastapi-orm-template/logs:${FOT_APP_DATA_DIR:-/var/log/fastapi-orm-template}"
+      - "./volumes/storage/fastapi-orm-template/data:${FOT_APP_DATA_DIR:-/var/lib/fastapi-orm-template}"
     ports:
       - "${FOT_APP_PORT:-8000}:${FOT_APP_PORT:-8000}"
     tty: true

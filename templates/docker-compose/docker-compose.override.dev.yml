@@ -35,12 +35,8 @@ services:
   #     - "${PGADMIN_PORT:-8080}:80"
 
   api:
-    # env_file:
-    #   - .env
-    environment:
-      DEBUG: ${DEBUG:-false}
-      # FOT_APP_LOGS_DIR: "/var/log/fastapi-orm-template"
-      # FOT_APP_DATA_DIR: "/var/lib/fastapi-orm-template"
+    env_file:
+      - .env
     volumes:
       - "./scripts/docker/docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh"
       - "./app:/app/fastapi-orm-template"

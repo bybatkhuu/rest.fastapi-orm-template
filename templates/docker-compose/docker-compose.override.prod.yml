@@ -1,6 +1,6 @@
 version: "3.8"
 
-# services:
+services:
 #   db:
 #     volumes:
 #       - "./volumes/storage/postgresql/conf.d:/etc/postgresql"
@@ -34,11 +34,9 @@ version: "3.8"
 #     ports:
 #       - "${PGADMIN_PORT:-8080}:80"
 
-#   api:
-#     env_file:
-#       - .env
-#     environment:
-#       DEBUG: ${DEBUG:-false}
+  api:
+    env_file:
+      - .env
 #     deploy:
 #       replicas: 0
 #       resources:

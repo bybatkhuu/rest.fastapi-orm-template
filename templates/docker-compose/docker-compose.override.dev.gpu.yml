@@ -37,14 +37,11 @@ services:
   api:
     image: bybatkhuu/fastapi-orm-template:latest-gpu
     runtime: nvidia
-    # env_file:
-    #   - .env
+    env_file:
+      - .env
     environment:
       NVIDIA_VISIBLE_DEVICES: ${NVIDIA_VISIBLE_DEVICES:-all}
       CUDA_VISIBLE_DEVICES: ${CUDA_VISIBLE_DEVICES:-all}
-      DEBUG: ${DEBUG:-false}
-      # FOT_APP_LOGS_DIR: "/var/log/fastapi-orm-template"
-      # FOT_APP_DATA_DIR: "/var/lib/fastapi-orm-template"
     volumes:
       - "./scripts/docker/docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh"
       - "./app:/app/fastapi-orm-template"
