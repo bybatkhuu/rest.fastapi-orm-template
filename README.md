@@ -264,10 +264,26 @@ DEBUG=false
 # TZ=Asia/Seoul
 
 
-## -- API configs -- ##
-FOT_PORT=8000
-FOT_DATA_DIR="/var/lib/fastapi-orm-template"
-FOT_LOGS_DIR="/var/log/fastapi-orm-template"
+## --- DB configs --- ##
+FOT_DB_HOST=db
+FOT_DB_PORT=5432
+FOT_DB_USERNAME=fot_user
+FOT_DB_PASSWORD="fot_password1"
+FOT_DB_DATABASE=fot_db
+# FOT_DB_DSN_URL="postgresql+psycopg://fot_user:fot_password1@db:5432/fot_db"
+
+# FOT_DB_READ_HOST=db
+# FOT_DB_READ_PORT=5432
+# FOT_DB_READ_USERNAME=fot_user
+# FOT_DB_READ_PASSWORD="fot_password1"
+# FOT_DB_READ_DATABASE=fot_db
+# FOT_DB_READ_DSN_URL="postgresql+psycopg://fot_user:fot_password1@db:5432/fot_db"
+
+
+## -- APP configs -- ##
+FOT_APP_PORT=8000
+FOT_APP_LOGS_DIR="/var/log/fastapi-orm-template"
+FOT_APP_DATA_DIR="/var/lib/fastapi-orm-template"
 
 
 ## -- Docker build args -- ##
@@ -289,7 +305,7 @@ For example as in [**`docker-compose.override.yml`**](templates/docker-compose/d
 ```yml
     command: ["/bin/bash"]
     command: ["-b", "pwd && ls -al && /bin/bash"]
-    command: ["-b", "sleep 1 && uvicorn main:app --host=0.0.0.0 --port=${FOT_PORT:-8000} --no-server-header --proxy-headers --forwarded-allow-ips='*' --no-access-log"]
+    command: ["-b", "sleep 3 && uvicorn main:app --host=0.0.0.0 --port=${FOT_APP_PORT:-8000} --no-server-header --proxy-headers --forwarded-allow-ips='*' --no-access-log"]
 ```
 
 ## Documentation
