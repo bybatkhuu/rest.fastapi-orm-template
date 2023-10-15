@@ -3,10 +3,8 @@ version: "3.8"
 services:
   db:
     image: postgres:14.9-bookworm
-    hostname: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_HOST:-db}
     restart: unless-stopped
     environment:
-      PGPORT: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_PORT:-5432}
       POSTGRES_USER: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_USERNAME:-{{cookiecutter.project_abbr}}_user}
       POSTGRES_PASSWORD: "{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_PASSWORD:-{{cookiecutter.project_abbr}}_password1}"
       POSTGRES_DB: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_DATABASE:-{{cookiecutter.project_abbr}}_db}
@@ -23,7 +21,6 @@ services:
     environment:
       TERM: ${TERM:-xterm}
       TZ: ${TZ:-{{cookiecutter.timezone}}}
-      ENV: ${ENV:-local}
       {{cookiecutter.env_prefix}}APP_PORT: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}APP_PORT:-8000}
     volumes:
       - "./volumes/storage/{{cookiecutter.project_slug}}/logs:/var/log/{{cookiecutter.project_slug}}"

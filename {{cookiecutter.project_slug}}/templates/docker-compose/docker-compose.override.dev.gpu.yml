@@ -2,9 +2,12 @@ version: "3.8"
 
 services:
   db:
+    hostname: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_HOST:-db}
+    environment:
+      PGPORT: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_PORT:-5432}
     # volumes:
-    #   - "./volumes/storage/postgresql/conf.d:/etc/postgresql"
-    #   - "./volumes/storage/postgresql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d"
+    #   - "./volumes/storage/postgresql/conf.d:/etc/postgresql:ro"
+    #   - "./volumes/storage/postgresql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro"
     #   - "./volumes/storage/postgresql/logs:/var/log/postgresql"
     # deploy:
     #   replicas: 0
@@ -24,6 +27,7 @@ services:
   #     PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-{{cookiecutter.project_abbr}}_user@{{cookiecutter.domain}}}
   #     PGADMIN_DEFAULT_PASSWORD: "${PGADMIN_PASSWORD:-{{cookiecutter.project_abbr}}_password1}"
   #   volumes:
+  #     - "/etc/localtime:/etc/localtime:ro"
   #     - "db-gui-data:/var/lib/pgadmin"
   #   deploy:
   #     replicas: 0
@@ -37,15 +41,14 @@ services:
   api:
     image: {{cookiecutter.docker_registry}}/{{cookiecutter.project_slug}}:latest-gpu
     runtime: nvidia
-    # env_file:
-    #   - .env
+    env_file:
+      - .env
     environment:
       NVIDIA_VISIBLE_DEVICES: ${NVIDIA_VISIBLE_DEVICES:-all}
       CUDA_VISIBLE_DEVICES: ${CUDA_VISIBLE_DEVICES:-all}
-      DEBUG: ${DEBUG:-false}
-      # {{cookiecutter.env_prefix}}APP_LOGS_DIR: "/var/log/{{cookiecutter.project_slug}}"
-      # {{cookiecutter.env_prefix}}APP_DATA_DIR: "/var/lib/{{cookiecutter.project_slug}}"
     volumes:
+      - "./volumes/storage/{{cookiecutter.project_slug}}/logs:{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}APP_LOGS_DIR:-/var/log/{{cookiecutter.project_slug}}}"
+      - "./volumes/storage/{{cookiecutter.project_slug}}/data:{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}APP_DATA_DIR:-/var/lib/{{cookiecutter.project_slug}}}"
       - "./scripts/docker/docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh"
       - "./app:/app/{{cookiecutter.project_slug}}"
       - "./volumes/.vscode-server:/home/{{cookiecutter.project_abbr}}-user/.vscode-server"

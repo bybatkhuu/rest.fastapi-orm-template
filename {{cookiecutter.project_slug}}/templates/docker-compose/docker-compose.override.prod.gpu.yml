@@ -1,19 +1,22 @@
 version: "3.8"
 
 services:
-  # db:
-  #   volumes:
-  #     - "./volumes/storage/postgresql/conf.d:/etc/postgresql"
-  #     - "./volumes/storage/postgresql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d"
-  #     - "./volumes/storage/postgresql/logs:/var/log/postgresql"
-  #   deploy:
-  #     replicas: 0
-  #     resources:
-  #       limits:
-  #         cpus: "1.0"
-  #         memory: 1G
-  #   ports:
-  #       - "{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_PORT:-5432}:{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_PORT:-5432}"
+  db:
+    hostname: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_HOST:-db}
+    # environment:
+    #   PGPORT: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_PORT:-5432}
+    # volumes:
+    #   - "./volumes/storage/postgresql/conf.d:/etc/postgresql:ro"
+    #   - "./volumes/storage/postgresql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro"
+    #   - "./volumes/storage/postgresql/logs:/var/log/postgresql"
+    # deploy:
+    #   replicas: 0
+    #   resources:
+    #     limits:
+    #       cpus: "1.0"
+    #       memory: 1G
+    # ports:
+    #     - "{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_PORT:-5432}:{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_PORT:-5432}"
 
   # db-gui:
   #   image: dpage/pgadmin4:latest
@@ -24,6 +27,7 @@ services:
   #     PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-{{cookiecutter.project_abbr}}_user@{{cookiecutter.domain}}}
   #     PGADMIN_DEFAULT_PASSWORD: "${PGADMIN_PASSWORD:-{{cookiecutter.project_abbr}}_password1}"
   #   volumes:
+  #     - "/etc/localtime:/etc/localtime:ro"
   #     - "db-gui-data:/var/lib/pgadmin"
   #   deploy:
   #     replicas: 0
@@ -37,12 +41,11 @@ services:
   api:
     image: {{cookiecutter.docker_registry}}/{{cookiecutter.project_slug}}:latest-gpu
     runtime: nvidia
-    # env_file:
-    #   - .env
+    env_file:
+      - .env
     environment:
       NVIDIA_VISIBLE_DEVICES: ${NVIDIA_VISIBLE_DEVICES:-all}
       CUDA_VISIBLE_DEVICES: ${CUDA_VISIBLE_DEVICES:-all}
-    #   DEBUG: ${DEBUG:-false}
     # deploy:
     #   replicas: 0
     #   resources:
