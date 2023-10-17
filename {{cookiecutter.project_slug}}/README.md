@@ -165,7 +165,7 @@ docker compose up -d && \
     docker compose logs -f --tail 100
 
 
-## 3. Stop docker compose:
+## 4. Stop docker compose:
 ./compose.sh stop
 # Or:
 docker compose down

@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: "{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_PASSWORD:-{{cookiecutter.project_abbr}}_password1}"
       POSTGRES_DB: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_DATABASE:-{{cookiecutter.project_abbr}}_db}
     volumes:
-      - "./volumes/storage/postgresql/data:/var/lib/postgresql/data"
+      - "db-data:/var/lib/postgresql/data"
 
   api:
     image: {{cookiecutter.docker_registry}}/{{cookiecutter.project_slug}}:latest
@@ -23,8 +23,13 @@ services:
       TZ: ${TZ:-{{cookiecutter.timezone}}}
       {{cookiecutter.env_prefix}}APP_PORT: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}APP_PORT:-8000}
     volumes:
-      - "./volumes/storage/{{cookiecutter.project_slug}}/logs:/var/log/{{cookiecutter.project_slug}}"
-      - "./volumes/storage/{{cookiecutter.project_slug}}/data:/var/lib/{{cookiecutter.project_slug}}"
+      - "api-logs:/var/log/{{cookiecutter.project_slug}}"
+      - "api-data:/var/lib/{{cookiecutter.project_slug}}"
     ports:
       - "{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}APP_PORT:-8000}:{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}APP_PORT:-8000}"
     tty: true
+
+volumes:
+  db-data:
+  api-logs:
+  api-data:

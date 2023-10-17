@@ -6,9 +6,7 @@ services:
     # environment:
     #   PGPORT: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_PORT:-5432}
     # volumes:
-    #   - "./volumes/storage/postgresql/conf.d:/etc/postgresql:ro"
-    #   - "./volumes/storage/postgresql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro"
-    #   - "./volumes/storage/postgresql/logs:/var/log/postgresql"
+    #   - "db-logs:/var/log/postgresql"
     # deploy:
     #   replicas: 0
     #   resources:
@@ -56,4 +54,5 @@ services:
     # command: ["-b", "sleep 3 && uvicorn main:app --host=0.0.0.0 --port={% raw %}${{% endraw %}{{cookiecutter.env_prefix}}APP_PORT:-8000} --no-server-header --proxy-headers --forwarded-allow-ips='*' --no-access-log"]
 
 # volumes:
+#   db-logs:
 #   db-gui-data:
