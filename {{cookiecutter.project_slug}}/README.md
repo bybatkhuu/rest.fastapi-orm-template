@@ -11,7 +11,6 @@ This is a {{cookiecutter.project_name}} project.
 - Web service
 - Microservice
 - Template
-- Cookiecutter
 - CI/CD
 - Docker and docker compose
 
