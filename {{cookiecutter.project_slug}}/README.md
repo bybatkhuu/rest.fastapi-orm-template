@@ -108,7 +108,7 @@ pip install -r ./requirements.gpu.txt
 #### **A.** **[RECOMMENDED]** For **docker** environment **[5.A]**
 
 ```sh
-# Copy `.env.example` file to `.env`:
+# Copy '.env.example' file to '.env':
 cp -v ./.env.example ./.env
 
 # Edit environment variables to fit in your environment:
@@ -118,14 +118,11 @@ nano ./.env
 #### **B.** For **standalone** environment **[5.B ~ 5.F]**
 
 ```sh
-# Copy `.env.example` file into `.env` file:
+# Copy '.env.example' file to '.env':
 cp -v ./.env.example ./app/.env
 
 # Edit environment variables to fit in your environment:
 nano ./app/.env
-
-# Enter into app directory:
-cd app
 ```
 
 ### 5. Run the server
