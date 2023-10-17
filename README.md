@@ -165,7 +165,7 @@ docker compose up -d && \
     docker compose logs -f --tail 100
 
 
-## 3. Stop docker compose:
+## 4. Stop docker compose:
 ./compose.sh stop
 # Or:
 docker compose down
@@ -322,3 +322,5 @@ For example as in [**`docker-compose.override.yml`**](templates/docker-compose/d
 ## References
 
 - FastAPI - <https://fastapi.tiangolo.com>
+- SQLAlchemy - <https://www.sqlalchemy.org>
+- Docker - <https://docs.docker.com>
