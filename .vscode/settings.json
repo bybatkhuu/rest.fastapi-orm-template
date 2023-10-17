@@ -132,7 +132,7 @@
 	"python.languageServer": "Pylance",
 	"python.analysis.extraPaths":
 	[
-		"${workspaceFolder}/fastapi-template/app",
-		// "${workspaceFolder}/fastapi-template/app/src/modules"
+		"${workspaceFolder}/fastapi-orm-template/app",
+		// "${workspaceFolder}/fastapi-orm-template/app/src/modules"
 	]
 }
