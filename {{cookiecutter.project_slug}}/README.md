@@ -6,10 +6,12 @@ This is a {{cookiecutter.project_name}} project.
 
 - FastAPI
 - REST API
+- PostgreSQL
 - ORM (SQLAlchemy)
 - Web service
 - Microservice
 - Template
+- Cookiecutter
 - CI/CD
 - Docker and docker compose
 
@@ -137,7 +139,7 @@ Follow the one of below instructions based on your environment **[A, B, C, D, E,
 **IMPORTANT:** Please, check **[arguments](#arguments)**!
 
 ```bash
-## 1. Configure `docker-compose.override.yml` file.
+## 1. Configure 'docker-compose.override.yml' file.
 # TIP: Skip this step, if you've already configured.
 
 # Set environment:
@@ -145,10 +147,10 @@ export _ENV=[ENV]
 # For example for development environment:
 export _ENV=dev
 
-# Copy `docker-compose.override.[ENV].yml` into `docker-compose.override.yml` file:
+# Copy 'docker-compose.override.[ENV].yml' into 'docker-compose.override.yml' file:
 cp -v ./templates/docker-compose/docker-compose.override.${_ENV}.yml ./docker-compose.override.yml
 
-# Edit `docker-compose.override.yml` file to fit in your environment:
+# Edit 'docker-compose.override.yml' file to fit in your environment:
 nano ./docker-compose.override.yml
 
 
@@ -296,6 +298,8 @@ DEBUG=false
 
 You can use the following arguments to configure:
 
+For **api** service:
+
 ```txt
 -b, --bash, bash, /bin/bash
     Run only bash shell.
@@ -322,5 +326,7 @@ For example as in [**`docker-compose.override.yml`**](templates/docker-compose/d
 ## References
 
 - FastAPI - <https://fastapi.tiangolo.com>
+- PostgreSQL - <https://www.postgresql.org>
 - SQLAlchemy - <https://www.sqlalchemy.org>
 - Docker - <https://docs.docker.com>
+- Docker Compose - <https://docs.docker.com/compose>
