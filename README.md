@@ -7,6 +7,7 @@ This is a cookiecutter template for FastAPI projects.
 - Cookiecutter
 - FastAPI
 - REST API
+- PostgreSQL
 - ORM (SQLAlchemy)
 - Web service
 - Microservice
