@@ -11,7 +11,6 @@ This is a FastAPI ORM Template project.
 - Web service
 - Microservice
 - Template
-- Cookiecutter
 - CI/CD
 - Docker and docker compose
 
