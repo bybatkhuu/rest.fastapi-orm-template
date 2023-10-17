@@ -322,3 +322,5 @@ For example as in [**`docker-compose.override.yml`**](templates/docker-compose/d
 ## References
 
 - FastAPI - <https://fastapi.tiangolo.com>
+- SQLAlchemy - <https://www.sqlalchemy.org>
+- Docker - <https://docs.docker.com>
