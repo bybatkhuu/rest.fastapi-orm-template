@@ -9,7 +9,7 @@ on:
       - completed
   push:
     tags:
-      - "v*.*.*"
+      - "v*.*.*-*"
 
 jobs:
   build_publish:

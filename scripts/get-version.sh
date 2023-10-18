@@ -34,7 +34,7 @@ VERSION_FILE_PATH="${VERSION_FILE_PATH:-cookiecutter.json}"
 if [ -n "${VERSION_FILE_PATH}" ] && [ -f "${VERSION_FILE_PATH}" ]; then
 	_current_version=$(jq -r ".version" "${VERSION_FILE_PATH}") || exit 2
 else
-	_current_version="0.0.1-$(date -u '+%y%m%d')"
+	_current_version="0.0.0-$(date -u '+%y%m%d')"
 fi
 
 echo "${_current_version}"
