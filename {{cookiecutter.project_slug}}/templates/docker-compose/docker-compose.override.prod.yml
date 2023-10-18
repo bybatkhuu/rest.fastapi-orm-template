@@ -37,6 +37,7 @@ services:
   #     - "${PGADMIN_PORT:-8080}:80"
 
   api:
+    image: {{cookiecutter.docker_registry}}/{{cookiecutter.project_slug}}:{{cookiecutter.version}}
     env_file:
       - .env
     # deploy:
