@@ -7,7 +7,7 @@ from onion_config import ConfigLoader
 from beans_logging import logger
 
 from src.core.constants.base import EnvEnum, ENV_PREFIX_DB
-from src.core.schemas.configs import ConfigSchema
+from src.core.configs import ConfigSchema
 
 
 def _pre_load_hook(config_data: Dict[str, Any]) -> Dict[str, Any]:

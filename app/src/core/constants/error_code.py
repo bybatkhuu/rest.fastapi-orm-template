@@ -32,6 +32,14 @@ class ErrorCodeEnum(Enum):
         description=f"{HTTPStatus(405).description}.",
         detail=None,
     )
+    CONFLICT = ErrorCodePM(
+        code="409_00000",
+        name="CONFLICT",
+        status_code=409,
+        message=f"{HTTPStatus(409).phrase}!",
+        description=f"{HTTPStatus(409).description}.",
+        detail=None,
+    )
     UNPROCESSABLE_ENTITY = ErrorCodePM(
         code="422_00000",
         name="UNPROCESSABLE_ENTITY",
@@ -43,6 +51,14 @@ class ErrorCodeEnum(Enum):
     INTERNAL_SERVER_ERROR = ErrorCodePM(
         code="500_00000",
         name="INTERNAL_SERVER_ERROR",
+        status_code=500,
+        message=f"{HTTPStatus(500).phrase}!",
+        description=f"{HTTPStatus(500).description}.",
+        detail=None,
+    )
+    DATABASE_ERROR = ErrorCodePM(
+        code="500_10000",
+        name="DATABASE_ERROR",
         status_code=500,
         message=f"{HTTPStatus(500).phrase}!",
         description=f"{HTTPStatus(500).description}.",

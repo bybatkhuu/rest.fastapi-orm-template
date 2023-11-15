@@ -4,7 +4,7 @@ from fastapi import Request
 from fastapi.exceptions import RequestValidationError
 
 from src.core.constants.error_code import ErrorCodeEnum
-from src.core.responses.base import BaseResponse
+from src.core.responses import BaseResponse
 
 
 ## For RequestValidationError error:

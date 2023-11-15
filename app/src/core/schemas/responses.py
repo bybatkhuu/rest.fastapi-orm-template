@@ -2,25 +2,25 @@
 
 from typing import Any, Union, Optional
 
-from pydantic import BaseModel, Field, constr
+from pydantic import Field, constr
 
 from src.config import config
 from src.core.constants.base import MethodEnum
-from .base import ExtraBaseModel
+from .base import ExtraBasePM, BasePM
 from __version__ import __version__
 
 
-class LinksResPM(ExtraBaseModel):
-    self_link: Optional[constr(strip_whitespace=True, max_length=2047)] = Field(
+class LinksResPM(ExtraBasePM):
+    self_link: Optional[constr(strip_whitespace=True, max_length=2048)] = Field(
         default=None,
         alias="self",
         title="Self link",
         description="Link to the current resource.",
-        examples=["https://api.example.com/v1/ping"],
+        examples=["/api/v1/resources"],
     )
 
 
-class MetaResPM(ExtraBaseModel):
+class MetaResPM(ExtraBasePM):
     request_id: Optional[
         constr(strip_whitespace=True, min_length=32, max_length=36)
     ] = Field(
@@ -38,7 +38,7 @@ class MetaResPM(ExtraBaseModel):
     api_version: constr(strip_whitespace=True) = Field(
         default=config.api.version,
         min_length=1,
-        max_length=15,
+        max_length=16,
         title="API version",
         description="Current API version.",
         examples=[config.api.version],
@@ -46,40 +46,63 @@ class MetaResPM(ExtraBaseModel):
     version: constr(strip_whitespace=True) = Field(
         default=__version__,
         min_length=5,
-        max_length=31,
+        max_length=32,
         title="Version",
         description="Current service version.",
         examples=[__version__],
     )
 
 
-class ErrorResPM(BaseModel):
-    code: constr(strip_whitespace=True) = Field(..., min_length=3, max_length=36)
-    description: Optional[constr(strip_whitespace=True)] = Field(
-        default=None, max_length=511
+class ErrorResPM(BasePM):
+    code: constr(strip_whitespace=True) = Field(
+        ...,
+        min_length=3,
+        max_length=36,
+        title="Error code",
+        description="Code that represents the error.",
+        examples=["400_00000"],
     )
-    detail: Union[Any, dict, list] = Field(default=None)
+    description: Optional[constr(strip_whitespace=True)] = Field(
+        default=None,
+        max_length=512,
+        title="Error description",
+        description="Description of the error.",
+        examples=["Bad request syntax or unsupported method."],
+    )
+    detail: Union[Any, dict, list] = Field(
+        default=None,
+        title="Error detail",
+        description="Detail of the error.",
+        examples=[
+            {
+                "loc": ["body", "field"],
+                "msg": "Error message.",
+                "type": "Error type.",
+                "ctx": {"constraint": "value"},
+            }
+        ],
+    )
 
 
-class BaseResPM(BaseModel):
+class BaseResPM(BasePM):
     message: str = Field(
         ...,
         min_length=1,
-        max_length=255,
+        max_length=256,
         title="Message",
-        description="Response message about the current request for the client.",
-        examples=["Request processed successfully."],
+        description="Response message about the current request.",
+        examples=["Successfully processed the request."],
     )
     data: Union[Any, dict, list] = Field(
         default=None,
         title="Data",
-        description="Resource data or any response related data.",
+        description="Resource data or any data related to response.",
         examples=["Any data: dict, list, str, int, float, null, etc."],
     )
     links: LinksResPM = Field(
         default_factory=LinksResPM,
         title="Links",
-        description="Resource related links.",
+        description="Links related to the current request or resource.",
     )
     meta: MetaResPM = Field(
         default_factory=MetaResPM,
@@ -94,13 +117,14 @@ class BaseResPM(BaseModel):
     )
 
 
+## Error response schemas
 class BadBaseResPM(BaseResPM):
     message: str = Field(
         ...,
         min_length=1,
-        max_length=255,
+        max_length=256,
         title="Message",
-        description="Response message about the current request for the client.",
+        description="Response message about the current request.",
         examples=["Bad Request!"],
     )
     data: Union[Any, dict, list] = Field(
@@ -123,13 +147,36 @@ class BadBaseResPM(BaseResPM):
     )
 
 
+class NotFoundBaseResPM(BadBaseResPM):
+    message: str = Field(
+        ...,
+        min_length=1,
+        max_length=256,
+        title="Message",
+        description="Response message about the current request.",
+        examples=["Not Found!"],
+    )
+    error: Union[ErrorResPM, Any] = Field(
+        default=None,
+        title="Error",
+        description="Error information about the current request.",
+        examples=[
+            {
+                "code": "404_00000",
+                "description": "Nothing matches the given URI.",
+                "detail": "Not found any resource!",
+            }
+        ],
+    )
+
+
 class MethodNotBaseResPM(BadBaseResPM):
     message: str = Field(
         ...,
         min_length=1,
-        max_length=255,
+        max_length=256,
         title="Message",
-        description="Response message about the current request for the client.",
+        description="Response message about the current request.",
         examples=["Method Not Allowed!"],
     )
     error: Union[ErrorResPM, Any] = Field(
@@ -150,9 +197,9 @@ class InvalidBaseResPM(BadBaseResPM):
     message: str = Field(
         ...,
         min_length=1,
-        max_length=255,
+        max_length=256,
         title="Message",
-        description="Response message about the current request for the client.",
+        description="Response message about the current request.",
         examples=["Validation error!"],
     )
     error: Union[ErrorResPM, Any] = Field(
@@ -180,9 +227,9 @@ class ErrorBaseResPM(BadBaseResPM):
     message: str = Field(
         ...,
         min_length=1,
-        max_length=255,
+        max_length=256,
         title="Message",
-        description="Response message about the current request for the client.",
+        description="Response message about the current request.",
         examples=["Internal Server Error!"],
     )
     error: Union[ErrorResPM, Any] = Field(
@@ -205,6 +252,7 @@ __all__ = [
     "ErrorResPM",
     "BaseResPM",
     "BadBaseResPM",
+    "NotFoundBaseResPM",
     "MethodNotBaseResPM",
     "InvalidBaseResPM",
     "ErrorBaseResPM",

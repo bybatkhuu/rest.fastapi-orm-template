@@ -19,5 +19,9 @@ app:
     openapi_tags:
       - name: "Utils"
         description: "Useful utility endpoints."
+      - name: "Tasks"
+        description: "Manage tasks."
+      - name: "Default"
+        description: "Redirection of default endpoints."
     swagger_ui_parameters:
-      syntaxHighlight.theme: nord
+      syntaxHighlight.theme: "nord"

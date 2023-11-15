@@ -4,7 +4,7 @@ from pydantic import validate_arguments
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 
-from src.core.handlers import (
+from src.core.exceptions.handlers import (
     not_found_handler,
     method_not_allowed_handler,
     server_error_handler,

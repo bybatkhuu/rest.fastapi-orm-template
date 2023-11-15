@@ -11,7 +11,7 @@ ENV_PREFIX_DB = f"{ENV_PREFIX}DB_"
 class EnvEnum(str, Enum):
     LOCAL = "local"
     DEVELOPMENT = "development"
-    TEST = "test"
+    TESTING = "testing"
     DEMO = "demo"
     DOCUMENTATION = "documentation"
     STAGING = "staging"
@@ -43,6 +43,18 @@ class MethodEnum(str, Enum):
     TRACE = "TRACE"
 
 
+class WarnEnum(str, Enum):
+    ERROR = "ERROR"
+    ALWAYS = "ALWAYS"
+    DEBUG = "DEBUG"
+    IGNORE = "IGNORE"
+
+
+class OrderDirect(str, Enum):
+    ASC = "ASC"
+    DESC = "DESC"
+
+
 __all__ = [
     "ENV_PREFIX",
     "ENV_PREFIX_APP",
@@ -50,4 +62,6 @@ __all__ = [
     "EnvEnum",
     "CORSMethodEnum",
     "MethodEnum",
+    "WarnEnum",
+    "OrderDirect",
 ]

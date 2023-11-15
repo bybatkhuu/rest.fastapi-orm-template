@@ -4,7 +4,7 @@ import os
 from urllib.parse import quote_plus
 from typing import List, Dict, Any, Optional
 
-from pydantic import Field, constr, root_validator, validator, PostgresDsn
+from pydantic import Field, constr, root_validator, validator, AnyUrl
 
 from beans_logging import LoggerConfigPM
 
@@ -25,9 +25,9 @@ class RoutesConfig(BaseConfig):
 
 class ApiConfig(FrozenBaseConfig):
     version: constr(strip_whitespace=True) = Field(
-        default="v1", min_length=1, max_length=15
+        default="v1", min_length=1, max_length=16
     )
-    prefix: constr(strip_whitespace=True) = Field(default="", max_length=127)
+    prefix: constr(strip_whitespace=True) = Field(default="", max_length=128)
     routes: RoutesConfig = Field(default_factory=RoutesConfig)
 
     @validator("prefix", always=True)
@@ -42,18 +42,18 @@ class ApiConfig(FrozenBaseConfig):
 
 class CorsConfig(FrozenBaseConfig):
     allow_origins: List[
-        constr(strip_whitespace=True, min_length=1, max_length=253)
+        constr(strip_whitespace=True, min_length=1, max_length=256)
     ] = Field(default=["*"])
     allow_origin_regex: Optional[constr(strip_whitespace=True)] = Field(
-        default=None, min_length=1, max_length=253
+        default=None, min_length=1, max_length=256
     )
     allow_headers: List[
-        constr(strip_whitespace=True, min_length=1, max_length=127)
+        constr(strip_whitespace=True, min_length=1, max_length=128)
     ] = Field(default=["*"])
     allow_methods: List[CORSMethodEnum] = Field(default=[CORSMethodEnum.ALL])
     allow_credentials: bool = Field(default=False)
     expose_headers: List[
-        constr(strip_whitespace=True, min_length=1, max_length=127)
+        constr(strip_whitespace=True, min_length=1, max_length=128)
     ] = Field(default=[])
     max_age: int = Field(default=600, ge=0, le=86_400)
 
@@ -64,10 +64,10 @@ class CorsConfig(FrozenBaseConfig):
 class DevConfig(BaseConfig):
     reload: bool = Field(default=False)
     reload_includes: Optional[
-        List[constr(strip_whitespace=True, min_length=1, max_length=255)]
+        List[constr(strip_whitespace=True, min_length=1, max_length=256)]
     ] = Field(default=None)
     reload_excludes: Optional[
-        List[constr(strip_whitespace=True, min_length=1, max_length=255)]
+        List[constr(strip_whitespace=True, min_length=1, max_length=256)]
     ] = Field(default=None)
 
     class Config:
@@ -89,23 +89,23 @@ class FrozenDevConfig(DevConfig):
 class DocsConfig(BaseConfig):
     enabled: bool = Field(default=True)
     openapi_url: Optional[constr(strip_whitespace=True)] = Field(
-        default="/openapi.json", min_length=8, max_length=127
+        default="/openapi.json", min_length=8, max_length=128
     )
     docs_url: Optional[constr(strip_whitespace=True)] = Field(
-        default="/docs", min_length=5, max_length=127
+        default="/docs", min_length=5, max_length=128
     )
     redoc_url: Optional[constr(strip_whitespace=True)] = Field(
-        default="/redoc", min_length=6, max_length=127
+        default="/redoc", min_length=6, max_length=128
     )
     swagger_ui_oauth2_redirect_url: Optional[constr(strip_whitespace=True)] = Field(
-        default="/docs/oauth2-redirect", min_length=12, max_length=127
+        default="/docs/oauth2-redirect", min_length=12, max_length=128
     )
     summary: Optional[constr(strip_whitespace=True)] = Field(
-        default=None, min_length=2, max_length=127
+        default=None, min_length=2, max_length=128
     )
     description: str = Field(default="", max_length=8192)
     terms_of_service: Optional[constr(strip_whitespace=True)] = Field(
-        default=None, min_length=1, max_length=255
+        default=None, min_length=1, max_length=256
     )
     contact: Optional[Dict[str, Any]] = Field(default=None)
     license_info: Optional[Dict[str, Any]] = Field(default=None)
@@ -142,23 +142,23 @@ class AppConfig(BaseConfig):
     name: constr(strip_whitespace=True) = Field(
         default="FastAPI ORM Template",
         min_length=2,
-        max_length=127,
+        max_length=128,
     )
     slug: constr(strip_whitespace=True) = Field(
-        default="fastapi-orm-template", min_length=2, max_length=127
+        default="fastapi-orm-template", min_length=2, max_length=128
     )
     bind_host: constr(strip_whitespace=True) = Field(
-        default="0.0.0.0", min_length=2, max_length=127
+        default="0.0.0.0", min_length=2, max_length=128
     )
     port: int = Field(default=8000, ge=80, lt=65536)
     gzip_min_size: int = Field(default=512, ge=0, le=10_485_760)  # 512 bytes
     behind_proxy: bool = Field(default=True)
     behind_cf_proxy: bool = Field(default=False)
     allowed_hosts: List[
-        constr(strip_whitespace=True, min_length=1, max_length=253)
+        constr(strip_whitespace=True, min_length=1, max_length=256)
     ] = Field(default=["*"])
     forwarded_allow_ips: List[
-        constr(strip_whitespace=True, min_length=1, max_length=253)
+        constr(strip_whitespace=True, min_length=1, max_length=256)
     ] = Field(default=["*"])
     cors: CorsConfig = Field(default_factory=CorsConfig)
     dev: DevConfig = Field(default_factory=DevConfig)
@@ -190,16 +190,16 @@ class PathsConfig(BaseConfig):
     data_dir: constr(strip_whitespace=True) = Field(
         default="/var/lib/{app_slug}",
         min_length=2,
-        max_length=1023,
+        max_length=1024,
         env=f"{ENV_PREFIX_APP}DATA_DIR",
     )
     uploads_dir: constr(strip_whitespace=True) = Field(
-        default="{data_dir}/uploads", min_length=2, max_length=1023
+        default="{data_dir}/uploads", min_length=2, max_length=1024
     )
     # models_dir: constr(strip_whitespace=True) = Field(
     #     default="{data_dir}/models",
     #     min_length=2,
-    #     max_length=1023,
+    #     max_length=1024,
     #     env=f"{ENV_PREFIX_APP}MODELS_DIR",
     # )
 
@@ -222,15 +222,16 @@ class FrozenPathsConfig(PathsConfig):
 
 class DbConfig(BaseConfig):
     dialect: constr(strip_whitespace=True) = Field(
-        default="postgresql", min_length=2, max_length=31
+        default="postgresql", min_length=2, max_length=32
     )
     driver: constr(strip_whitespace=True) = Field(
-        default="psycopg", min_length=2, max_length=31
+        default="psycopg", min_length=2, max_length=32
     )
-    dsn_url: PostgresDsn = Field(
+    dsn_url: AnyUrl = Field(
         default="postgresql+psycopg://fot_user:fot_password1@localhost:5432/fot_db"
     )
-    read_dsn_url: Optional[PostgresDsn] = Field(default=None)
+    read_dsn_url: Optional[AnyUrl] = Field(default=None)
+    table_prefix: constr(strip_whitespace=True) = Field(default="fot_", max_length=16)
     max_try_connect: int = Field(default=3, ge=1, le=100)
     wait_seconds_try_connect: int = Field(default=10, ge=1, le=600)
     echo_sql: bool = Field(default=False)
@@ -290,11 +291,8 @@ class FrozenDbConfig(DbConfig):
 class ConfigSchema(FrozenBaseConfig):
     env: EnvEnum = Field(default=EnvEnum.LOCAL, env="ENV")
     debug: bool = Field(default=False, env="DEBUG")
-    tz: constr(strip_whitespace=True) = Field(
-        default="UTC", min_length=2, max_length=127, env="TZ"
-    )
     version: constr(strip_whitespace=True) = Field(
-        default=__version__, min_length=3, max_length=31
+        default=__version__, min_length=3, max_length=32
     )
     api: ApiConfig = Field(default_factory=ApiConfig)
     app: AppConfig = Field(default_factory=AppConfig)

@@ -6,6 +6,7 @@ from typing import Any, Optional, Dict, Type
 from pydantic import validate_arguments, conint, constr
 from starlette.background import BackgroundTask
 from fastapi import Request
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
 from src.config import config
@@ -75,8 +76,7 @@ class BaseResponse(JSONResponse):
             meta = {}
 
         if request:
-            _http_info: dict = request.state.http_info
-            _self_link = f"{_http_info['request_proto']}://{_http_info['request_host']}{utils.get_request_path(request)}"
+            _self_link = f"{utils.get_request_path(request)}"
             links["self"] = _self_link
             meta["request_id"]: str = request.state.request_id
             meta["method"]: str = request.method
@@ -108,7 +108,7 @@ class BaseResponse(JSONResponse):
         response_pm = response_schema(
             message=message, data=content, links=links, meta=meta, error=error
         )
-        _content = response_pm.dict(by_alias=True)
+        _content = jsonable_encoder(obj=response_pm, by_alias=True)
 
         super().__init__(
             content=_content,

@@ -6,7 +6,7 @@ from fastapi import HTTPException, Request
 
 from src.core import utils
 from src.core.constants.error_code import ErrorCodeEnum
-from src.core.responses.base import BaseResponse
+from src.core.responses import BaseResponse
 
 
 ## For HTTPException error:

@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   db:
-    image: postgres:14.9-bookworm
+    image: postgres:15.4-bookworm
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${FOT_DB_USERNAME:-fot_user}

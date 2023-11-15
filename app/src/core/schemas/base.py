@@ -1,32 +1,46 @@
 # -*- coding: utf-8 -*-
 
-from pydantic import BaseModel, BaseSettings
-from pydantic.env_settings import SettingsSourceCallable
+from datetime import datetime
+
+from pydantic import BaseModel, Field, constr
+
+from src.core.utils import dt
 
 
-class BaseConfig(BaseSettings):
+class BasePM(BaseModel):
     class Config:
-        extra = "allow"
-        arbitrary_types_allowed = True
-
-        @classmethod
-        def customise_sources(
-            cls,
-            init_settings: SettingsSourceCallable,
-            env_settings: SettingsSourceCallable,
-            file_secret_settings: SettingsSourceCallable,
-        ) -> tuple[SettingsSourceCallable, ...]:
-            return env_settings, init_settings, file_secret_settings
+        json_encoders = {datetime: dt.datetime_to_iso}
 
 
-class FrozenBaseConfig(BaseConfig):
-    class Config:
-        frozen = True
-
-
-class ExtraBaseModel(BaseModel):
+class ExtraBasePM(BasePM):
     class Config:
         extra = "allow"
 
 
-__all__ = ["BaseConfig", "FrozenBaseConfig", "ExtraBaseModel"]
+class IdPM(ExtraBasePM):
+    id: constr(strip_whitespace=True) = Field(
+        ...,
+        min_length=32,
+        max_length=64,
+        title="ID",
+        description="Identifier value of the resource.",
+        examples=["RES1699854224922928_DC2CC6C9033C4837B6C34C8BB19BB289"],
+    )
+
+
+class AtPM(ExtraBasePM):
+    created_at: datetime = Field(
+        ...,
+        title="Created datetime",
+        description="Created datetime of the resource.",
+        examples=["2021-01-01T00:00:00+00:00"],
+    )
+    updated_at: datetime = Field(
+        ...,
+        title="Updated datetime",
+        description="Last updated datetime of the resource.",
+        examples=["2021-01-02T00:00:00+00:00"],
+    )
+
+
+__all__ = ["BasePM", "ExtraBasePM", "IdPM", "AtPM"]

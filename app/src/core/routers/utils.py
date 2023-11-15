@@ -4,7 +4,7 @@ from fastapi import APIRouter, Request
 
 from src.config import config
 from src.core.schemas.responses import BaseResPM
-from src.core.responses.base import BaseResponse
+from src.core.responses import BaseResponse
 
 
 router = APIRouter(tags=config.api.routes.utils["_tags"])

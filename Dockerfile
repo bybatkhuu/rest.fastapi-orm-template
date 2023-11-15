@@ -28,7 +28,8 @@ RUN _BUILD_TARGET_ARCH=$(uname -m) && \
 	apt-get install -y --no-install-recommends \
 		ca-certificates \
 		build-essential \
-		wget && \
+		wget \
+		libpq-dev && \
 	if [ "${_BUILD_TARGET_ARCH}" == "x86_64" ]; then \
 		export _MINICONDA_URL=https://repo.anaconda.com/miniconda/Miniconda3-py39_23.5.2-0-Linux-x86_64.sh; \
 	elif [ "${_BUILD_TARGET_ARCH}" == "aarch64" ]; then \
@@ -107,7 +108,8 @@ RUN rm -rfv /var/lib/apt/lists/* /var/cache/apt/archives/* /tmp/* /root/.cache/*
 		iputils-ping \
 		net-tools \
 		curl \
-		nano && \
+		nano \
+		libpq5 && \
 	apt-get clean -y && \
 	sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
 	sed -i -e 's/# en_AU.UTF-8 UTF-8/en_AU.UTF-8 UTF-8/' /etc/locale.gen && \
