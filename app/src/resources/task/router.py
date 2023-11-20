@@ -145,7 +145,7 @@ async def create_task(
         ...,
         title="Task data",
         description="Task data to create.",
-        examples=[{"name": "Task 1"}],
+        examples=[{"name": "Task 1", "point": 70}],
     ),
     db_session: AsyncSession = Depends(async_get_write_db),
 ):
@@ -229,7 +229,7 @@ async def update_task(
         ...,
         title="Task data",
         description="Task data to update.",
-        examples=[{"name": "Task 1"}],
+        examples=[{"name": "Task 1", "point": 70}],
     ),
     db_session: AsyncSession = Depends(async_get_write_db),
 ):

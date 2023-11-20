@@ -26,6 +26,7 @@ async def async_load_structure(async_engine: AsyncEngine):
         async with async_engine.begin() as _connection:
             register_models()
             await _connection.run_sync(AsyncBaseORM.metadata.create_all)
+            await _connection.run_sync(BaseORM.metadata.create_all)
 
         await async_engine.dispose()
     except Exception:
@@ -48,6 +49,7 @@ def load_structure(engine: Engine):
         with engine.begin() as _connection:
             register_models()
             BaseORM.metadata.create_all(bind=_connection)
+            AsyncBaseORM.metadata.create_all(bind=_connection)
 
         engine.dispose()
     except Exception:

@@ -22,6 +22,14 @@ class TaskBasePM(ExtraBasePM):
         description="Name of the task.",
         examples=["Task 1"],
     )
+    point: int = Field(
+        default=0,
+        ge=0,
+        le=100,
+        title="Task point",
+        description="Point of the task.",
+        examples=[70],
+    )
 
 
 class TaskPM(AtPM, TaskBasePM, IdPM):
@@ -58,6 +66,7 @@ class ResTaskPM(BaseResPM):
             {
                 "id": "TAS1699928748406212_46D46E7E55FA4A6E8478BD6B04195793",
                 "name": "Task 1",
+                "point": 70,
                 "created_at": "2021-01-01T00:00:00+00:00",
                 "updated_at": "2021-01-01T00:00:00+00:00",
             }
@@ -75,12 +84,14 @@ class ResTasksPM(BaseResPM):
                 {
                     "id": "TAS1699928748406212_46D46E7E55FA4A6E8478BD6B04195793",
                     "name": "Task 1",
+                    "point": 70,
                     "created_at": "2021-01-01T00:00:00+00:00",
                     "updated_at": "2021-01-01T00:00:00+00:00",
                 },
                 {
                     "id": "TAS1699854600504660_337FC34BE4304E14A193F6A2793AD9D1",
                     "name": "Task 2",
+                    "point": 30,
                     "created_at": "2021-01-01T00:00:00+00:00",
                     "updated_at": "2021-01-01T00:00:00+00:00",
                 },

@@ -11,25 +11,20 @@ from sqlalchemy import (
     Index,
     func,
     desc,
+    asc,
     inspect,
     Select,
     select,
     Insert,
     Update,
     Delete,
-    ChunkedIteratorResult,
+    Subquery,
 )
-from sqlalchemy.orm import (
-    DeclarativeBase,
-    declarative_mixin,
-    Mapped,
-    mapped_column,
-    Session,
-)
+from sqlalchemy.orm import DeclarativeBase, declarative_mixin, Mapped, mapped_column
 from sqlalchemy.util import ReadOnlyProperties
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.constants import WarnEnum
+from src.core.constants import OrderDirect, WarnEnum
+from src.config import config
 from src.core import utils
 from src.logger import logger
 
@@ -61,9 +56,7 @@ class TimestampMixin:
         sort_order=9999,
     )
 
-    __table_args__ = (
-        Index(None, desc("created_at")),
-    )
+    __table_args__ = (Index("idx_created_at_desc", desc("created_at")),)
 
 
 @declarative_mixin
@@ -71,13 +64,6 @@ class BaseMixin(TimestampMixin, IdStrMixin):
     def __init__(self, warn_mode: WarnEnum = WarnEnum.ALWAYS, **kwargs):
         if "id" not in kwargs:
             kwargs["id"] = self.__class__.create_unique_id()
-
-        _now_utc_tz = utils.now_utc_tz()
-        if "created_at" not in kwargs:
-            kwargs["created_at"] = _now_utc_tz
-
-        if "updated_at" not in kwargs:
-            kwargs["updated_at"] = _now_utc_tz
 
         for _key, _val in kwargs.items():
             try:
@@ -215,211 +201,71 @@ class BaseMixin(TimestampMixin, IdStrMixin):
 
         return stmt
 
-    ## Async
     @classmethod
-    async def async_exists_by_id(cls, async_session: AsyncSession, id: str) -> bool:
-        """Check if ORM object exists in database by ID.
-
-        Args:
-            async_session (AsyncSession, required): SQLAlchemy async_session for database connection.
-            id            (str         , required): ID of object.
-
-        Returns:
-            bool: True if exists, False otherwise.
-        """
-
-        _is_exists = False
-        try:
-            _stmt: Select = select(cls.id).where(cls.id == id)
-            _result: ChunkedIteratorResult = await async_session.execute(_stmt)
-            if _result.scalar():
-                _is_exists = True
-        except Exception:
-            logger.error(
-                f"Failed to check if '{cls.__name__}' object '{id}' ID exists in database!"
-            )
-            raise
-
-        return _is_exists
-
-    async def async_exists(self, async_session: AsyncSession) -> bool:
-        """Check if ORM object exists in database.
-
-        Args:
-            async_session (AsyncSession, required): SQLAlchemy async_session for database connection.
-
-        Returns:
-            bool: True if exists, False otherwise.
-        """
-
-        _is_exists = False
-        try:
-            _is_exists = await self.__class__.async_exists_by_id(
-                async_session=async_session, id=self.id
-            )
-        except Exception:
-            logger.error(
-                f"Failed to check if '{self.__class__.__name__}' object '{self.id}' ID exists in database!"
-            )
-            raise
-
-        return _is_exists
-
-    @classmethod
-    async def async_count_by_where(
+    def _build_select(
         cls,
-        async_session: AsyncSession,
-        where: Union[List[Dict[str, Any]], Dict[str, Any]],
-    ) -> int:
-        """Count ORM objects in database by filter conditions.
+        where: Union[List[Dict[str, Any]], Dict[str, Any], None] = None,
+        offset: int = 0,
+        limit: int = config.db.select_limit,
+        order_by: Union[List[str], str, None] = None,
+        order_direct: OrderDirect = OrderDirect.DESC,
+        disable_limit: bool = False,
+    ) -> Select:
+        """Build SQLAlchemy select statement for ORM object.
 
         Args:
-            async_session (AsyncSession              , required): SQLAlchemy async_session for database connection.
             where         (Union[List[Dict[str, Any]],
-                                      Dict[str, Any]], required): List of filter conditions.
+                                 Dict[str, Any], None], optional): List of filter conditions. Defaults to None.
+            offset        (int                        , optional): Offset number. Defaults to 0.
+            limit         (int                        , optional): Limit number. Defaults to `config.db.select_limit`.
+            order_by      (Union[List[str], str, None], optional): List of order by columns. Defaults to None.
+            order_direct  (OrderDirect                , optional): Sort order direction. Defaults to `OrderDirect.DESC`.
+            disable_limit (bool                       , optional): Disable select limit. Defaults to False.
 
         Returns:
-            int: Count of ORM objects in database.
+            Select: Built SQLAlchemy select statement.
         """
 
-        _count = 0
-        try:
-            _stmt: Select = select(func.count()).select_from(cls)
-            if where:
-                _stmt: Select = cls._build_where(stmt=_stmt, where=where)
+        _order_direct = desc
+        if order_direct == OrderDirect.ASC:
+            _order_direct = asc
 
-            _result: ChunkedIteratorResult = await async_session.execute(_stmt)
-            _count: int = _result.scalar()
-        except Exception:
-            logger.error(
-                f"Failed to count '{cls.__name__}' objects by '{where}' filter in database!"
-            )
-            raise
+        ## Deffered join to improve performance:
+        # Subquery:
+        _sub_query: Select = select(cls.id)
+        if where:
+            _sub_query = cls._build_where(stmt=_sub_query, where=where)
 
-        return _count
+        if order_by:
+            if isinstance(order_by, str):
+                order_by = [order_by]
 
-    @classmethod
-    async def async_count(cls, async_session: AsyncSession) -> int:
-        """Count all ORM objects in database.
+            if isinstance(order_by, list):
+                for _order_by in order_by:
+                    _sub_query = _sub_query.order_by(
+                        _order_direct(getattr(cls, _order_by))
+                    )
 
-        Args:
-            async_session (AsyncSession, required): SQLAlchemy async_session for database connection.
+        _sub_query: Select = _sub_query.order_by(_order_direct(cls.id))
 
-        Returns:
-            int: Count of ORM objects in database.
-        """
+        if not disable_limit:
+            _sub_query = _sub_query.limit(limit).offset(offset)
+        # Make into subquery:
+        _sub_query: Subquery = _sub_query.subquery()
 
-        _count = 0
-        try:
-            _count: int = await cls.async_count_by_where(
-                async_session=async_session, where=[]
-            )
-        except Exception:
-            logger.error(f"Failed to count '{cls.__name__}' objects from database!")
-            raise
+        # Main query:
+        _stmt: Select = select(cls).join(_sub_query, cls.id == _sub_query.c.id)
+        if order_by:
+            if isinstance(order_by, str):
+                order_by = [order_by]
 
-        return _count
+            if isinstance(order_by, list):
+                for _order_by in order_by:
+                    _stmt = _stmt.order_by(_order_direct(getattr(cls, _order_by)))
 
-    ## Sync
-    @classmethod
-    def exists_by_id(cls, session: Session, id: str) -> bool:
-        """Check if ORM object ID exists in database.
+        _stmt = _stmt.order_by(_order_direct(cls.id))
 
-        Args:
-            session (Session, required): SQLAlchemy session for database connection.
-            id      (str    , required): ID of object.
-
-        Returns:
-            bool: True if exists, False otherwise.
-        """
-
-        _is_exists = False
-        try:
-            _stmt: Select = select(cls.id).where(cls.id == id)
-            _result: ChunkedIteratorResult = session.execute(_stmt)
-            if _result.scalar():
-                _is_exists = True
-        except Exception:
-            logger.error(
-                f"Failed to check if '{cls.__name__}' object '{id}' ID exists in database!"
-            )
-            raise
-
-        return _is_exists
-
-    def exists(self, session: Session) -> bool:
-        """Check if ORM object ID exists in database.
-
-        Args:
-            session (Session, required): SQLAlchemy session for database connection.
-
-        Returns:
-            bool: True if exists, False otherwise.
-        """
-
-        _is_exists = False
-        try:
-            _is_exists = self.__class__.exists_by_id(session=session, id=self.id)
-        except Exception:
-            logger.error(
-                f"Failed to check if '{self.__class__.__name__}' object '{self.id}' ID exists in database!"
-            )
-            raise
-
-        return _is_exists
-
-    @classmethod
-    def count_by_where(
-        cls,
-        session: Session,
-        where: Union[List[Dict[str, Any]], Dict[str, Any]],
-    ) -> int:
-        """Count ORM objects in database by filter conditions.
-
-        Args:
-            session (Session                   , required): SQLAlchemy session for database connection.
-            where   (Union[List[Dict[str, Any]],
-                                Dict[str, Any]], required): List of filter conditions.
-
-        Returns:
-            int: Count of ORM objects in database.
-        """
-
-        _count = 0
-        try:
-            _stmt: Select = select(func.count()).select_from(cls)
-            if where:
-                _stmt: Select = cls._build_where(stmt=_stmt, where=where)
-
-            _result: ChunkedIteratorResult = session.execute(_stmt)
-            _count: int = _result.scalar()
-        except Exception:
-            logger.error(
-                f"Failed to count '{cls.__name__}' objects by '{where}' filter in database!"
-            )
-            raise
-
-        return _count
-
-    @classmethod
-    def count(cls, session: Session) -> int:
-        """Count all ORM objects in database.
-
-        Args:
-            session (Session, required): SQLAlchemy session for database connection.
-
-        Returns:
-            int: Count of ORM objects in database.
-        """
-
-        _count = 0
-        try:
-            _count: int = cls.count_by_where(session=session, where=[])
-        except Exception:
-            logger.error(f"Failed to count '{cls.__name__}' objects from database!")
-            raise
-
-        return _count
+        return _stmt
 
 
 __all__ = ["IdIntMixin", "IdStrMixin", "TimestampMixin", "BaseMixin"]

@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncAttrs
 
 from src.config import config
 from src.core import utils
-from src.databases.rdb.mixins import CRUDMixin
+from src.databases.rdb.mixins import AsyncCRUDMixin, CRUDMixin
 
 
 _NAMING_CONVENTION = {
@@ -18,7 +18,7 @@ _NAMING_CONVENTION = {
 }
 
 
-class BaseORM(CRUDMixin, DeclarativeBase):
+class AsyncBaseORM(AsyncCRUDMixin, AsyncAttrs, DeclarativeBase):
     metadata = MetaData(naming_convention=_NAMING_CONVENTION)
 
     @declared_attr.directive
@@ -28,7 +28,7 @@ class BaseORM(CRUDMixin, DeclarativeBase):
         return _table_name
 
 
-class AsyncBaseORM(CRUDMixin, AsyncAttrs, DeclarativeBase):
+class BaseORM(CRUDMixin, DeclarativeBase):
     metadata = MetaData(naming_convention=_NAMING_CONVENTION)
 
     @declared_attr.directive

@@ -20,14 +20,6 @@ from src.logger import logger
 def get_test(
     db_session: Session,
 ) -> dict:
-    # _result = TaskORM.get_by_where(
-    #     session=db_session,
-    #     where={"column": "id", "value": "ffb4245f0331377d2c475c4a396b8e0b"},
-    # )
-
-    _result = TaskORM.select_by_where(session=db_session, where=[])
-
-    # print("Result: ", _result)
     return {"message": "Hello World!"}
 
 
@@ -35,19 +27,6 @@ def get_test(
 async def async_get_test(
     db_session: AsyncSession,
 ) -> dict:
-    _tasks: List[TaskORM] = await TaskORM.async_select_by_where(
-        async_session=db_session, where={"column": "name", "value": "Auditor"}
-    )
-
-    _tasks: List[TaskORM] = await TaskORM.async_update_objects(
-        async_session=db_session, orm_objects=_tasks, updated_at=datetime.utcnow()
-    )
-
-    for _task in _tasks:
-        print(f"Result: {_task}")
-
-    print()
-
     return {"message": "Hello World!"}
 
 

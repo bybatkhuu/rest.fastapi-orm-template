@@ -2,18 +2,18 @@
 
 from typing import List, Dict, Union, Any
 
-from sqlalchemy import update, Update, ChunkedIteratorResult
+from sqlalchemy import Update, update, Result
 from sqlalchemy.orm import DeclarativeBase, declarative_mixin
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.logger import logger
 
-from .read import ReadMixin
+from .read import AsyncReadMixin
 
 
 @declarative_mixin
-class UpdateMixin(ReadMixin):
+class AsyncUpdateMixin(AsyncReadMixin):
     async def async_update(
         self,
         async_session: AsyncSession,
@@ -27,23 +27,20 @@ class UpdateMixin(ReadMixin):
             async_session (AsyncSession  , required): SQLAlchemy async_session for database connection.
             auto_commit   (bool          , optional): Auto commit. Defaults to True.
             returning     (bool          , optional): Return updated ORM object. Defaults to False.
-            **kwargs      (Dict[str, Any], required): Dictionary of update data.
+            **kwargs      (Dict[str, Any], optional): Dictionary of update data.
 
         Raises:
-            ValueError: Raise error if no update data provided.
+            Exception : If failed to update object into database.
 
         Returns:
             DeclarativeBase: Updated ORM object.
         """
 
-        if not kwargs:
-            raise ValueError("No update data provided!")
-
         try:
             for _key, _val in kwargs.items():
                 if _key == "id":
                     continue
-                elif _val is not None:
+                else:
                     setattr(self, _key, _val)
 
             if auto_commit:
@@ -53,6 +50,7 @@ class UpdateMixin(ReadMixin):
         except Exception:
             if auto_commit:
                 await async_session.rollback()
+
             logger.error(
                 f"Failed to update '{self.__class__.__name__}' object '{self.id}' ID into database!"
             )
@@ -65,7 +63,7 @@ class UpdateMixin(ReadMixin):
         cls,
         async_session: AsyncSession,
         id: str,
-        check_exists: bool = False,
+        orm_way: bool = False,
         auto_commit: bool = True,
         returning: bool = True,
         **kwargs: Dict[str, Any],
@@ -75,25 +73,26 @@ class UpdateMixin(ReadMixin):
         Args:
             async_session (AsyncSession  , required): SQLAlchemy async_session for database connection.
             id            (str           , required): ID of object.
-            check_exists  (bool          , optional): Check if ORM object exists in database. Defaults to False.
+            orm_way       (bool          , optional): Use ORM way to update object into database. Defaults to False.
             auto_commit   (bool          , optional): Auto commit. Defaults to True.
             returning     (bool          , optional): Return updated ORM object. Defaults to True.
             **kwargs      (Dict[str, Any], required): Dictionary of update data.
 
         Raises:
-            ValueError: Raise error if no update data provided.
-            NoResultFound: Raise error if ORM object ID not found in database.
+            ValueError   : If no data provided to update.
+            NoResultFound: If ORM object ID not found in database, when `orm_way` is True.
+            Exception    : If failed to update object into database.
 
         Returns:
             DeclarativeBase: Updated ORM object.
         """
 
         if not kwargs:
-            raise ValueError("No update data provided!")
+            raise ValueError("No data provided to update!")
 
         _orm_object: Union[cls, None] = None
         try:
-            if check_exists:
+            if orm_way:
                 _orm_object: cls = await cls.async_get(
                     async_session=async_session, id=id, allow_no_result=False
                 )
@@ -107,30 +106,104 @@ class UpdateMixin(ReadMixin):
                 _stmt: Update = update(cls).where(cls.id == id).values(**kwargs)
                 if returning:
                     _stmt = _stmt.returning(cls)
-                _result: ChunkedIteratorResult = await async_session.execute(_stmt)
-                _orm_object: Union[cls, None] = _result.scalars().one_or_none()
-                if auto_commit and _orm_object:
+
+                _result: Result = await async_session.execute(_stmt)
+                if returning:
+                    _orm_object: Union[cls, None] = _result.scalars().one()
+
+                if auto_commit:
                     await async_session.commit()
-                    # await async_session.refresh(_orm_object)
+
+                if not returning:
+                    logger.debug(
+                        f"Updated '{_result.rowcount}' row(s) into '{cls.__name__}' table."
+                    )
+
+                    if _result.rowcount == 0:
+                        raise NoResultFound(
+                            f"Not found any '{cls.__name__}' object with '{id}' ID from database!"
+                        )
         except NoResultFound:
+            if (not orm_way) and auto_commit:
+                await async_session.rollback()
+
             raise
         except Exception:
-            if auto_commit:
+            if (not orm_way) and auto_commit:
                 await async_session.rollback()
+
             logger.error(
-                f"Failed to update '{cls.__name__}' object '{id}' ID into database!"
+                f"Failed to update '{cls.__name__}' object with '{id}' ID into database!"
             )
             raise
 
         return _orm_object
 
     @classmethod
+    async def async_update_by_ids(
+        cls,
+        async_session: AsyncSession,
+        ids: List[str],
+        auto_commit: bool = True,
+        returning: bool = True,
+        **kwargs: Dict[str, Any],
+    ) -> List[DeclarativeBase]:
+        """Update ORM objects into database by ID list.
+
+        Args:
+            async_session (AsyncSession  , required): SQLAlchemy async_session for database connection.
+            ids           (List[str]     , required): List of IDs.
+            auto_commit   (bool          , optional): Auto commit. Defaults to True.
+            returning     (bool          , optional): Return updated ORM object. Defaults to True.
+            **kwargs      (Dict[str, Any], required): Dictionary of update data.
+
+        Raises:
+            ValueError: If no data provided to update.
+            Exception : If failed to update objects into database.
+
+        Returns:
+            List[DeclarativeBase]: List of updated ORM objects.
+        """
+
+        if not kwargs:
+            raise ValueError("No data provided to update!")
+
+        _orm_objects: List[cls] = []
+        if 0 < len(ids):
+            try:
+                _stmt: Update = update(cls).where(cls.id.in_(ids)).values(**kwargs)
+                if returning:
+                    _stmt = _stmt.returning(cls)
+
+                _result: Result = await async_session.execute(_stmt)
+                if returning:
+                    _orm_objects: List[cls] = _result.scalars().all()
+
+                if auto_commit:
+                    await async_session.commit()
+
+                if not returning:
+                    logger.debug(
+                        f"Updated '{_result.rowcount}' row(s) into '{cls.__name__}' table."
+                    )
+            except Exception:
+                if auto_commit:
+                    await async_session.rollback()
+
+                logger.error(
+                    f"Failed to update '{cls.__name__}' objects by ID list into database!"
+                )
+                raise
+
+        return _orm_objects
+
+    @classmethod
     async def async_update_objects(
         cls,
         async_session: AsyncSession,
         orm_objects: List[DeclarativeBase],
-        returning: bool = False,
         auto_commit: bool = True,
+        returning: bool = False,
         **kwargs: Dict[str, Any],
     ) -> List[DeclarativeBase]:
         """Update ORM objects into database.
@@ -139,20 +212,22 @@ class UpdateMixin(ReadMixin):
             async_session (AsyncSession         , required): SQLAlchemy async_session for database connection.
             orm_objects   (List[DeclarativeBase], required): List of ORM objects.
             auto_commit   (bool                 , optional): Auto commit. Defaults to True.
+            returning     (bool                 , optional): Return updated ORM object. Defaults to False.
             **kwargs      (Dict[str, Any]       , required): Dictionary of update data.
 
         Raises:
-            ValueError: Raise error if no update data provided.
+            ValueError: If no data provided to update.
+            Exception : If failed to update objects into database.
 
         Returns:
             List[DeclarativeBase]: List of updated ORM objects.
         """
 
         if not kwargs:
-            raise ValueError("No update data provided!")
+            raise ValueError("No data provided to update!")
 
-        try:
-            if 0 < len(orm_objects):
+        if 0 < len(orm_objects):
+            try:
                 for _orm_object in orm_objects:
                     for _key, _val in kwargs.items():
                         if _key == "id":
@@ -165,11 +240,14 @@ class UpdateMixin(ReadMixin):
                     if returning:
                         for _orm_object in orm_objects:
                             await async_session.refresh(_orm_object)
-        except Exception:
-            if auto_commit:
-                await async_session.rollback()
-            logger.error(f"Failed to update '{cls.__name__}' objects into database!")
-            raise
+            except Exception:
+                if auto_commit:
+                    await async_session.rollback()
+
+                logger.error(
+                    f"Failed to update '{cls.__name__}' objects into database!"
+                )
+                raise
 
         return orm_objects
 
@@ -178,9 +256,9 @@ class UpdateMixin(ReadMixin):
         cls,
         async_session: AsyncSession,
         where: Union[List[Dict[str, Any]], Dict[str, Any]],
-        check_exists: bool = True,
-        returning: bool = False,
+        orm_way: bool = False,
         auto_commit: bool = True,
+        returning: bool = True,
         **kwargs: Dict[str, Any],
     ) -> List[DeclarativeBase]:
         """Update ORM objects into database by filter conditions.
@@ -189,46 +267,59 @@ class UpdateMixin(ReadMixin):
             async_session (AsyncSession              , required): SQLAlchemy async_session for database connection.
             where         (Union[List[Dict[str, Any]],
                                       Dict[str, Any]], required): List of filter conditions.
+            orm_way       (bool                      , optional): Use ORM way to update object into database. Defaults to False.
             auto_commit   (bool                      , optional): Auto commit. Defaults to True.
+            returning     (bool                      , optional): Return updated ORM object. Defaults to True.
             **kwargs      (Dict[str, Any]            , required): Dictionary of update data.
 
         Raises:
-            ValueError: Raise error if no update data provided.
-            NoResultFound: Raise error if ORM object ID not found in database.
+            ValueError: If no data provided to update.
+            Exception : If failed to update objects into database.
 
         Returns:
             List[DeclarativeBase]: List of updated ORM objects.
         """
 
         if not kwargs:
-            raise ValueError("No update data provided!")
+            raise ValueError("No data provided to update!")
 
         _orm_objects: List[cls] = []
         try:
-            if check_exists:
+            if orm_way:
                 _orm_objects: List[cls] = await cls.async_select_by_where(
                     async_session=async_session, where=where, disable_limit=True
                 )
 
-                _orm_objects: List[cls] = await cls.async_update_objects(
-                    async_session=async_session,
-                    objects=_orm_objects,
-                    auto_commit=auto_commit,
-                    **kwargs,
-                )
+                if 0 < len(_orm_objects):
+                    _orm_objects: List[cls] = await cls.async_update_objects(
+                        async_session=async_session,
+                        objects=_orm_objects,
+                        auto_commit=auto_commit,
+                        returning=returning,
+                        **kwargs,
+                    )
             else:
                 _stmt: Update = update(cls)
                 _stmt = cls._build_where(_stmt, where)
                 _stmt = _stmt.values(**kwargs)
                 if returning:
                     _stmt = _stmt.returning(cls)
-                _result: ChunkedIteratorResult = await async_session.execute(_stmt)
-                _orm_objects: List[cls] = _result.scalars().all()
+
+                _result: Result = await async_session.execute(_stmt)
+                if returning:
+                    _orm_objects: List[cls] = _result.scalars().all()
+
                 if auto_commit:
                     await async_session.commit()
+
+                if not returning:
+                    logger.debug(
+                        f"Updated '{_result.rowcount}' row(s) into '{cls.__name__}' table."
+                    )
         except Exception:
-            if auto_commit:
+            if (not orm_way) and auto_commit:
                 await async_session.rollback()
+
             logger.error(
                 f"Failed to update '{cls.__name__}' object by '{where}' filter into database!"
             )
@@ -251,22 +342,29 @@ class UpdateMixin(ReadMixin):
             **kwargs      (Dict[str, Any], required): Dictionary of update data.
 
         Raises:
-            ValueError: Raise error if no update data provided.
+            ValueError: If no data provided to update.
+            Exception : If failed to update objects into database.
         """
 
         if not kwargs:
-            raise ValueError("No update data provided!")
+            raise ValueError("No data provided to update!")
 
         try:
             _stmt: Update = update(cls).values(**kwargs)
-            await async_session.execute(_stmt)
+            _result: Result = await async_session.execute(_stmt)
+
             if auto_commit:
                 await async_session.commit()
+
+            logger.debug(
+                f"Updated '{_result.rowcount}' row(s) into '{cls.__name__}' table."
+            )
         except Exception:
             if auto_commit:
                 await async_session.rollback()
+
             logger.error(f"Failed to update '{cls.__name__}' objects into database!")
             raise
 
 
-__all__ = ["UpdateMixin"]
+__all__ = ["AsyncUpdateMixin"]
