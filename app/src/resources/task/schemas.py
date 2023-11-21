@@ -2,7 +2,7 @@
 
 from typing import Union, List, Any, Dict
 
-from pydantic import Field, root_validator
+from pydantic import Field, root_validator, validator
 
 from src.config import config
 from src.core.schemas.base import IdPM, AtPM, ExtraBasePM
@@ -23,13 +23,19 @@ class TaskBasePM(ExtraBasePM):
         examples=["Task 1"],
     )
     point: int = Field(
-        default=0,
+        default=70,
         ge=0,
         le=100,
         title="Task point",
         description="Point of the task.",
         examples=[70],
     )
+
+    @validator("point", always=True)
+    def _check_point(cls, value: int) -> int:
+        if (value % 10) != 0:
+            raise ValueError("Point must be a multiple of 10!")
+        return value
 
 
 class TaskPM(AtPM, TaskBasePM, IdPM):
@@ -87,6 +93,9 @@ class ResTasksPM(BaseResPM):
                     "point": 70,
                     "created_at": "2021-01-01T00:00:00+00:00",
                     "updated_at": "2021-01-01T00:00:00+00:00",
+                    "links": {
+                        "self": "/api/v1/tasks/TAS1699928748406212_46D46E7E55FA4A6E8478BD6B04195793"
+                    },
                 },
                 {
                     "id": "TAS1699854600504660_337FC34BE4304E14A193F6A2793AD9D1",
@@ -94,6 +103,9 @@ class ResTasksPM(BaseResPM):
                     "point": 30,
                     "created_at": "2021-01-01T00:00:00+00:00",
                     "updated_at": "2021-01-01T00:00:00+00:00",
+                    "links": {
+                        "self": "/api/v1/tasks/TAS1699854600504660_337FC34BE4304E14A193F6A2793AD9D1"
+                    },
                 },
             ]
         ],

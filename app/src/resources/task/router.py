@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from fastapi import APIRouter, Request, Depends, Path, Body, Query, HTTPException
-from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.config import config
-from src.core.dependencies.db import async_get_read_db, async_get_write_db, get_write_db
+from src.core.dependencies.db import async_get_read_db, async_get_write_db
 from src.core.constants.error_code import ErrorCodeEnum
 from src.core.schemas.responses import InvalidBaseResPM, NotFoundBaseResPM
 from src.core.responses import BaseResponse
@@ -24,20 +23,6 @@ router = APIRouter(
 )
 
 
-@router.get("/test")
-def get_test(request: Request, db_session: Session = Depends(get_write_db)):
-    service.get_test(db_session=db_session)
-    return {"message": "Hello World!"}
-
-
-@router.get("/async_test")
-async def get_test(
-    request: Request, db_session: AsyncSession = Depends(async_get_write_db)
-):
-    await service.async_get_test(db_session=db_session)
-    return {"message": "Hello World!"}
-
-
 @router.get(
     "/", response_model=ResTasksPM, responses={422: {"model": InvalidBaseResPM}}
 )
@@ -50,6 +35,14 @@ async def get_tasks(
         title="Task name",
         description="Name of the task.",
         examples=["Task 1"],
+    ),
+    point: Optional[int] = Query(
+        default=None,
+        ge=0,
+        le=100,
+        title="Task point",
+        description="Point of the task.",
+        examples=[70],
     ),
     skip: int = Query(
         default=0,
@@ -70,55 +63,67 @@ async def get_tasks(
 ):
     _response: BaseResponse
     _request_id = request.state.request_id
+
+    _kwargs = {}
+    if name:
+        _kwargs["name"] = name
+
+    if point:
+        _kwargs["point"] = point
+
     try:
-        _tasks: List[TaskORM] = await service.async_get_list(
+        _result: Tuple[List[TaskORM], int] = await service.async_get_list(
             db_session=db_session,
             request_id=_request_id,
-            name=name,
             skip=skip,
             limit=(limit + 1),
+            **_kwargs,
         )
+        _tasks, _total_count = _result
 
         _url_path = request.url.path + "?"
         if request.url.query:
             _url_path += request.url.remove_query_params(["skip", "limit"]).query + "&"
 
-        _first_url = None
-        _prev_url = None
-        _next_url = None
-        _last_url = None
+        _links = {
+            "first": None,
+            "prev": None,
+            "next": None,
+            "last": None,
+        }
+
+        if 0 < _total_count:
+            _links["first"] = f"{_url_path}skip=0&limit={limit}"
+
+            _last_skip = int(_total_count / limit) * limit
+            if _last_skip == _total_count:
+                _last_skip = _last_skip - limit
+            _links["last"] = f"{_url_path}skip={_last_skip}&limit={limit}"
 
         _list_count = len(_tasks)
-
-        if 0 < _list_count:
-            _first_url = f"{_url_path}skip=0&limit={limit}"
-
         if _list_count == (limit + 1):
             _tasks = _tasks[:limit]
             _list_count = len(_tasks)
-            _next_url = f"{_url_path}skip={skip + limit}&limit={limit}"
+            _links["next"] = f"{_url_path}skip={skip + limit}&limit={limit}"
 
         if 0 < skip:
             _prev_skip = skip - limit
             if _prev_skip < 0:
                 _prev_skip = 0
-
-            _prev_url = f"{_url_path}skip={_prev_skip}&limit={limit}"
+            _links["prev"] = f"{_url_path}skip={_prev_skip}&limit={limit}"
 
         _message = "Not found any task!"
-        if _list_count:
+        if 0 < _list_count:
             _message = "Suceessfully retrieved task list."
 
         _response = BaseResponse(
             message=_message,
             content=_tasks,
-            links={
-                "first": _first_url,
-                "prev": _prev_url,
-                "next": _next_url,
-                "last": _last_url,
+            links=_links,
+            meta={
+                "list_count": _list_count,
+                "total_count": _total_count,
             },
-            meta={"list_count": _list_count},
             request=request,
             response_schema=ResTasksPM,
         )

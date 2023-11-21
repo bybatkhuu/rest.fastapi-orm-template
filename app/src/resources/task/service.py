@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
-from typing import List, Optional
+from typing import List, Tuple
 
 from sqlalchemy.exc import IntegrityError, NoResultFound
-from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import validate_arguments
 
@@ -17,35 +15,29 @@ from src.logger import logger
 
 
 @validate_arguments(config=dict(arbitrary_types_allowed=True))
-def get_test(
-    db_session: Session,
-) -> dict:
-    return {"message": "Hello World!"}
-
-
-@validate_arguments(config=dict(arbitrary_types_allowed=True))
-async def async_get_test(
-    db_session: AsyncSession,
-) -> dict:
-    return {"message": "Hello World!"}
-
-
-@validate_arguments(config=dict(arbitrary_types_allowed=True))
 async def async_get_list(
     db_session: AsyncSession,
     request_id: str,
-    name: Optional[str] = None,
     skip: int = 0,
     limit: int = config.db.select_limit,
-) -> List[TaskORM]:
+    **kwargs,
+) -> Tuple[List[TaskORM], int]:
+    _total_count = 0
     _tasks: List[TaskORM] = []
     try:
         _where = []
-        if name:
-            _where.append({"op": "like", "column": "name", "value": name})
+        if kwargs:
+            for _key, _val in kwargs.items():
+                if _key == "name":
+                    _where.append({"op": "like", "column": _key, "value": _val})
+                else:
+                    _where.append({"column": _key, "value": _val})
 
         _tasks: List[TaskORM] = await TaskORM.async_select_by_where(
             async_session=db_session, where=_where, offset=skip, limit=limit
+        )
+        _total_count: int = await TaskORM.async_count_by_where(
+            async_session=db_session, where=_where
         )
 
     except Exception:
@@ -55,7 +47,7 @@ async def async_get_list(
             message="Failed to get task list!",
         )
 
-    return _tasks
+    return _tasks, _total_count
 
 
 @validate_arguments(config=dict(arbitrary_types_allowed=True))
