@@ -7,16 +7,8 @@ from .sync import CreateMixin, DeleteMixin
 
 
 @declarative_mixin
-class AsyncCRUDMixin(AsyncCreateMixin, AsyncDeleteMixin):
+class CRUDMixin(AsyncCreateMixin, AsyncDeleteMixin, CreateMixin, DeleteMixin):
     pass
 
 
-@declarative_mixin
-class CRUDMixin(CreateMixin, DeleteMixin):
-    pass
-
-
-__all__ = [
-    "AsyncCRUDMixin",
-    "CRUDMixin",
-]
+__all__ = ["CRUDMixin"]

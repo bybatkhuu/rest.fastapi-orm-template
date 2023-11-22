@@ -5,7 +5,7 @@ from typing import Any, Optional, Dict
 from pydantic import conint, constr, validate_arguments
 from fastapi import HTTPException
 
-from src.core.constants.error_code import ErrorCodeEnum
+from src.core.constants import ErrorCodeEnum
 
 
 class BaseHTTPException(HTTPException):

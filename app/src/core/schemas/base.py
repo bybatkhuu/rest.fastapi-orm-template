@@ -4,12 +4,12 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field, constr
 
-from src.core.utils import dt
+from src.core import utils
 
 
 class BasePM(BaseModel):
     class Config:
-        json_encoders = {datetime: dt.datetime_to_iso}
+        json_encoders = {datetime: utils.datetime_to_iso}
 
 
 class ExtraBasePM(BasePM):
@@ -28,7 +28,7 @@ class IdPM(ExtraBasePM):
     )
 
 
-class AtPM(ExtraBasePM):
+class TimestampPM(ExtraBasePM):
     created_at: datetime = Field(
         ...,
         title="Created datetime",
@@ -43,4 +43,4 @@ class AtPM(ExtraBasePM):
     )
 
 
-__all__ = ["BasePM", "ExtraBasePM", "IdPM", "AtPM"]
+__all__ = ["BasePM", "ExtraBasePM", "IdPM", "TimestampPM"]

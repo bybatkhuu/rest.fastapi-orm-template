@@ -10,43 +10,43 @@ from .close import *
 register_models()
 
 ## Async
-write_async_engine = make_async_engine(dsn_url=config.db.dsn_url)
-WriteAsyncSession = create_async_session_maker(async_engine=write_async_engine)
+async_write_engine = make_async_engine(dsn_url=config.db.dsn_url)
+AsyncWriteSession = create_async_session_maker(async_engine=async_write_engine)
 
-read_async_engine = make_async_engine(dsn_url=config.db.read_dsn_url)
-ReadAsyncSession = create_async_session_maker(async_engine=read_async_engine)
+async_read_engine = make_async_engine(dsn_url=config.db.read_dsn_url)
+AsyncReadSession = create_async_session_maker(async_engine=async_read_engine)
 
 ## Sync
-write_engine = make_engine(dsn_url=config.db.dsn_url)
-WriteSession = create_session_maker(engine=write_engine)
+# write_engine = make_engine(dsn_url=config.db.dsn_url)
+# WriteSession = create_session_maker(engine=write_engine)
 
-read_engine = make_engine(dsn_url=config.db.read_dsn_url)
-ReadSession = create_session_maker(engine=read_engine)
+# read_engine = make_engine(dsn_url=config.db.read_dsn_url)
+# ReadSession = create_session_maker(engine=read_engine)
 
 
 engines = [
-    write_async_engine,
-    read_async_engine,
-    write_engine,
-    read_engine,
+    async_write_engine,
+    async_read_engine,
+    # write_engine,
+    # read_engine,
 ]
 sessions = [
-    WriteAsyncSession,
-    ReadAsyncSession,
-    WriteSession,
-    ReadSession,
+    AsyncWriteSession,
+    AsyncReadSession,
+    # WriteSession,
+    # ReadSession,
 ]
 
 
 __all__ = [
-    "write_async_engine",
-    "read_async_engine",
-    "WriteAsyncSession",
-    "ReadAsyncSession",
-    "write_engine",
-    "WriteSession",
-    "read_engine",
-    "ReadSession",
+    "async_write_engine",
+    "async_read_engine",
+    "AsyncWriteSession",
+    "AsyncReadSession",
+    # "write_engine",
+    # "WriteSession",
+    # "read_engine",
+    # "ReadSession",
     "engines",
     "sessions",
     "make_async_engine",

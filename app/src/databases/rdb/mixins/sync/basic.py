@@ -5,8 +5,8 @@ from typing import Union, List, Dict, Any
 from sqlalchemy import func, Select, select, Result
 from sqlalchemy.orm import declarative_mixin, Session
 
+from src.databases.rdb.mixins import BaseMixin
 from src.logger import logger
-from src.databases.rdb.mixins.base import BaseMixin
 
 
 @declarative_mixin

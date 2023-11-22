@@ -3,7 +3,7 @@
 from fastapi import APIRouter, Request
 
 from src.config import config
-from src.core.schemas.responses import BaseResPM
+from src.core.schemas import BaseResPM
 from src.core.responses import BaseResponse
 
 

@@ -1,6 +1,3 @@
 # -*- coding: utf-8 -*-
 
-from .base import BaseResponse
-
-
-__all__ = ["BaseResponse"]
+from .base import *

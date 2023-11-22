@@ -84,7 +84,6 @@ class AsyncDeleteMixin(AsyncReadMixin):
         except NoResultFound:
             if (not orm_way) and auto_commit:
                 await async_session.rollback()
-
             raise
         except Exception:
             if (not orm_way) and auto_commit:

@@ -81,7 +81,6 @@ class DeleteMixin(ReadMixin):
         except NoResultFound:
             if (not orm_way) and auto_commit:
                 session.rollback()
-
             raise
         except Exception:
             if (not orm_way) and auto_commit:

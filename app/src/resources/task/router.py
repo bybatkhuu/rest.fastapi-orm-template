@@ -5,10 +5,10 @@ from typing import List, Optional, Tuple
 from fastapi import APIRouter, Request, Depends, Path, Body, Query, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.core.constants import ErrorCodeEnum
 from src.config import config
 from src.core.dependencies.db import async_get_read_db, async_get_write_db
-from src.core.constants.error_code import ErrorCodeEnum
-from src.core.schemas.responses import InvalidBaseResPM, NotFoundBaseResPM
+from src.core.schemas import InvalidBaseResPM, NotFoundBaseResPM
 from src.core.responses import BaseResponse
 from src.core.exceptions import BaseHTTPException
 from src.resources.task.schemas import TaskBasePM, ResTaskPM, ResTasksPM
@@ -61,6 +61,13 @@ async def get_tasks(
     ),
     db_session: AsyncSession = Depends(async_get_read_db),
 ):
+    """
+    ### Features
+
+    * Get task list with pagination (`skip`, `limit`).
+    * Filter task list by `name` and `point`.
+    """
+
     _response: BaseResponse
     _request_id = request.state.request_id
 

@@ -30,15 +30,15 @@ from src.logger import logger
 
 
 @declarative_mixin
-class IdIntMixin:
-    id: Mapped[int] = mapped_column(
-        BigInteger, primary_key=True, autoincrement=True, sort_order=-10
-    )
+class IdStrMixin:
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, sort_order=-100)
 
 
 @declarative_mixin
-class IdStrMixin:
-    id: Mapped[str] = mapped_column(String(64), primary_key=True, sort_order=-10)
+class IdIntMixin:
+    id: Mapped[int] = mapped_column(
+        BigInteger, primary_key=True, autoincrement=True, sort_order=-100
+    )
 
 
 @declarative_mixin
@@ -47,13 +47,13 @@ class TimestampMixin:
         DateTime(timezone=True),
         nullable=False,
         server_default=func.CURRENT_TIMESTAMP(),
-        sort_order=9998,
+        sort_order=1001,
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
         server_default=func.CURRENT_TIMESTAMP(),
-        sort_order=9999,
+        sort_order=1002,
     )
 
     __table_args__ = (Index("idx_created_at_desc", desc("created_at")),)
@@ -268,4 +268,4 @@ class BaseMixin(TimestampMixin, IdStrMixin):
         return _stmt
 
 
-__all__ = ["IdIntMixin", "IdStrMixin", "TimestampMixin", "BaseMixin"]
+__all__ = ["BaseMixin"]

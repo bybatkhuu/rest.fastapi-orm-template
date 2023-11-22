@@ -9,10 +9,10 @@ from fastapi import Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
+from src.core.constants import EnvEnum
 from src.config import config
 from src.core import utils
-from src.core.constants.base import EnvEnum
-from src.core.schemas.responses import BaseResPM
+from src.core.schemas import BaseResPM
 from __version__ import __version__
 
 

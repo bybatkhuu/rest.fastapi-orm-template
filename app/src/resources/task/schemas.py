@@ -5,8 +5,7 @@ from typing import Union, List, Any, Dict
 from pydantic import Field, root_validator, validator
 
 from src.config import config
-from src.core.schemas.base import IdPM, AtPM, ExtraBasePM
-from src.core.schemas.responses import BaseResPM, LinksResPM
+from src.core.schemas import IdPM, TimestampPM, ExtraBasePM, BaseResPM, LinksResPM
 
 
 _tasks_base_url = f'{config.api.prefix}{config.api.routes.tasks["_prefix"]}'
@@ -38,7 +37,7 @@ class TaskBasePM(ExtraBasePM):
         return value
 
 
-class TaskPM(AtPM, TaskBasePM, IdPM):
+class TaskPM(TimestampPM, TaskBasePM, IdPM):
     class Config:
         orm_mode = True
 

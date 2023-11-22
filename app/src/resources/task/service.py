@@ -6,8 +6,8 @@ from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import validate_arguments
 
+from src.core.constants import ErrorCodeEnum
 from src.config import config
-from src.core.constants.error_code import ErrorCodeEnum
 from src.core.exceptions import BaseHTTPException
 from src.resources.task.schemas import TaskBasePM
 from src.resources.task.models import TaskORM

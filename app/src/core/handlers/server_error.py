@@ -4,8 +4,8 @@ from fastapi import Request
 
 from beans_logging_fastapi import async_log_http_error
 
+from src.core.constants import ErrorCodeEnum
 from src.config import config
-from src.core.constants.error_code import ErrorCodeEnum
 from src.core.responses import BaseResponse
 
 

@@ -3,8 +3,12 @@
 from typing import List, Union
 
 from sqlalchemy import Engine
-from sqlalchemy.orm import scoped_session
-from sqlalchemy.ext.asyncio import AsyncEngine, async_scoped_session
+from sqlalchemy.orm import scoped_session, close_all_sessions
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    async_scoped_session,
+    # close_all_sessions as async_close_all_sessions,
+)
 
 from src.logger import logger
 
@@ -23,11 +27,15 @@ async def async_close_db(
 
     logger.info(f"Closing all database connections...")
     try:
+        # close_all_sessions()
+        # await async_close_all_sessions()
         for _session in sessions:
             if isinstance(_session, scoped_session):
-                _session.remove()
+                # _session.remove()
+                _session.close_all()
             elif isinstance(_session, async_scoped_session):
-                await _session.remove()
+                # await _session.remove()
+                await _session.close_all()
 
         for _engine in engines:
             if isinstance(_engine, Engine):
@@ -52,8 +60,10 @@ def close_db(sessions: List[scoped_session], engines: List[Engine]):
 
     logger.info(f"Closing all database connections...")
     try:
+        # close_all_sessions()
         for _session in sessions:
-            _session.remove()
+            # _session.remove()
+            _session.close_all()
 
         for _engine in engines:
             _engine.dispose()

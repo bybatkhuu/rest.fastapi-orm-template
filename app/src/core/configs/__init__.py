@@ -8,7 +8,7 @@ from pydantic import Field, constr, root_validator, validator, AnyUrl
 
 from beans_logging import LoggerConfigPM
 
-from src.core.constants.base import (
+from src.core.constants import (
     EnvEnum,
     CORSMethodEnum,
     ENV_PREFIX,
@@ -31,8 +31,8 @@ class ApiConfig(FrozenBaseConfig):
     routes: RoutesConfig = Field(default_factory=RoutesConfig)
 
     @validator("prefix", always=True)
-    def _check_prefix(cls, val: Any, values: Dict[str, Any]) -> str:
-        if val and isinstance(val, str) and ("{api_version}" in val):
+    def _check_prefix(cls, val: str, values: Dict[str, Any]) -> str:
+        if val and ("{api_version}" in val) and ("version" in values):
             val = val.format(api_version=values["version"])
         return val
 
@@ -118,7 +118,7 @@ class DocsConfig(BaseConfig):
 
 class FrozenDocsConfig(DocsConfig):
     @validator("description", always=True)
-    def _check_description(cls, val: Any) -> str:
+    def _check_description(cls, val: str) -> str:
         _desc_file_path = "./assets/description.md"
         if (not val) and os.path.isfile(_desc_file_path):
             with open(_desc_file_path, "r") as _file:
@@ -165,8 +165,8 @@ class AppConfig(BaseConfig):
     docs: DocsConfig = Field(default_factory=DocsConfig)
 
     @validator("slug", always=True)
-    def _check_slug(cls, val: Any, values: Dict[str, Any]) -> str:
-        if not val:
+    def _check_slug(cls, val: str, values: Dict[str, Any]) -> str:
+        if "name" in values:
             val = (
                 values["name"]
                 .lower()
@@ -301,30 +301,35 @@ class ConfigSchema(FrozenBaseConfig):
     logger: LoggerConfigPM = Field(default_factory=LoggerConfigPM)
 
     @validator("version", always=True)
-    def _check_version(cls, val: Any) -> str:
+    def _check_version(cls, val: str) -> str:
         val = __version__
         return val
 
     @validator("app", always=True)
     def _check_app(cls, val: AppConfig, values: Dict[str, Any]) -> FrozenAppConfig:
-        _dev = val.dev
-        if values["env"] == EnvEnum.DEVELOPMENT:
+        _dev: DevConfig = val.dev
+        if ("env" in values) and (values["env"] == EnvEnum.DEVELOPMENT):
             _dev.reload = True
         _dev = FrozenDevConfig(**_dev.dict())
 
-        _docs = val.docs
-        _api = values["api"]
-        if _docs.enabled:
-            if "{api_prefix}" in _docs.openapi_url:
+        _docs: DocsConfig = val.docs
+        _api = None
+        if "api" in values:
+            _api: ApiConfig = values["api"]
+
+        if _api and _docs.enabled:
+            if _docs.openapi_url and ("{api_prefix}" in _docs.openapi_url):
                 _docs.openapi_url = _docs.openapi_url.format(api_prefix=_api.prefix)
 
-            if "{api_prefix}" in _docs.docs_url:
+            if _docs.docs_url and ("{api_prefix}" in _docs.docs_url):
                 _docs.docs_url = _docs.docs_url.format(api_prefix=_api.prefix)
 
-            if "{api_prefix}" in _docs.redoc_url:
+            if _docs.redoc_url and ("{api_prefix}" in _docs.redoc_url):
                 _docs.redoc_url = _docs.redoc_url.format(api_prefix=_api.prefix)
 
-            if "{api_prefix}" in _docs.swagger_ui_oauth2_redirect_url:
+            if _docs.swagger_ui_oauth2_redirect_url and (
+                "{api_prefix}" in _docs.swagger_ui_oauth2_redirect_url
+            ):
                 _docs.swagger_ui_oauth2_redirect_url = (
                     _docs.swagger_ui_oauth2_redirect_url.format(api_prefix=_api.prefix)
                 )
@@ -337,7 +342,7 @@ class ConfigSchema(FrozenBaseConfig):
     def _check_paths(
         cls, val: PathsConfig, values: Dict[str, Any]
     ) -> FrozenPathsConfig:
-        if "{app_slug}" in val.data_dir:
+        if ("app" in values) and ("{app_slug}" in val.data_dir):
             val.data_dir = val.data_dir.format(app_slug=values["app"].slug)
 
         val = FrozenPathsConfig(**val.dict())
@@ -345,9 +350,12 @@ class ConfigSchema(FrozenBaseConfig):
 
     @validator("db", always=True)
     def _check_db(cls, val: DbConfig, values: Dict[str, Any]) -> FrozenDbConfig:
-        if values["debug"]:
-            val.echo_sql = True
-            val.echo_pool = True
+        if ("debug" in values) and (not values["debug"]):
+            os.environ.pop(f"{ENV_PREFIX_DB}ECHO_SQL", None)
+            val.echo_sql = False
+
+            os.environ.pop(f"{ENV_PREFIX_DB}ECHO_POOL", None)
+            val.echo_pool = False
 
         val = FrozenDbConfig(**val.dict())
         return val
@@ -356,10 +364,11 @@ class ConfigSchema(FrozenBaseConfig):
     def _check_logger(
         cls, val: LoggerConfigPM, values: Dict[str, Any]
     ) -> LoggerConfigPM:
-        if not val.app_name:
-            val.app_name = values["app"].slug
-        elif "{app_slug}" in val.app_name:
-            val.app_name = val.app_name.format(app_slug=values["app"].slug)
+        if "app" in values:
+            if not val.app_name:
+                val.app_name = values["app"].slug
+            elif "{app_slug}" in val.app_name:
+                val.app_name = val.app_name.format(app_slug=values["app"].slug)
 
         if f"{ENV_PREFIX_APP}LOGS_DIR" in os.environ:
             val.file.logs_dir = os.getenv(f"{ENV_PREFIX_APP}LOGS_DIR")

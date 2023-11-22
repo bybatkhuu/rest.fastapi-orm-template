@@ -6,6 +6,7 @@ import asyncio
 from sqlalchemy import Engine, text
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy_utils import database_exists, create_database
+from fastapi.concurrency import run_in_threadpool
 
 from src.config import config
 from src.logger import logger
@@ -26,7 +27,7 @@ async def async_is_db_connectable(async_engine: AsyncEngine) -> bool:
         _url = async_engine.url
         if not database_exists(_url):
             logger.warning(f"'{_url.database}' database doesn't exist, creating...")
-            create_database(_url)
+            await run_in_threadpool(create_database, url=_url)
             logger.success(f"Successfully created '{_url.database}' database.")
 
         async with async_engine.connect() as _connection:

@@ -6,7 +6,7 @@ from typing import Dict, Any
 from onion_config import ConfigLoader
 from beans_logging import logger
 
-from src.core.constants.base import EnvEnum, ENV_PREFIX_DB
+from src.core.constants import EnvEnum, ENV_PREFIX_DB
 from src.core.configs import ConfigSchema
 
 

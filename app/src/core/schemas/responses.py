@@ -4,8 +4,8 @@ from typing import Any, Union, Optional
 
 from pydantic import Field, constr
 
+from src.core.constants import MethodEnum
 from src.config import config
-from src.core.constants.base import MethodEnum
 from .base import ExtraBasePM, BasePM
 from __version__ import __version__
 

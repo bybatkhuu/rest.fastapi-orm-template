@@ -66,30 +66,6 @@ def get_request_path(request: Request) -> str:
 
 
 @validate_arguments
-def is_connectable(
-    url: str = "https://www.google.com", timeout: int = 3, check_status=False
-) -> bool:
-    """Check if the url is connectable.
-
-    Args:
-        url          (str , optional): URL to check. Defaults to 'https://www.google.com'.
-        timeout      (int , optional): Timeout in seconds. Defaults to 3.
-        check_status (bool, optional): Check HTTP status code (200). Defaults to False.
-
-    Returns:
-        bool: True if connectable, False otherwise.
-    """
-
-    try:
-        _response: HTTPResponse = request.urlopen(url, timeout=timeout)
-        if check_status:
-            return _response.getcode() == 200
-        return True
-    except:
-        return False
-
-
-@validate_arguments
 async def async_is_connectable(
     url: str = "https://www.google.com", timeout: int = 3, check_status=False
 ) -> bool:
@@ -114,9 +90,33 @@ async def async_is_connectable(
         return False
 
 
+@validate_arguments
+def is_connectable(
+    url: str = "https://www.google.com", timeout: int = 3, check_status=False
+) -> bool:
+    """Check if the url is connectable.
+
+    Args:
+        url          (str , optional): URL to check. Defaults to 'https://www.google.com'.
+        timeout      (int , optional): Timeout in seconds. Defaults to 3.
+        check_status (bool, optional): Check HTTP status code (200). Defaults to False.
+
+    Returns:
+        bool: True if connectable, False otherwise.
+    """
+
+    try:
+        _response: HTTPResponse = request.urlopen(url, timeout=timeout)
+        if check_status:
+            return _response.getcode() == 200
+        return True
+    except:
+        return False
+
+
 __all__ = [
     "get_http_status",
     "get_request_path",
-    "is_connectable",
     "async_is_connectable",
+    "is_connectable",
 ]

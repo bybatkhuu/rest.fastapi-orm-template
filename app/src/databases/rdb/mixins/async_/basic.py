@@ -6,8 +6,8 @@ from sqlalchemy import func, Select, select, Result
 from sqlalchemy.orm import declarative_mixin
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.databases.rdb.mixins import BaseMixin
 from src.logger import logger
-from src.databases.rdb.mixins.base import BaseMixin
 
 
 @declarative_mixin
