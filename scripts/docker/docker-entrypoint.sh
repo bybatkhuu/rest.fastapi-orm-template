@@ -5,6 +5,7 @@ set -euo pipefail
 _doStart()
 {
 	sleep 3
+	alembic upgrade head || exit 2
 	exec python -u ./main.py || exit 2
 	# exec uvicorn main:app --host=0.0.0.0 --port="${FOT_APP_PORT:-8000}" --no-server-header --proxy-headers --forwarded-allow-ips='*' --no-access-log || exit 2
 	exit 0
