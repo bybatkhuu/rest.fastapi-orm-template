@@ -5,6 +5,7 @@ from typing import Union, List, Any, Dict
 from pydantic import Field, root_validator, validator
 
 from src.config import config
+from src.core.utils.validator import ValidRegEnum
 from src.core.schemas import IdPM, TimestampPM, ExtraBasePM, BaseResPM, LinksResPM
 
 
@@ -17,6 +18,7 @@ class TaskBasePM(ExtraBasePM):
         ...,
         min_length=2,
         max_length=64,
+        regex=ValidRegEnum.ALPHANUM_EXTEND.value,
         title="Task name",
         description="Name of the task.",
         examples=["Task 1"],

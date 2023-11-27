@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.constants import ErrorCodeEnum
 from src.config import config
+from src.core.utils.validator import ValidRegEnum
 from src.core.dependencies.db import async_get_read_db, async_get_write_db
 from src.core.schemas import InvalidBaseResPM, NotFoundBaseResPM
 from src.core.responses import BaseResponse
@@ -35,6 +36,7 @@ async def get_tasks(
         default=None,
         min_length=2,
         max_length=64,
+        regex=ValidRegEnum.ALPHANUM_EXTEND.value,
         title="Task name",
         description="Name of the task.",
         examples=["Task 1"],
@@ -199,6 +201,7 @@ async def get_task(
     request: Request,
     task_id: str = Path(
         ...,
+        regex=ValidRegEnum.ALPHANUM_HYPHEN.value,
         title="Task ID",
         description="Task ID to get.",
         examples=["TAS1699928748406212_46D46E7E55FA4A6E8478BD6B04195793"],
@@ -239,6 +242,7 @@ async def update_task(
     request: Request,
     task_id: str = Path(
         ...,
+        regex=ValidRegEnum.ALPHANUM_HYPHEN.value,
         title="Task ID",
         description="Task ID to update.",
         examples=["TAS1699928748406212_46D46E7E55FA4A6E8478BD6B04195793"],
@@ -290,6 +294,7 @@ async def delete_task(
     request: Request,
     task_id: str = Path(
         ...,
+        regex=ValidRegEnum.ALPHANUM_HYPHEN.value,
         title="Task ID",
         description="Task ID to delete.",
         examples=["TAS1699928748406212_46D46E7E55FA4A6E8478BD6B04195793"],
