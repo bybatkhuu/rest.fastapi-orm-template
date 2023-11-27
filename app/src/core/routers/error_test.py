@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
 
 
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 from fastapi import APIRouter, Request, Body, HTTPException
 
-from src.core.constants.error_code import ErrorCodeEnum
-from src.core.schemas.responses import (
+from src.core.constants import ErrorCodeEnum
+from src.core.schemas import (
+    BasePM,
     BaseResPM,
     BadBaseResPM,
     MethodNotBaseResPM,
     InvalidBaseResPM,
     ErrorBaseResPM,
 )
-from src.core.responses.base import BaseResponse
-from src.core.exceptions.raises import raise_http_exception
+from src.core.responses import BaseResponse
+from src.core.exceptions import BaseHTTPException
 
 
 router = APIRouter(tags=["Error Test"])
@@ -54,21 +55,21 @@ def get_http_exception_detail():
 
 
 @router.get(
-    "/exception-raise",
-    summary="Raise exception",
+    "/exception-custom",
+    summary="Custom exception",
     status_code=400,
     response_model=BadBaseResPM,
 )
-def get_raise_http_exception():
-    raise_http_exception(
+def get_base_http_exception():
+    raise BaseHTTPException(
         error_enum=ErrorCodeEnum.BAD_REQUEST,
-        message="Test raise_http_exception!",
+        message="Test BaseHTTPException!",
         description="Description test.",
         detail={"msg": "Detail test."},
     )
 
 
-class Item(BaseModel):
+class Item(BasePM):
     name: str
     price: int = Field(..., ge=100)
 

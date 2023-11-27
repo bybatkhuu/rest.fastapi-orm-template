@@ -6,3 +6,7 @@ api:
       _tags: ["Utils"]
       ping: "/ping" # GET
       health: "/health" # GET
+    tasks:
+      _tags: ["Tasks"]
+      _prefix: "/tasks" # GET, POST
+      task: "/{task_id}" # GET, PUT, DELETE
