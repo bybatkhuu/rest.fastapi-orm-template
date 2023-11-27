@@ -72,8 +72,8 @@ class ResTaskPM(BaseResPM):
                 "id": "TAS1699928748406212_46D46E7E55FA4A6E8478BD6B04195793",
                 "name": "Task 1",
                 "point": 70,
-                "created_at": "2021-01-01T00:00:00+00:00",
                 "updated_at": "2021-01-01T00:00:00+00:00",
+                "created_at": "2021-01-01T00:00:00+00:00",
             }
         ],
     )
@@ -90,8 +90,8 @@ class ResTasksPM(BaseResPM):
                     "id": "TAS1699928748406212_46D46E7E55FA4A6E8478BD6B04195793",
                     "name": "Task 1",
                     "point": 70,
-                    "created_at": "2021-01-01T00:00:00+00:00",
                     "updated_at": "2021-01-01T00:00:00+00:00",
+                    "created_at": "2021-01-01T00:00:00+00:00",
                     "links": {
                         "self": "/api/v1/tasks/TAS1699928748406212_46D46E7E55FA4A6E8478BD6B04195793"
                     },
@@ -100,8 +100,8 @@ class ResTasksPM(BaseResPM):
                     "id": "TAS1699854600504660_337FC34BE4304E14A193F6A2793AD9D1",
                     "name": "Task 2",
                     "point": 30,
-                    "created_at": "2021-01-01T00:00:00+00:00",
                     "updated_at": "2021-01-01T00:00:00+00:00",
+                    "created_at": "2021-01-01T00:00:00+00:00",
                     "links": {
                         "self": "/api/v1/tasks/TAS1699854600504660_337FC34BE4304E14A193F6A2793AD9D1"
                     },

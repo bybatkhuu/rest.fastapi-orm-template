@@ -29,17 +29,17 @@ class IdPM(ExtraBasePM):
 
 
 class TimestampPM(ExtraBasePM):
-    created_at: datetime = Field(
-        ...,
-        title="Created datetime",
-        description="Created datetime of the resource.",
-        examples=["2021-01-01T00:00:00+00:00"],
-    )
     updated_at: datetime = Field(
         ...,
         title="Updated datetime",
         description="Last updated datetime of the resource.",
         examples=["2021-01-02T00:00:00+00:00"],
+    )
+    created_at: datetime = Field(
+        ...,
+        title="Created datetime",
+        description="Created datetime of the resource.",
+        examples=["2021-01-01T00:00:00+00:00"],
     )
 
 
