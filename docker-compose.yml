@@ -5,11 +5,14 @@ services:
     image: postgres:15.4-bookworm
     restart: unless-stopped
     environment:
+      PG_COLOR: ${PG_COLOR:-auto}
+      POSTGRES_INITDB_ARGS: "${POSTGRES_INITDB_ARGS:--E UTF8 --locale=en_US.UTF-8}"
       POSTGRES_USER: ${FOT_DB_USERNAME:-fot_user}
       POSTGRES_PASSWORD: "${FOT_DB_PASSWORD:-fot_password1}"
       POSTGRES_DB: ${FOT_DB_DATABASE:-fot_db}
     volumes:
       - "db-data:/var/lib/postgresql/data"
+    tty: true
 
   api:
     image: bybatkhuu/fastapi-orm-template:latest

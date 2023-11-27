@@ -2,7 +2,7 @@
 
 import os
 from urllib.parse import quote_plus
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Union
 
 from pydantic import Field, constr, root_validator, validator, AnyUrl
 
@@ -234,8 +234,12 @@ class DbConfig(BaseConfig):
     table_prefix: constr(strip_whitespace=True) = Field(default="fot_", max_length=16)
     max_try_connect: int = Field(default=3, ge=1, le=100)
     wait_seconds_try_connect: int = Field(default=10, ge=1, le=600)
-    echo_sql: bool = Field(default=False)
-    echo_pool: bool = Field(default=False)
+    echo_sql: Union[bool, constr(strip_whitespace=True, regex="^(debug)$")] = Field(
+        default=False
+    )
+    echo_pool: Union[bool, constr(strip_whitespace=True, regex="^(debug)$")] = Field(
+        default=False
+    )
     pool_size: int = Field(default=10, ge=0, le=1000)  # 0 means no limit
     max_overflow: int = Field(
         default=10, ge=0, le=1000
@@ -262,9 +266,13 @@ class FrozenDbConfig(DbConfig):
             and (f"{ENV_PREFIX_DB}DATABASE" in os.environ)
         ):
             _encoded_password = quote_plus(os.getenv(f"{ENV_PREFIX_DB}PASSWORD"))
-            values[
-                "dsn_url"
-            ] = f'{values["dialect"]}+{values["driver"]}://{os.getenv(f"{ENV_PREFIX_DB}USERNAME")}:{_encoded_password}@{os.getenv(f"{ENV_PREFIX_DB}HOST")}:{os.getenv(f"{ENV_PREFIX_DB}PORT")}/{os.getenv(f"{ENV_PREFIX_DB}DATABASE")}'
+            values["dsn_url"] = (
+                f'{values["dialect"]}+{values["driver"]}://'
+                f'{os.getenv(f"{ENV_PREFIX_DB}USERNAME")}:{_encoded_password}@'
+                f'{os.getenv(f"{ENV_PREFIX_DB}HOST")}:'
+                f'{os.getenv(f"{ENV_PREFIX_DB}PORT")}/'
+                f'{os.getenv(f"{ENV_PREFIX_DB}DATABASE")}'
+            )
 
         if (f"{ENV_PREFIX_DB}READ_DSN_URL" not in os.environ) and (
             (f"{ENV_PREFIX_DB}READ_HOST" in os.environ)
@@ -274,9 +282,13 @@ class FrozenDbConfig(DbConfig):
             and (f"{ENV_PREFIX_DB}READ_DATABASE" in os.environ)
         ):
             _encoded_password = quote_plus(os.getenv(f"{ENV_PREFIX_DB}READ_PASSWORD"))
-            values[
-                "read_dsn_url"
-            ] = f'{values["dialect"]}+{values["driver"]}://{os.getenv(f"{ENV_PREFIX_DB}READ_USERNAME")}:{_encoded_password}@{os.getenv(f"{ENV_PREFIX_DB}READ_HOST")}:{os.getenv(f"{ENV_PREFIX_DB}READ_PORT")}/{os.getenv(f"{ENV_PREFIX_DB}READ_DATABASE")}'
+            values["read_dsn_url"] = (
+                f'{values["dialect"]}+{values["driver"]}://'
+                f'{os.getenv(f"{ENV_PREFIX_DB}READ_USERNAME")}:{_encoded_password}@'
+                f'{os.getenv(f"{ENV_PREFIX_DB}READ_HOST")}:'
+                f'{os.getenv(f"{ENV_PREFIX_DB}READ_PORT")}/'
+                f'{os.getenv(f"{ENV_PREFIX_DB}READ_DATABASE")}'
+            )
 
         if not values["read_dsn_url"]:
             values["read_dsn_url"] = values["dsn_url"]

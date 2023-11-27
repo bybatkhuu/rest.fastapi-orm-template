@@ -27,10 +27,13 @@ async def async_load_structure(async_engine: AsyncEngine):
             register_models()
             await _connection.run_sync(BaseORM.metadata.create_all)
 
-        await async_engine.dispose()
     except Exception:
+        await async_engine.dispose()
         logger.exception(f"Failed to create '{_db_name}' database structure!")
-        exit(2)
+        raise
+        # exit(2)
+    finally:
+        await async_engine.dispose()
     logger.success(f"Successfully initialized '{_db_name}' database structure.")
 
 
@@ -49,10 +52,13 @@ def load_structure(engine: Engine):
             register_models()
             BaseORM.metadata.create_all(bind=_connection)
 
-        engine.dispose()
     except Exception:
+        engine.dispose()
         logger.exception(f"Failed to create '{_db_name}' database structure!")
-        exit(2)
+        raise
+        # exit(2)
+    finally:
+        engine.dispose()
     logger.success(f"Successfully initialized '{_db_name}' database structure.")
 
 

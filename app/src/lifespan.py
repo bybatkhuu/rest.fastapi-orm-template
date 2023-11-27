@@ -29,7 +29,7 @@ async def lifespan(app: FastAPI):
 
     logger.info("Preparing to startup...")
     await async_check_db(async_engine=async_write_engine)
-    await async_check_db(async_engine=async_read_engine)
+    await async_check_db(async_engine=async_read_engine, create_db=False)
     await async_load_structure(async_engine=async_write_engine)
     # Add startup code here...
     logger.success("Finished preparation to startup.")

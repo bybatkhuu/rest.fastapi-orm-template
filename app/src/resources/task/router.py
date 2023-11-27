@@ -24,7 +24,10 @@ router = APIRouter(
 
 
 @router.get(
-    "/", response_model=ResTasksPM, responses={422: {"model": InvalidBaseResPM}}
+    "/",
+    summary="Get Task List",
+    response_model=ResTasksPM,
+    responses={422: {"model": InvalidBaseResPM}},
 )
 async def get_tasks(
     request: Request,
@@ -147,6 +150,7 @@ async def get_tasks(
 
 @router.post(
     "/",
+    summary="Create Task",
     status_code=201,
     response_model=ResTaskPM,
     responses={422: {"model": InvalidBaseResPM}},
@@ -184,6 +188,7 @@ async def create_task(
 
 @router.get(
     config.api.routes.tasks["task"],
+    summary="Get Task",
     response_model=ResTaskPM,
     responses={
         404: {"model": NotFoundBaseResPM},
@@ -223,6 +228,7 @@ async def get_task(
 
 @router.put(
     config.api.routes.tasks["task"],
+    summary="Update Task",
     response_model=ResTaskPM,
     responses={
         404: {"model": NotFoundBaseResPM},
@@ -273,6 +279,7 @@ async def update_task(
 
 @router.delete(
     config.api.routes.tasks["task"],
+    summary="Delete Task",
     status_code=204,
     responses={
         404: {"model": NotFoundBaseResPM},

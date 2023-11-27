@@ -57,7 +57,7 @@ class BaseResponse(JSONResponse):
             links           (Optional[Dict[str, Any]] , optional): Links for response. Defaults to None.
             meta            (Optional[Dict[str, Any]] , optional): Meta data for response. Defaults to None.
             error           (Any                      , optional): Error data for response. Defaults to None.
-            response_schema (Optional[Type[BaseResPM]], optional): Response schema type. Defaults to Type[BaseResPM].
+            response_schema (Optional[Type[BaseResPM]], optional): Response schema type. Defaults to `Type[BaseResPM]`.
         """
 
         _http_status: HTTPStatus
