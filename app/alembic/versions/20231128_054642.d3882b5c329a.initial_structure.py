@@ -52,10 +52,15 @@ def upgrade():
             server_default=sa.text("CURRENT_TIMESTAMP"),
             nullable=False,
         ),
-        sa.PrimaryKeyConstraint("id", name=op.f("pk_fot_task")),
+        sa.PrimaryKeyConstraint(
+            "id", name=op.f("pk_fot_task")
+        ),
     )
     op.create_index(
-        "idx_created_at_desc", "fot_task", [sa.text("created_at DESC")], unique=False
+        "idx_created_at_desc",
+        "fot_task",
+        [sa.text("created_at DESC")],
+        unique=False,
     )
     # ### end Alembic commands ###
 
