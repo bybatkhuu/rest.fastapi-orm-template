@@ -37,7 +37,7 @@ services:
   #     - "${PGADMIN_PORT:-8080}:80"
 
   api:
-    image: bybatkhuu/fastapi-orm-template:latest-gpu
+    image: bybatkhuu/rest.fastapi-orm-template:latest-gpu
     runtime: nvidia
     env_file:
       - .env
@@ -46,7 +46,7 @@ services:
       CUDA_VISIBLE_DEVICES: ${CUDA_VISIBLE_DEVICES:-all}
     volumes:
       - "./scripts/docker/docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh"
-      - "./app:/app/fastapi-orm-template"
+      - "./app:/app/rest.fastapi-orm-template"
     # deploy:
     #   replicas: 0
     #   resources:

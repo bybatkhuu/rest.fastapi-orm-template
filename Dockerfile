@@ -2,9 +2,9 @@ ARG BASE_IMAGE=debian:12.1-slim
 ARG DEBIAN_FRONTEND=noninteractive
 
 ARG FOT_APP_DIR="/app"
-ARG FOT_APP_HOME="${FOT_APP_DIR}/fastapi-orm-template"
-ARG FOT_APP_DATA_DIR="/var/lib/fastapi-orm-template"
-ARG FOT_APP_LOGS_DIR="/var/log/fastapi-orm-template"
+ARG FOT_APP_HOME="${FOT_APP_DIR}/rest.fastapi-orm-template"
+ARG FOT_APP_DATA_DIR="/var/lib/rest.fastapi-orm-template"
+ARG FOT_APP_LOGS_DIR="/var/log/rest.fastapi-orm-template"
 
 
 # Here is the builder image

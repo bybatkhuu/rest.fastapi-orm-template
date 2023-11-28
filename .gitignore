@@ -524,7 +524,7 @@ archive/
 results/
 extra_configs/
 pythonpath/
-fastapi-orm-template/
+rest.fastapi-orm-template/
 {{cookiecutter.project_slug}}/
 .benchmarks/
 .temp/
@@ -542,7 +542,7 @@ archive
 results
 extra_configs
 pythonpath
-fastapi-orm-template
+rest.fastapi-orm-template
 {{cookiecutter.project_slug}}
 pm2-process.json
 sample.py

@@ -41,7 +41,7 @@ services:
       - .env
     volumes:
       - "./scripts/docker/docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh"
-      - "./app:/app/fastapi-orm-template"
+      - "./app:/app/rest.fastapi-orm-template"
     # deploy:
     #   replicas: 0
     #   resources:

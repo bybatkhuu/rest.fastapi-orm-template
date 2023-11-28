@@ -15,7 +15,7 @@ services:
     tty: true
 
   api:
-    image: bybatkhuu/fastapi-orm-template:latest
+    image: bybatkhuu/rest.fastapi-orm-template:latest
     build:
       context: .
     depends_on:
@@ -26,8 +26,8 @@ services:
       TZ: ${TZ:-Asia/Seoul}
       FOT_APP_PORT: ${FOT_APP_PORT:-8000}
     volumes:
-      - "api-logs:/var/log/fastapi-orm-template"
-      - "api-data:/var/lib/fastapi-orm-template"
+      - "api-logs:/var/log/rest.fastapi-orm-template"
+      - "api-data:/var/lib/rest.fastapi-orm-template"
     ports:
       - "${FOT_APP_PORT:-8000}:${FOT_APP_PORT:-8000}"
     tty: true
