@@ -76,12 +76,12 @@ async def async_is_db_connectable(async_engine: AsyncEngine) -> bool:
     return _is_connectable
 
 
-async def async_check_db(async_engine: AsyncEngine, create_db: bool = True) -> bool:
+async def async_check_db(async_engine: AsyncEngine, is_write_db: bool = True) -> bool:
     """Check database connection, exit application if failed after few attempts.
 
     Args:
         async_engine (AsyncEngine, required): SQLAlchemy async engine to check connection.
-        create_db    (bool       , optional): Create database if it doesn't exist. Defaults to True.
+        is_write_db  (bool       , optional): If True, create database if it doesn't exist. Defaults to True.
 
     Raises:
         ConnectionError: If can't connect to database after few attempts.
@@ -91,12 +91,13 @@ async def async_check_db(async_engine: AsyncEngine, create_db: bool = True) -> b
     """
 
     _is_done = False
+    _tmp_str = "" if is_write_db else "read "
     _db_name = async_engine.url.database
-    logger.info(f"Connecting to the '{_db_name}' database...")
+    logger.info(f"Connecting to the '{_db_name}' {_tmp_str}database...")
     for _i in range(config.db.max_try_connect):
-        # logger.debug(f"Trying to connect '{_db_name}' database {_i + 1} time(s)...")
+        # logger.debug(f"Trying to connect '{_db_name}' {_tmp_str}database {_i + 1} time(s)...")
 
-        if create_db:
+        if is_write_db:
             await async_create_db(async_engine=async_engine, warn_mode=WarnEnum.IGNORE)
 
         if await async_is_db_connectable(async_engine=async_engine):
@@ -104,17 +105,17 @@ async def async_check_db(async_engine: AsyncEngine, create_db: bool = True) -> b
             break
         else:
             if (config.db.max_try_connect - 1) <= _i:
-                _message = f"Falied to connect '{_db_name}' database {_i + 1} time(s)!"
+                _message = f"Falied to connect '{_db_name}' {_tmp_str}database {_i + 1} time(s)!"
                 logger.error(_message)
                 raise ConnectionError(_message)
                 # exit(2)
 
             logger.warning(
-                f"Unable to connect '{_db_name}' database {_i + 1} time(s), retrying in {config.db.wait_seconds_try_connect} second(s)..."
+                f"Unable to connect '{_db_name}' {_tmp_str}database {_i + 1} time(s), retrying in {config.db.wait_seconds_try_connect} second(s)..."
             )
             await asyncio.sleep(config.db.wait_seconds_try_connect)
 
-    logger.success(f"Successfully connected to the '{_db_name}' database.")
+    logger.success(f"Successfully connected to the '{_db_name}' {_tmp_str}database.")
     return _is_done
 
 
@@ -179,12 +180,12 @@ def is_db_connectable(engine: Engine) -> bool:
     return _is_connectable
 
 
-def check_db(engine: Engine, create_db: bool = True) -> bool:
+def check_db(engine: Engine, is_write_db: bool = True) -> bool:
     """Check database connection, exit application if failed after few attempts.
 
     Args:
-        engine    (Engine, required): SQLAlchemy engine to check connection.
-        create_db (bool  , optional): Create database if it doesn't exist. Defaults to True.
+        engine       (Engine, required): SQLAlchemy engine to check connection.
+        is_write_db  (bool  , optional): If True, create database if it doesn't exist. Defaults to True.
 
     Raises:
         ConnectionError: If can't connect to database after few attempts.
@@ -194,12 +195,13 @@ def check_db(engine: Engine, create_db: bool = True) -> bool:
     """
 
     _is_done = False
+    _tmp_str = "" if is_write_db else "read "
     _db_name = engine.url.database
-    logger.info(f"Connecting to the '{_db_name}' database...")
+    logger.info(f"Connecting to the '{_db_name}' {_tmp_str}database...")
     for _i in range(config.db.max_try_connect):
-        # logger.debug(f"Trying to connect '{_db_name}' database {_i + 1} time(s)...")
+        # logger.debug(f"Trying to connect '{_db_name}' {_tmp_str}database {_i + 1} time(s)...")
 
-        if create_db:
+        if is_write_db:
             create_db(engine=engine, warn_mode=WarnEnum.IGNORE)
 
         if is_db_connectable(engine=engine):
@@ -207,17 +209,17 @@ def check_db(engine: Engine, create_db: bool = True) -> bool:
             break
         else:
             if (config.db.max_try_connect - 1) <= _i:
-                _message = f"Falied to connect '{_db_name}' database {_i + 1} time(s)!"
+                _message = f"Falied to connect '{_db_name}' {_tmp_str}database {_i + 1} time(s)!"
                 logger.error(_message)
                 raise ConnectionError(_message)
                 # exit(2)
 
             logger.warning(
-                f"Unable to connect '{_db_name}' database {_i + 1} time(s), retrying in {config.db.wait_seconds_try_connect} second(s)..."
+                f"Unable to connect '{_db_name}' {_tmp_str}database {_i + 1} time(s), retrying in {config.db.wait_seconds_try_connect} second(s)..."
             )
             time.sleep(config.db.wait_seconds_try_connect)
 
-    logger.success(f"Successfully connected to the '{_db_name}' database.")
+    logger.success(f"Successfully connected to the '{_db_name}' {_tmp_str}database.")
     return _is_done
 
 

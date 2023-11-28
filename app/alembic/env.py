@@ -7,7 +7,7 @@ from logging.config import fileConfig
 from alembic import context
 
 from src.config import config as app_config
-from src.databases.rdb import make_engine
+from src.databases.rdb import make_engine, check_db
 from src.core.models import BaseORM
 
 
@@ -75,8 +75,10 @@ def run_migrations_online() -> None:
     #     poolclass=pool.NullPool,
     # )
 
-    connectable = make_engine(dsn_url=app_config.db.dsn_url)
-    with connectable.connect() as connection:
+    _engine = make_engine(dsn_url=app_config.db.dsn_url)
+
+    check_db(engine=_engine)
+    with _engine.connect() as connection:
         context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
