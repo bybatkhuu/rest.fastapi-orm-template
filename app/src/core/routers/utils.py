@@ -63,7 +63,7 @@ async def get_health(request: Request):
     _is_write_db = False
     if await async_is_db_connectable(async_engine=async_write_engine):
         _data["DB"]["write"] = {
-            "message": "Write database is up and connectable.",
+            "message": "Write database is up and connected.",
             "is_alive": True,
         }
         _is_write_db = True
@@ -71,7 +71,7 @@ async def get_health(request: Request):
     _is_read_db = False
     if await async_is_db_connectable(async_engine=async_read_engine):
         _data["DB"]["read"] = {
-            "message": "Read database is up and connectable.",
+            "message": "Read database is up and connected.",
             "is_alive": True,
         }
         _is_read_db = True
