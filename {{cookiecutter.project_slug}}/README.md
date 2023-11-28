@@ -53,18 +53,18 @@ cd ~/workspaces/projects
 **A.** Clone the repository (for **public**: git + https):
 
 ```sh
-git clone https://github.com/{{cookiecutter.github_owner}}/rest.{{cookiecutter.project_slug}}.git && \
-    cd rest.{{cookiecutter.project_slug}}
+git clone https://github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}.git && \
+    cd {{cookiecutter.project_slug}}
 ```
 
 **B.** Clone the repository (for **development**: git + ssh key):
 
 ```sh
-git clone git@github.com:{{cookiecutter.github_owner}}/rest.{{cookiecutter.project_slug}}.git && \
-    cd rest.{{cookiecutter.project_slug}}
+git clone git@github.com:{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}.git && \
+    cd {{cookiecutter.project_slug}}
 ```
 
-**C.** Or download source code: <https://github.com/{{cookiecutter.github_owner}}/rest.{{cookiecutter.project_slug}}/releases>
+**C.** Or download source code: <https://github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/releases>
 
 ### 3. Install python dependencies
 
