@@ -48,7 +48,7 @@ async def get_health(request: Request):
     _message = "Some services are not available or not working properly!"
 
     _data = {
-        "db": {
+        "DB": {
             "write": {
                 "message": "Can't connect to the write database!",
                 "is_alive": False,
@@ -62,7 +62,7 @@ async def get_health(request: Request):
 
     _is_write_db = False
     if await async_is_db_connectable(async_engine=async_write_engine):
-        _data["db"]["write"] = {
+        _data["DB"]["write"] = {
             "message": "Write database is up and connected.",
             "is_alive": True,
         }
@@ -70,7 +70,7 @@ async def get_health(request: Request):
 
     _is_read_db = False
     if await async_is_db_connectable(async_engine=async_read_engine):
-        _data["db"]["read"] = {
+        _data["DB"]["read"] = {
             "message": "Read database is up and connected.",
             "is_alive": True,
         }
