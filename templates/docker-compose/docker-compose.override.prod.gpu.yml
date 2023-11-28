@@ -37,7 +37,7 @@ services:
   #     - "${PGADMIN_PORT:-8080}:80"
 
   api:
-    image: bybatkhuu/fastapi-orm-template:0.0.2-231015-gpu
+    image: bybatkhuu/fastapi-orm-template:1.0.0-231127-gpu
     runtime: nvidia
     env_file:
       - .env
