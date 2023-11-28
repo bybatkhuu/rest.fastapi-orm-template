@@ -188,7 +188,7 @@ nano ./pm2-process.json
 
 ## 2. Start PM2 process:
 pm2 start ./pm2-process.json && \
-    pm2 logs --lines 50 fastapi-orm-template
+    pm2 logs --lines 50 rest.fastapi-orm-template
 
 
 ## 3. Stop PM2 process:
@@ -280,8 +280,8 @@ FOT_DB_DATABASE=fot_db
 
 ## -- APP configs -- ##
 FOT_APP_PORT=8000
-FOT_APP_LOGS_DIR="/var/log/fastapi-orm-template"
-FOT_APP_DATA_DIR="/var/lib/fastapi-orm-template"
+FOT_APP_LOGS_DIR="/var/log/rest.fastapi-orm-template"
+FOT_APP_DATA_DIR="/var/lib/rest.fastapi-orm-template"
 
 
 
