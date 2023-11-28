@@ -1,6 +1,5 @@
-env: local
+env: "local"
 debug: false
-tz: "UTC"
 
 app:
   name: "{{cookiecutter.project_name}}"

@@ -260,7 +260,6 @@ You can use the following environment variables to configure:
 ## --- Environment variable --- ##
 ENV=local
 DEBUG=false
-# TZ={{cookiecutter.timezone}}
 
 
 ## --- DB configs --- ##

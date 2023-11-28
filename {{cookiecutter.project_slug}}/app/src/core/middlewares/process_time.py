@@ -18,7 +18,7 @@ class ProcessTimeMiddleware(BaseHTTPMiddleware):
         _start_time: int = time.perf_counter_ns()
         response: Response = await call_next(request)
         _end_time: int = time.perf_counter_ns()
-        _response_time: float = round((_end_time - _start_time) / 1000000, 1)
+        _response_time: float = round((_end_time - _start_time) / 1_000_000, 1)
         response.headers["X-Process-Time"] = str(_response_time)
 
         return response

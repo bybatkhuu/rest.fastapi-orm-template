@@ -4,9 +4,13 @@ set -euo pipefail
 
 _doStart()
 {
-	sleep 3
-	python -u ./main.py || exit 2
-	# uvicorn main:app --host=0.0.0.0 --port={% raw %}${{% endraw %}{{cookiecutter.env_prefix}}APP_PORT:-8000} --no-server-header --proxy-headers --forwarded-allow-ips='*' --no-access-log || exit 2
+	echo "INFO: Starting alembic migration..."
+	alembic upgrade head || exit 2
+	echo -e "OK: Alembic migration completed successfully.\n"
+
+	echo "OK: Database is ready. Continuing with application startup..."
+	exec python -u ./main.py || exit 2
+	# exec uvicorn main:app --host=0.0.0.0 --port={% raw %}${{% endraw %}{{cookiecutter.env_prefix}}APP_PORT:-8000} --no-server-header --proxy-headers --forwarded-allow-ips='*' --no-access-log || exit 2
 	exit 0
 }
 
@@ -37,7 +41,7 @@ main()
 				/bin/bash
 			else
 				echo "INFO: Executing command -> ${*}"
-				/bin/bash -c "${@}" || exit 2
+				exec /bin/bash -c "${@}" || exit 2
 			fi
 			exit 0;;
 		*)

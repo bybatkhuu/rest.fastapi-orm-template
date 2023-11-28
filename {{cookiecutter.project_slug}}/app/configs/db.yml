@@ -1,10 +1,11 @@
 db:
-  dialect: postgresql
-  driver: psycopg
+  dialect: "postgresql"
+  driver: "psycopg"
   dsn_url: "postgresql+psycopg://{{cookiecutter.project_abbr}}_user:{{cookiecutter.project_abbr}}_password1@localhost:5432/{{cookiecutter.project_abbr}}_db"
   # read_dsn_url: "postgresql+psycopg://{{cookiecutter.project_abbr}}_user:{{cookiecutter.project_abbr}}_password1@localhost:5432/{{cookiecutter.project_abbr}}_db"
+  table_prefix: "{{cookiecutter.project_abbr}}_"
   max_try_connect: 3
-  wait_seconds_try_connect: 10
+  wait_seconds_try_connect: 5
   echo_sql: false
   echo_pool: false
   pool_size: 10 # 0 means no limit

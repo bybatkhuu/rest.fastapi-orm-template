@@ -26,4 +26,4 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          ./scripts/bump-version.sh -b={% raw %}${{ inputs.bump_type }}{% endraw %} -c -p
+          ./scripts/bump-version.sh -b={% raw %}${{ inputs.bump_type }}{% endraw %} -c -t -p
