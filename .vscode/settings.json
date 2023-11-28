@@ -80,7 +80,6 @@
 		"**/*.log": true,
 		"**/*.out": true,
 		"**/*.bak": true,
-		"**/.bak.*": true,
 		"**/.DS_Store": true,
 		"**/Thumbs.db": true
 	},
@@ -124,7 +123,6 @@
 		"**/*.log": true,
 		"**/*.out": true,
 		"**/*.bak": true,
-		"**/.bak.*": true,
 		"**/.DS_Store": true,
 		"**/Thumbs.db": true
 	},
