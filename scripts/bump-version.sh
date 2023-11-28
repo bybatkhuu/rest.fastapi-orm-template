@@ -12,6 +12,12 @@ cd "${_PROJECT_DIR}" || exit 2
 # shellcheck disable=SC1091
 source ./scripts/base.sh
 
+# Checking 'jq' is installed or not:
+if [ -z "$(which jq)" ]; then
+	echoError "'jq' not found or not installed."
+	exit 1
+fi
+
 # Loading .env file (if exists):
 if [ -f ".env" ]; then
 	# shellcheck disable=SC1091
