@@ -233,7 +233,7 @@ class DbConfig(BaseConfig):
     read_dsn_url: Optional[AnyUrl] = Field(default=None)
     table_prefix: constr(strip_whitespace=True) = Field(default="fot_", max_length=16)
     max_try_connect: int = Field(default=3, ge=1, le=100)
-    wait_seconds_try_connect: int = Field(default=10, ge=1, le=600)
+    wait_seconds_try_connect: int = Field(default=5, ge=1, le=600)
     echo_sql: Union[bool, constr(strip_whitespace=True, regex="^(debug)$")] = Field(
         default=False
     )

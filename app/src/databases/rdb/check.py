@@ -94,7 +94,7 @@ async def async_check_db(async_engine: AsyncEngine, create_db: bool = True) -> b
     _db_name = async_engine.url.database
     logger.info(f"Connecting to the '{_db_name}' database...")
     for _i in range(config.db.max_try_connect):
-        logger.debug(f"Trying to connect '{_db_name}' database {_i + 1} time(s)...")
+        # logger.debug(f"Trying to connect '{_db_name}' database {_i + 1} time(s)...")
 
         if create_db:
             await async_create_db(async_engine=async_engine, warn_mode=WarnEnum.IGNORE)
@@ -109,8 +109,8 @@ async def async_check_db(async_engine: AsyncEngine, create_db: bool = True) -> b
                 raise ConnectionError(_message)
                 # exit(2)
 
-            logger.debug(
-                f"Failed to connect '{_db_name}' database {_i + 1} time(s), attempting to connect again after {config.db.wait_seconds_try_connect} second(s)..."
+            logger.warning(
+                f"Unable to connect '{_db_name}' database {_i + 1} time(s), retrying in {config.db.wait_seconds_try_connect} second(s)..."
             )
             await asyncio.sleep(config.db.wait_seconds_try_connect)
 
@@ -197,7 +197,7 @@ def check_db(engine: Engine, create_db: bool = True) -> bool:
     _db_name = engine.url.database
     logger.info(f"Connecting to the '{_db_name}' database...")
     for _i in range(config.db.max_try_connect):
-        logger.debug(f"Trying to connect '{_db_name}' database {_i + 1} time(s)...")
+        # logger.debug(f"Trying to connect '{_db_name}' database {_i + 1} time(s)...")
 
         if create_db:
             create_db(engine=engine, warn_mode=WarnEnum.IGNORE)
@@ -212,8 +212,8 @@ def check_db(engine: Engine, create_db: bool = True) -> bool:
                 raise ConnectionError(_message)
                 # exit(2)
 
-            logger.debug(
-                f"Failed to connect '{_db_name}' database {_i + 1} time(s), attempting to connect again after {config.db.wait_seconds_try_connect} second(s)..."
+            logger.warning(
+                f"Unable to connect '{_db_name}' database {_i + 1} time(s), retrying in {config.db.wait_seconds_try_connect} second(s)..."
             )
             time.sleep(config.db.wait_seconds_try_connect)
 
