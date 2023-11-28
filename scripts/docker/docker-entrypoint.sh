@@ -4,13 +4,34 @@ set -euo pipefail
 
 _doStart()
 {
-	sleep 3
-	alembic upgrade head || exit 2
+	# sleep 3
+
+	echo "INFO: Waiting for database to be ready..."
+	_max_attempts=3
+	_attempt_counter=0
+	_sleep_seconds=5
+
+	while true; do
+		if alembic upgrade head 2>/dev/null; then
+			echo "OK: Alembic migration completed successfully."
+			break
+		else
+			if (( _attempt_counter == _max_attempts )); then
+				echo "ERROR: Maximum attempts reached. Failed to connect database!"
+				exit 1
+			fi
+
+			_attempt_counter=$((_attempt_counter + 1))
+			echo "WARN: Unable to connect database ${_attempt_counter} time(s), retrying in ${_sleep_seconds} second(s)..."
+			sleep ${_sleep_seconds}
+		fi
+	done
+	echo "OK: Database is ready. Continuing with application startup..."
+
 	exec python -u ./main.py || exit 2
 	# exec uvicorn main:app --host=0.0.0.0 --port="${FOT_APP_PORT:-8000}" --no-server-header --proxy-headers --forwarded-allow-ips='*' --no-access-log || exit 2
 	exit 0
 }
-
 
 main()
 {
