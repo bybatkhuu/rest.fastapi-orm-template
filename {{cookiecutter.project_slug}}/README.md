@@ -263,7 +263,7 @@ DEBUG=false
 
 
 ## --- DB configs --- ##
-{{cookiecutter.env_prefix}}DB_HOST=db
+{{cookiecutter.env_prefix}}DB_HOST=localhost
 {{cookiecutter.env_prefix}}DB_PORT=5432
 {{cookiecutter.env_prefix}}DB_USERNAME={{cookiecutter.project_abbr}}_user
 {{cookiecutter.env_prefix}}DB_PASSWORD="{{cookiecutter.project_abbr}}_password1"

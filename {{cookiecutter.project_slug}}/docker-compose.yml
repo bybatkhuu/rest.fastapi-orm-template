@@ -24,6 +24,7 @@ services:
     environment:
       TERM: ${TERM:-xterm}
       TZ: ${TZ:-Asia/Seoul}
+      # {{cookiecutter.env_prefix}}DB_HOST: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_HOST:-db}
       {{cookiecutter.env_prefix}}APP_PORT: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}APP_PORT:-8000}
     volumes:
       - "api-logs:/var/log/{{cookiecutter.project_slug}}"
