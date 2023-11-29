@@ -37,7 +37,7 @@ services:
   #     - "${PGADMIN_PORT:-8080}:80"
 
   api:
-    image: bybatkhuu/rest.fastapi-orm-template:1.0.3-231128
+    image: bybatkhuu/rest.fastapi-orm-template:1.1.0-231129
     env_file:
       - .env
     # deploy:
