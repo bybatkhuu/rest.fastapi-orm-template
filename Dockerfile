@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=debian:12.1-slim
+ARG BASE_IMAGE=debian:12.2-slim
 ARG DEBIAN_FRONTEND=noninteractive
 
 ARG FOT_APP_DIR="/app"
