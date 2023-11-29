@@ -28,19 +28,19 @@ def _pre_load_hook(config_data: Dict[str, Any]) -> Dict[str, Any]:
             (config_data["env"] == EnvEnum.STAGING)
             or (config_data["env"] == EnvEnum.PRODUCTION)
         ):
-            if (not os.getenv(f"{ENV_PREFIX_DB}DSN_URL")) and (
-                not os.getenv(f"{ENV_PREFIX_DB}HOST")
-                or not os.getenv(f"{ENV_PREFIX_DB}PORT")
-                or not os.getenv(f"{ENV_PREFIX_DB}USERNAME")
-                or not os.getenv(f"{ENV_PREFIX_DB}PASSWORD")
-                or not os.getenv(f"{ENV_PREFIX_DB}DATABASE")
+            if f"{ENV_PREFIX_DB}DSN_URL" not in os.environ and (
+                f"{ENV_PREFIX_DB}HOST" not in os.environ
+                or f"{ENV_PREFIX_DB}PORT" not in os.environ
+                or f"{ENV_PREFIX_DB}USERNAME" not in os.environ
+                or f"{ENV_PREFIX_DB}PASSWORD" not in os.environ
+                or f"{ENV_PREFIX_DB}DATABASE" not in os.environ
             ):
                 raise KeyError(
                     f"Missing required '{ENV_PREFIX_DB}*' environment variables for staging/production environment!"
                 )
     except Exception:
-        logger.exception(f"Error occured while pre-loading config:")
-        exit(2)
+        logger.error(f"Error occured while pre-loading config!")
+        raise
 
     return config_data
 
