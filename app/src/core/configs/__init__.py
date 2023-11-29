@@ -227,13 +227,38 @@ class DbConfig(BaseConfig):
     driver: constr(strip_whitespace=True) = Field(
         default="psycopg", min_length=2, max_length=32
     )
-    dsn_url: AnyUrl = Field(
-        default="postgresql+psycopg://fot_user:fot_password1@localhost:5432/fot_db"
+
+    host: constr(strip_whitespace=True) = Field(
+        default="localhost", min_length=2, max_length=128
     )
+    port: int = Field(default=5432, ge=100, le=65535)
+    username: constr(strip_whitespace=True) = Field(
+        default="fot_user", min_length=2, max_length=32
+    )
+    password: constr(strip_whitespace=True) = Field(
+        default="fot_password1", min_length=2, max_length=64
+    )
+    database: constr(strip_whitespace=True) = Field(
+        default="fot_db", min_length=2, max_length=128
+    )
+    dsn_url: Optional[AnyUrl] = Field(default=None)
+
+    read_host: Optional[
+        constr(strip_whitespace=True, min_length=2, max_length=128)
+    ] = Field(default=None)
+    read_port: Optional[int] = Field(default=None, ge=100, le=65535)
+    read_username: Optional[
+        constr(strip_whitespace=True, min_length=2, max_length=32)
+    ] = Field(default=None)
+    read_password: Optional[
+        constr(strip_whitespace=True, min_length=2, max_length=64)
+    ] = Field(default=None)
+    read_database: Optional[
+        constr(strip_whitespace=True, min_length=2, max_length=128)
+    ] = Field(default=None)
     read_dsn_url: Optional[AnyUrl] = Field(default=None)
-    table_prefix: constr(strip_whitespace=True) = Field(
-        default="fot_", max_length=16
-    )
+
+    table_prefix: constr(strip_whitespace=True) = Field(default="fot_", max_length=16)
     max_try_connect: int = Field(default=3, ge=1, le=100)
     wait_seconds_try_connect: int = Field(default=5, ge=1, le=600)
     echo_sql: Union[bool, constr(strip_whitespace=True, regex="^(debug)$")] = Field(
@@ -260,40 +285,35 @@ class DbConfig(BaseConfig):
 class FrozenDbConfig(DbConfig):
     @root_validator(skip_on_failure=True)
     def _check_all(cls, values: Dict[str, Any]) -> Dict[str, Any]:
-        if (f"{ENV_PREFIX_DB}DSN_URL" not in os.environ) and (
-            (f"{ENV_PREFIX_DB}HOST" in os.environ)
-            and (f"{ENV_PREFIX_DB}PORT" in os.environ)
-            and (f"{ENV_PREFIX_DB}USERNAME" in os.environ)
-            and (f"{ENV_PREFIX_DB}PASSWORD" in os.environ)
-            and (f"{ENV_PREFIX_DB}DATABASE" in os.environ)
-        ):
-            _encoded_password = quote_plus(os.getenv(f"{ENV_PREFIX_DB}PASSWORD"))
-            values["dsn_url"] = (
-                f'{values["dialect"]}+{values["driver"]}://'
-                f'{os.getenv(f"{ENV_PREFIX_DB}USERNAME")}:{_encoded_password}@'
-                f'{os.getenv(f"{ENV_PREFIX_DB}HOST")}:'
-                f'{os.getenv(f"{ENV_PREFIX_DB}PORT")}/'
-                f'{os.getenv(f"{ENV_PREFIX_DB}DATABASE")}'
-            )
+        _dsn_url_template = (
+            "{dialect}+{driver}://{username}:{password}@{host}:{port}/{database}"
+        )
 
-        if (f"{ENV_PREFIX_DB}READ_DSN_URL" not in os.environ) and (
-            (f"{ENV_PREFIX_DB}READ_HOST" in os.environ)
-            and (f"{ENV_PREFIX_DB}READ_PORT" in os.environ)
-            and (f"{ENV_PREFIX_DB}READ_USERNAME" in os.environ)
-            and (f"{ENV_PREFIX_DB}READ_PASSWORD" in os.environ)
-            and (f"{ENV_PREFIX_DB}READ_DATABASE" in os.environ)
-        ):
-            _encoded_password = quote_plus(os.getenv(f"{ENV_PREFIX_DB}READ_PASSWORD"))
-            values["read_dsn_url"] = (
-                f'{values["dialect"]}+{values["driver"]}://'
-                f'{os.getenv(f"{ENV_PREFIX_DB}READ_USERNAME")}:{_encoded_password}@'
-                f'{os.getenv(f"{ENV_PREFIX_DB}READ_HOST")}:'
-                f'{os.getenv(f"{ENV_PREFIX_DB}READ_PORT")}/'
-                f'{os.getenv(f"{ENV_PREFIX_DB}READ_DATABASE")}'
+        if not values["dsn_url"]:
+            _encoded_password = quote_plus(values["password"])
+            values["dsn_url"] = _dsn_url_template.format(
+                dialect=values["dialect"],
+                driver=values["driver"],
+                username=values["username"],
+                password=_encoded_password,
+                host=values["host"],
+                port=values["port"],
+                database=values["database"],
             )
 
         if not values["read_dsn_url"]:
-            values["read_dsn_url"] = values["dsn_url"]
+            _encoded_password = quote_plus(
+                values["read_password"] or values["password"]
+            )
+            values["read_dsn_url"] = _dsn_url_template.format(
+                dialect=values["dialect"],
+                driver=values["driver"],
+                username=values["read_username"] or values["username"],
+                password=_encoded_password,
+                host=values["read_host"] or values["host"],
+                port=values["read_port"] or values["port"],
+                database=values["read_database"] or values["database"],
+            )
 
         return values
 

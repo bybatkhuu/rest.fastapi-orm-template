@@ -1,7 +1,17 @@
 db:
   dialect: "postgresql"
   driver: "psycopg"
-  dsn_url: "postgresql+psycopg://fot_user:fot_password1@localhost:5432/fot_db"
+  host: "localhost"
+  port: 5432
+  username: "fot_user"
+  password: "fot_password1"
+  database: "fot_db"
+  # dsn_url: "postgresql+psycopg://fot_user:fot_password1@localhost:5432/fot_db"
+  # read_host: "localhost"
+  # read_port: 5432
+  # read_username: "fot_user"
+  # read_password: "fot_password1"
+  # read_database: "fot_db"
   # read_dsn_url: "postgresql+psycopg://fot_user:fot_password1@localhost:5432/fot_db"
   table_prefix: "fot_"
   max_try_connect: 3
