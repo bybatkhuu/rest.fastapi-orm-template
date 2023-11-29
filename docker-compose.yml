@@ -24,6 +24,7 @@ services:
     environment:
       TERM: ${TERM:-xterm}
       TZ: ${TZ:-Asia/Seoul}
+      # FOT_DB_HOST: ${FOT_DB_HOST:-db}
       FOT_APP_PORT: ${FOT_APP_PORT:-8000}
     volumes:
       - "api-logs:/var/log/rest.fastapi-orm-template"
