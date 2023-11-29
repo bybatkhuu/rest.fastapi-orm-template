@@ -1,7 +1,17 @@
 db:
   dialect: "postgresql"
   driver: "psycopg"
-  dsn_url: "postgresql+psycopg://{{cookiecutter.project_abbr}}_user:{{cookiecutter.project_abbr}}_password1@localhost:5432/{{cookiecutter.project_abbr}}_db"
+  host: "localhost"
+  port: 5432
+  username: "{{cookiecutter.project_abbr}}_user"
+  password: "{{cookiecutter.project_abbr}}_password1"
+  database: "{{cookiecutter.project_abbr}}_db"
+  # dsn_url: "postgresql+psycopg://{{cookiecutter.project_abbr}}_user:{{cookiecutter.project_abbr}}_password1@localhost:5432/{{cookiecutter.project_abbr}}_db"
+  # read_host: "localhost"
+  # read_port: 5432
+  # read_username: "{{cookiecutter.project_abbr}}_user"
+  # read_password: "{{cookiecutter.project_abbr}}_password1"
+  # read_database: "{{cookiecutter.project_abbr}}_db"
   # read_dsn_url: "postgresql+psycopg://{{cookiecutter.project_abbr}}_user:{{cookiecutter.project_abbr}}_password1@localhost:5432/{{cookiecutter.project_abbr}}_db"
   table_prefix: "{{cookiecutter.project_abbr}}_"
   max_try_connect: 3
