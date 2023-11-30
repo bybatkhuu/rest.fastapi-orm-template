@@ -5,6 +5,7 @@ services:
     image: postgres:15.4-bookworm
     restart: unless-stopped
     environment:
+      TERM: ${TERM:-xterm}
       PG_COLOR: ${PG_COLOR:-auto}
       POSTGRES_INITDB_ARGS: "${POSTGRES_INITDB_ARGS:--E UTF8 --locale=en_US.UTF-8}"
       POSTGRES_USER: ${FOT_DB_USERNAME:-fot_user}

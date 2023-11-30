@@ -12,7 +12,7 @@ psycopg[c]==3.1.13
 # psycopg[binary]==3.1.13
 alembic==1.12.1
 # beans-logging[fastapi]==6.0.0
-beans-logging-fastapi==1.0.2
+beans-logging-fastapi==1.1.0
 onion-config[pydantic-v1]==5.1.0
 aiohttp==3.9.1
 fastapi[all]==0.99.1
