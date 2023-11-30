@@ -6,6 +6,6 @@
 	"repo_owner": "username",
 	"github_owner": "{{cookiecutter.repo_owner}}",
 	"docker_registry": "{{cookiecutter.repo_owner}}",
-	"version": "1.1.0-231129",
+	"version": "1.2.0-231130",
 	"domain": "example.com"
 }

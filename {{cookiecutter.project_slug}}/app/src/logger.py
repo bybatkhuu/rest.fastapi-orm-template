@@ -16,7 +16,9 @@ logger: Logger = logger_loader.load()
 
 def _http_file_format(record: dict) -> str:
     _format = http_file_format(
-        record=record, msg_format=config.logger.extra.http_file_format
+        record=record,
+        msg_format=config.logger.extra.http_file_format,
+        tz=config.logger.extra.http_file_tz,
     )
     return _format
 
