@@ -1,5 +1,5 @@
 logger:
-  app_name: "{app_slug}"
+  app_name: "{api_slug}"
   level: "INFO"
   use_diagnose: false
   stream:
@@ -8,7 +8,7 @@ logger:
     std_handler:
       enabled: true
   file:
-    logs_dir: "/var/log/{app_name}"
+    logs_dir: "../logs"
     rotate_size: 10000000 # 10MB
     rotate_time: "00:00:00"
     backup_count: 90
@@ -32,10 +32,11 @@ logger:
     mute_modules:
       [
         "uvicorn.access",
+        "uvicorn.error",
+        "multipart",
         "watchfiles",
         "watchfiles.main",
         "watchfiles.watcher",
-        "sqlalchemy",
       ]
   extra:
     http_std_msg_format: '<n><w>[{request_id}]</w></n> {client_host} {user_id} "<u>{method} {url_path}</u> HTTP/{http_version}" {status_code} {content_length}B {response_time}ms'

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from pydantic import validate_arguments
+from pydantic import validate_call
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
@@ -12,12 +12,12 @@ from beans_logging_fastapi import (
     ResponseHTTPInfoMiddleware,
 )
 
-from src.config import config
-from src.core.middlewares import ProcessTimeMiddleware, RequestIdMiddleware
+from .config import config
+from .core.middlewares import ProcessTimeMiddleware, RequestIdMiddleware
 
 
-@validate_arguments(config=dict(arbitrary_types_allowed=True))
-def add_middlewares(app: FastAPI):
+@validate_call(config={"arbitrary_types_allowed": True})
+def add_middlewares(app: FastAPI) -> None:
     """Add middlewares to FastAPI app.
 
     Args:
@@ -33,12 +33,14 @@ def add_middlewares(app: FastAPI):
     )
     app.add_middleware(
         RequestHTTPInfoMiddleware,
-        has_proxy_headers=config.app.behind_proxy,
-        has_cf_headers=config.app.behind_cf_proxy,
+        has_proxy_headers=config.api.behind_proxy,
+        has_cf_headers=config.api.behind_cf_proxy,
     )
-    app.add_middleware(GZipMiddleware, minimum_size=config.app.gzip_min_size)
-    app.add_middleware(CORSMiddleware, **config.app.cors.dict())
-    app.add_middleware(TrustedHostMiddleware, allowed_hosts=config.app.allowed_hosts)
+    app.add_middleware(GZipMiddleware, minimum_size=config.api.gzip_min_size)
+    app.add_middleware(CORSMiddleware, **config.api.security.cors.model_dump())
+    app.add_middleware(
+        TrustedHostMiddleware, allowed_hosts=config.api.security.allowed_hosts
+    )
     app.add_middleware(RequestIdMiddleware)
     app.add_middleware(ProcessTimeMiddleware)
 

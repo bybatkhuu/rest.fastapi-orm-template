@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from pydantic import validate_arguments
+from pydantic import validate_call
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 
-from src.core.handlers import (
+from .core.handlers import (
     not_found_handler,
     method_not_allowed_handler,
     server_error_handler,
@@ -13,8 +13,8 @@ from src.core.handlers import (
 )
 
 
-@validate_arguments(config=dict(arbitrary_types_allowed=True))
-def add_exception_handlers(app: FastAPI):
+@validate_call(config={"arbitrary_types_allowed": True})
+def add_exception_handlers(app: FastAPI) -> None:
     """Add exception handlers to FastAPI application.
 
     Args:
