@@ -136,12 +136,6 @@ pip install -r ./requirements/requirements.amd64.txt
 
 ```sh
 pip install -r ./requirements/requirements.arm64.txt
-```
-
-**OPTION C.** For **NVIDIA GPU** and **x86_64** CPU:
-
-```sh
-pip install -r ./requirements/requirements.gpu.txt
 ``` -->
 
 ### 4. 🌎 Configure environment variables
@@ -365,7 +359,7 @@ FOT_API_DATA_DIR="/var/lib/rest.fastapi-orm-template"
 
 
 ## -- Docker build args -- ##
-# HASH_PASSWORD="\$5\$S6d3bt3eXvBW3zT1\$GcPvS36pfZ1Sk/oE8ixklLYrvQegc1xFjtE7gxlzJU8" # !!! CHANGE THIS TO REAL HASHED PASSWORD! DEFAULT: "FOT_USER_PASSWORD123" !!!
+# HASH_PASSWORD="\$5\$S6d3bt3eXvBW3zT1\$GcPvS36pfZ1Sk/oE8ixklLYrvQegc1xFjtE7gxlzJU8" # !!! CHANGE THIS TO REAL HASHED PASSWORD !!!
 # IMG_ARGS="--build-arg HASH_PASSWORD=${HASH_PASSWORD}"
 ```
 
