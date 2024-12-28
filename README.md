@@ -56,7 +56,7 @@ This is a template repository for FastAPI with ORM (SQLAlchemy) projects.
 - Install [**docker** and **docker compose**](https://docs.docker.com/engine/install)
     - Docker image: [**bybatkhuu/rest.fastapi-orm-template**](https://hub.docker.com/repository/docker/bybatkhuu/rest.fastapi-orm-template)
 
-For **standalone** environment:
+For **standalone** runtime:
 
 - Install **Python (>= v3.9)** and **pip (>= 23)**:
     - **[RECOMMENDED] [Miniconda (v3)](https://docs.anaconda.com/miniconda)**
@@ -66,8 +66,8 @@ For **standalone** environment:
     - **[RECOMMENDED] [Docker image](https://hub.docker.com/_/postgres)** (postgres)
     - *[Packages and installers](https://www.postgresql.org/download)*
 - Install **libpq (>= v16)** for **psycopg[c]**:
-    - MacOS - **[libpq](https://formulae.brew.sh/formula/libpq)**
     - Debian/Ubuntu - **libpq-dev**
+    - MacOS - **[libpq](https://formulae.brew.sh/formula/libpq)**
 
 [OPTIONAL] For **DEVELOPMENT** environment:
 

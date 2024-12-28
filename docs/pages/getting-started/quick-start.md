@@ -68,7 +68,7 @@ docker compose up -d --remove-orphans --force-recreate && \
 > [!IMPORTANT]
 > Before running, need to install [**PM2**](https://pm2.keymetrics.io/docs/usage/quick-start):
 
-```sh
+```bash
 ## 1. Configure PM2 configuration file.
 
 # Copy example PM2 configuration file:
@@ -80,7 +80,7 @@ nano ./pm2-process.json
 
 ## 2. Start PM2 process:
 pm2 start ./pm2-process.json && \
-    pm2 logs --lines 50 ft
+    pm2 logs --lines 50 fot
 ```
 
 ### Standalone runtime (Python)
@@ -168,7 +168,7 @@ Standalone runtime (Only for **PM2**):
 
 ```sh
 pm2 stop ./pm2-process.json && \
-    pm2 flush && \
+    pm2 flush fot && \
     pm2 delete ./pm2-process.json
 ```
 

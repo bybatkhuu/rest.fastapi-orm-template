@@ -1,15 +1,9 @@
 # 🚧 Prerequisites
 
-<!-- *[OPTIONAL]* For **GPU (NVIDIA)**:
-
-- Install **NVIDIA GPU driver (>= v453)** -->
-
 [RECOMMENDED] For **docker** runtime:
 
 - Install [**docker** and **docker compose**](https://docs.docker.com/engine/install)
     - Docker image: [**bybatkhuu/rest.fastapi-orm-template**](https://hub.docker.com/repository/docker/bybatkhuu/rest.fastapi-orm-template)
-<!-- - *[OPTIONAL]* For **GPU (NVIDIA)**:
-    - Install **[NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) (>= v1)** -->
 
 For **standalone** runtime:
 
@@ -17,8 +11,12 @@ For **standalone** runtime:
     - **[RECOMMENDED]  [Miniconda (v3)](https://docs.anaconda.com/miniconda)**
     - *[arm64/aarch64]  [Miniforge (v3)](https://github.com/conda-forge/miniforge)*
     - *[Python virutal environment]  [venv](https://docs.python.org/3/library/venv.html)*
-<!-- - *[OPTIONAL]* For **GPU (NVIDIA)**:
-    - Install **NVIDIA CUDA (>= v11)** and **cuDNN (>= v8)** -->
+- Install **PostrgreSQL (>= v16)**:
+    - **[RECOMMENDED]  [Docker image](https://hub.docker.com/_/postgres)** (postgres)
+    - *[Packages and installers](https://www.postgresql.org/download)*
+- Install **libpq (>= v16)** for **psycopg[c]**:
+    - Debian/Ubuntu - **libpq-dev**
+    - MacOS - **[libpq](https://formulae.brew.sh/formula/libpq)**
 
 [OPTIONAL] For **DEVELOPMENT** environment:
 
