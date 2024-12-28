@@ -1,8 +1,8 @@
 # File created using '.gitignore Generator' for Visual Studio Code: https://bit.ly/vscode-gig
-# Created by https://www.toptal.com/developers/gitignore/api/zsh,xcode,windows,visualstudiocode,vim,sublimetext,ssh,python,powershell,macos,linux,jupyternotebooks,jetbrains
-# Edit at https://www.toptal.com/developers/gitignore?templates=zsh,xcode,windows,visualstudiocode,vim,sublimetext,ssh,python,powershell,macos,linux,jupyternotebooks,jetbrains
+# Created by https://www.toptal.com/developers/gitignore/api/zsh,xcode,windows,visualstudiocode,vim,sublimetext,ssh,python,macos,linux,jupyternotebooks,jetbrains+all,powershell
+# Edit at https://www.toptal.com/developers/gitignore?templates=zsh,xcode,windows,visualstudiocode,vim,sublimetext,ssh,python,macos,linux,jupyternotebooks,jetbrains+all,powershell
 
-### JetBrains ###
+### JetBrains+all ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
@@ -81,39 +81,14 @@ fabric.properties
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
 
-### JetBrains Patch ###
-# Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
+### JetBrains+all Patch ###
+# Ignore everything but code style settings and run configurations
+# that are supposed to be shared within teams.
 
-# *.iml
-# modules.xml
-# .idea/misc.xml
-# *.ipr
+.idea/*
 
-# Sonarlint plugin
-# https://plugins.jetbrains.com/plugin/7973-sonarlint
-.idea/**/sonarlint/
-
-# SonarQube Plugin
-# https://plugins.jetbrains.com/plugin/7238-sonarqube-community-plugin
-.idea/**/sonarIssues.xml
-
-# Markdown Navigator plugin
-# https://plugins.jetbrains.com/plugin/7896-markdown-navigator-enhanced
-.idea/**/markdown-navigator.xml
-.idea/**/markdown-navigator-enh.xml
-.idea/**/markdown-navigator/
-
-# Cache file creation bug
-# See https://youtrack.jetbrains.com/issue/JBR-2257
-.idea/$CACHE_FILE$
-
-# CodeStream plugin
-# https://plugins.jetbrains.com/plugin/12206-codestream
-.idea/codestream.xml
-
-# Azure Toolkit for IntelliJ plugin
-# https://plugins.jetbrains.com/plugin/8053-azure-toolkit-for-intellij
-.idea/**/azureSettings.xml
+!.idea/codeStyles
+!.idea/runConfigurations
 
 ### JupyterNotebooks ###
 # gitignore template for Jupyter Notebooks
@@ -508,58 +483,41 @@ zsdoc/data
 /tests/_output/*
 !/tests/_output/.gitkeep
 
-# End of https://www.toptal.com/developers/gitignore/api/zsh,xcode,windows,visualstudiocode,vim,sublimetext,ssh,python,powershell,macos,linux,jupyternotebooks,jetbrains
+# End of https://www.toptal.com/developers/gitignore/api/zsh,xcode,windows,visualstudiocode,vim,sublimetext,ssh,python,macos,linux,jupyternotebooks,jetbrains+all,powershell
 
 # Custom rules (everything added below won't be overriden by 'Generate .gitignore File' if you use 'Update' option)
 
-
 # Directories:
+log/
+logs/
+backup/
+backups/
+tmp/
 data/
 dataset/
 datasets/
-log/
-logs/
-backups/
-archive/
-results/
-extra_configs/
-pythonpath/
-rest.fastapi-orm-template/
-{{cookiecutter.project_slug}}/
 .benchmarks/
-.temp/
-.temp.*/
-
+rest.fastapi-orm-template/
 
 # Files:
+log
+logs
+backup
+backups
+tmp
 data
 dataset
 datasets
-log
-logs
-backups
-archive
-results
-extra_configs
-pythonpath
+.benchmarks
 rest.fastapi-orm-template
-{{cookiecutter.project_slug}}
+env
+*.bak
 pm2-process.json
+compose.override.yml
+compose.override.yaml
 sample.py
 example.py
 test.py
-docker-compose.override.yml
-docker-compose.override.yaml
-.benchmarks
-.temp
-.temp.*
-*.bak
-
 
 # Specific directories:
 volumes/**
-
-
-# Includes:
-#!volumes/**/
-#!volumes/**/*.gitkeep

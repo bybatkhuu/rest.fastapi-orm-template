@@ -1,6 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
+
 ## --- Base --- ##
 # Getting path of this script file:
 _SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
@@ -17,10 +18,7 @@ fi
 
 ## --- Variables --- ##
 # Load from envrionment variables:
-VERSION_FILENAME="${VERSION_FILENAME:-__version__.py}"
-
-# Calculated variables:
-VERSION_FILE_PATH="app/${VERSION_FILENAME}"
+VERSION_FILE_PATH="${VERSION_FILE_PATH:-./src/api/__version__.py}"
 ## --- Variables --- ##
 
 
