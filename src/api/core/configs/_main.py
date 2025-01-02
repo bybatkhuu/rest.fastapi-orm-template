@@ -11,7 +11,7 @@ from beans_logging import LoggerConfigPM
 from api.__version__ import __version__
 from api.core.constants import EnvEnum, ENV_PREFIX, ENV_PREFIX_API, ENV_PREFIX_DB
 from ._base import FrozenBaseConfig
-from .db import DbConfig, FrozenDbConfig
+from ._db import DbConfig, FrozenDbConfig
 from ._dev import DevConfig, FrozenDevConfig
 from ._api import ApiConfig, FrozenApiConfig
 

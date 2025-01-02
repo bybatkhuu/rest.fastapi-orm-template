@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import (
     async_scoped_session,
     AsyncSession,
 )
-from sqlalchemy.pool import QueuePool, SingletonThreadPool
+from sqlalchemy.pool import AsyncAdaptedQueuePool, QueuePool, SingletonThreadPool
 
 from api.config import config
 
@@ -49,9 +49,9 @@ def make_async_engine(dsn_url: AnyUrl, **kwargs) -> AsyncEngine:
         kwargs["pool_recycle"] = config.db.pool_recycle
 
     if "poolclass" not in kwargs:
-        kwargs["poolclass"] = QueuePool
+        kwargs["poolclass"] = AsyncAdaptedQueuePool
 
-    if issubclass(kwargs["poolclass"], QueuePool):
+    if issubclass(kwargs["poolclass"], AsyncAdaptedQueuePool):
         if "max_overflow" not in kwargs:
             kwargs["max_overflow"] = config.db.max_overflow
 
@@ -59,12 +59,12 @@ def make_async_engine(dsn_url: AnyUrl, **kwargs) -> AsyncEngine:
             kwargs["pool_timeout"] = config.db.pool_timeout
 
     if (
-        issubclass(kwargs["poolclass"], QueuePool)
+        issubclass(kwargs["poolclass"], AsyncAdaptedQueuePool)
         or issubclass(kwargs["poolclass"], SingletonThreadPool)
     ) and ("pool_size" not in kwargs):
         kwargs["pool_size"] = config.db.pool_size
 
-    _async_engine = create_async_engine(url=dsn_url, **kwargs)
+    _async_engine = create_async_engine(url=str(dsn_url), **kwargs)
     return _async_engine
 
 
@@ -142,7 +142,7 @@ def make_engine(dsn_url: AnyUrl, **kwargs) -> Engine:
     ) and ("pool_size" not in kwargs):
         kwargs["pool_size"] = config.db.pool_size
 
-    _engine = create_engine(url=dsn_url, **kwargs)
+    _engine = create_engine(url=str(dsn_url), **kwargs)
     return _engine
 
 
