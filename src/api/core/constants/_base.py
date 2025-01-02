@@ -5,6 +5,7 @@ from enum import Enum
 
 ENV_PREFIX = "FOT_"
 ENV_PREFIX_API = f"{ENV_PREFIX}API_"
+ENV_PREFIX_DB = f"{ENV_PREFIX}DB_"
 
 
 class EnvEnum(str, Enum):
@@ -53,6 +54,7 @@ class HTTPSchemeEnum(str, Enum):
 __all__ = [
     "ENV_PREFIX",
     "ENV_PREFIX_API",
+    "ENV_PREFIX_DB",
     "EnvEnum",
     "WarnEnum",
     "LanguageEnum",

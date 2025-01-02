@@ -36,6 +36,7 @@ logger:
         "watchfiles",
         "watchfiles.main",
         "watchfiles.watcher",
+        "sqlalchemy",
       ]
   extra:
     http_std_msg_format: '<n><w>[{request_id}]</w></n> {client_host} {user_id} "<u>{method} {url_path}</u> HTTP/{http_version}" {status_code} {content_length}B {response_time}ms'

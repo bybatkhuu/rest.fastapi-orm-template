@@ -9,8 +9,9 @@ from pydantic_settings import SettingsConfigDict
 from beans_logging import LoggerConfigPM
 
 from api.__version__ import __version__
-from api.core.constants import EnvEnum, ENV_PREFIX, ENV_PREFIX_API
+from api.core.constants import EnvEnum, ENV_PREFIX, ENV_PREFIX_API, ENV_PREFIX_DB
 from ._base import FrozenBaseConfig
+from .db import DbConfig, FrozenDbConfig
 from ._dev import DevConfig, FrozenDevConfig
 from ._api import ApiConfig, FrozenApiConfig
 
@@ -22,6 +23,7 @@ class MainConfig(FrozenBaseConfig):
     version: constr(strip_whitespace=True) = Field(  # type: ignore
         default=__version__, min_length=3, max_length=32
     )
+    db: DbConfig = Field(default_factory=DbConfig)
     api: ApiConfig = Field(...)
     logger: LoggerConfigPM = Field(default_factory=LoggerConfigPM)
 
@@ -59,6 +61,19 @@ class MainConfig(FrozenBaseConfig):
 
         _dev = FrozenDevConfig(**_dev.model_dump())
         val = FrozenApiConfig(dev=_dev, **val.model_dump(exclude={"dev"}))
+        return val
+
+    @field_validator("db")
+    @classmethod
+    def _check_db(cls, val: DbConfig, info: ValidationInfo) -> FrozenDbConfig:
+        if ("debug" in info.data) and (not info.data["debug"]):
+            os.environ.pop(f"{ENV_PREFIX_DB}ECHO_SQL", None)
+            val.echo_sql = False
+
+            os.environ.pop(f"{ENV_PREFIX_DB}ECHO_POOL", None)
+            val.echo_pool = False
+
+        val = FrozenDbConfig(**val.model_dump())
         return val
 
     @field_validator("logger")
