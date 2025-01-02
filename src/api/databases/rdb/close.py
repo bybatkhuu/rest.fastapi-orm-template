@@ -50,6 +50,7 @@ async def async_close_db(
         raise SystemExit(1)
 
     logger.success(f"Successfully closed all database connections.")
+    return
 
 
 ## Sync
@@ -64,10 +65,10 @@ def close_db(sessions: List[scoped_session], engines: List[Engine]) -> None:
 
     logger.info(f"Closing all database connections...")
     try:
-        # close_all_sessions()
-        for _session in sessions:
-            # _session.remove()
-            _session.close_all()
+        close_all_sessions()
+        # for _session in sessions:
+        #     # _session.remove()
+        #     _session.close_all()
 
         for _engine in engines:
             _engine.dispose()
@@ -77,6 +78,7 @@ def close_db(sessions: List[scoped_session], engines: List[Engine]) -> None:
         raise SystemExit(1)
 
     logger.success(f"Successfully closed all database connections.")
+    return
 
 
 __all__ = ["async_close_db", "close_db"]
