@@ -1,11 +1,29 @@
 {
 	"project_name": "FastAPI ORM Template",
 	"project_slug": "rest.fastapi-orm-template",
+	"project_description": "This is a short description of the project.",
 	"project_abbr": "fot",
-	"env_prefix": "FOT_",
-	"repo_owner": "username",
-	"github_owner": "{{cookiecutter.repo_owner}}",
+	"env_prefix": "{{cookiecutter.project_abbr.upper().replace('-', '_')}}_",
+	"author_username": "username",
+	"repo_owner": "{{cookiecutter.author_username}}",
+	"repo_name": "{{cookiecutter.project_slug}}",
 	"docker_registry": "{{cookiecutter.repo_owner}}",
-	"version": "1.2.0-231130",
-	"domain": "example.com"
+	"docker_repo_name": "{{cookiecutter.repo_name}}",
+	"domain": "example.com",
+	"author_email": "user@{{cookiecutter.domain}}",
+	"author_fullname": "Full Name",
+	"python_version": "3.9",
+	"version": "0.0.0-241201",
+	"timezone": "UTC",
+	"language": "en",
+	"copyright_year": "2025",
+	"license": [
+		"MIT License",
+		"Apache License 2.0",
+		"GNU GPLv3",
+		"BSD License",
+		"ISC License",
+		"Proprietary License",
+		"No License"
+	]
 }
