@@ -28,6 +28,8 @@ class AsyncBaseORM(AsyncCRUDMixin, AsyncAttrs, DeclarativeBase):
         DeclarativeBase: Base class for ORM models.
     """
 
+    __table_args__ = {"extend_existing": True}
+
     metadata = MetaData(naming_convention=_NAMING_CONVENTION)
 
     @declared_attr.directive
@@ -45,6 +47,8 @@ class SyncBaseORM(CRUDMixin, DeclarativeBase):
         AsyncAttrs     : Mixin class for async attributes support (awaitable).
         DeclarativeBase: Base class for ORM models.
     """
+
+    __table_args__ = {"extend_existing": True}
 
     metadata = MetaData(naming_convention=_NAMING_CONVENTION)
 
@@ -64,6 +68,8 @@ class BaseORM(CRUDMixin, AsyncCRUDMixin, AsyncAttrs, DeclarativeBase):
         AsyncAttrs     : Mixin class for async attributes support (awaitable).
         DeclarativeBase: Base class for ORM models.
     """
+
+    __table_args__ = {"extend_existing": True}
 
     metadata = MetaData(naming_convention=_NAMING_CONVENTION)
 

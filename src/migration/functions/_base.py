@@ -100,8 +100,20 @@ def create_fn_stat_count(table_name: str) -> None:
     return
 
 
+def drop_fn_all() -> None:
+    """Drop function to generate primary key for table."""
+
+    op.execute("DROP FUNCTION IF EXISTS fn_tr__truncate_stat_count() CASCADE;")
+    op.execute("DROP FUNCTION IF EXISTS fn_tr__update_stat_count() CASCADE;")
+    op.execute("DROP FUNCTION IF EXISTS fn_tr__updated_at() CASCADE;")
+    op.execute("DROP FUNCTION IF EXISTS fn_tr__generate_pk() CASCADE;")
+
+    return
+
+
 __all__ = [
     "create_fn_generate_pk",
     "create_fn_updated_at",
     "create_fn_stat_count",
+    "drop_fn_all",
 ]

@@ -21,28 +21,39 @@ branch_labels: Union[str, Sequence[str], None] = ${repr(branch_labels)}
 depends_on: Union[str, Sequence[str], None] = ${repr(depends_on)}
 
 
-def upgrade():
+def upgrade() -> None:
     schema_upgrades()
     if context.get_x_argument(as_dictionary=True).get('data', None):
         data_upgrades()
 
-def downgrade():
+    return
+
+
+def downgrade() -> None:
     if context.get_x_argument(as_dictionary=True).get('data', None):
         data_downgrades()
     schema_downgrades()
 
-def schema_upgrades():
+    return
+
+
+def schema_upgrades() -> None:
     """schema upgrade migrations go here."""
     ${upgrades if upgrades else "pass"}
 
-def schema_downgrades():
+
+def schema_downgrades() -> None:
     """schema downgrade migrations go here."""
     ${downgrades if downgrades else "pass"}
 
-def data_upgrades():
-    """Add any optional data upgrade migrations here!"""
-    pass
 
-def data_downgrades():
+def data_upgrades() -> None:
+    """Add any optional data upgrade migrations here!"""
+
+    return
+
+
+def data_downgrades() -> None:
     """Add any optional data downgrade migrations here!"""
-    pass
+
+    return

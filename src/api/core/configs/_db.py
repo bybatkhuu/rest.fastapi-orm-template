@@ -2,7 +2,6 @@
 
 from urllib.parse import quote_plus
 from typing import Any, Dict, Optional, Union
-from typing_extensions import Self
 
 from pydantic import AnyUrl, Field, conint, constr, SecretStr, model_validator
 from pydantic_settings import SettingsConfigDict
@@ -67,6 +66,9 @@ class FrozenDbConfig(DbConfig):
 
         if not values["dsn_url"]:
             _encoded_password = quote_plus(values["password"])
+            if isinstance(values["password"], SecretStr):
+                _encoded_password = quote_plus(values["password"].get_secret_value())
+
             values["dsn_url"] = _dsn_url_template.format(
                 dialect=values["dialect"],
                 driver=values["driver"],
@@ -80,8 +82,16 @@ class FrozenDbConfig(DbConfig):
         if not values["read_dsn_url"]:
             if values["read_password"]:
                 _encoded_password = quote_plus(values["read_password"])
+                if isinstance(values["read_password"], SecretStr):
+                    _encoded_password = quote_plus(
+                        values["read_password"].get_secret_value()
+                    )
             else:
                 _encoded_password = quote_plus(values["password"])
+                if isinstance(values["password"], SecretStr):
+                    _encoded_password = quote_plus(
+                        values["password"].get_secret_value()
+                    )
 
             values["read_dsn_url"] = _dsn_url_template.format(
                 dialect=values["dialect"],
