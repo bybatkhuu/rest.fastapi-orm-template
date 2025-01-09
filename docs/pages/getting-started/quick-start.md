@@ -64,9 +64,9 @@ docker compose up -d --remove-orphans --force-recreate && \
 #### Standalone runtime
 
 > [!IMPORTANT]
-> Before running, make sure database is up and running.
+> Before running, make sure **database** is up and running.
 
-Run alembic migration to create or update database schema to the latest version:
+Run `alembic migration` to create or update `database schema` to the latest version:
 
 ```sh
 ./scripts/migrate.sh up
