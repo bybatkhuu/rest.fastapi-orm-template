@@ -35,15 +35,15 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Get version
         run: echo "_VERSION=$(./scripts/get-version.sh)" >> ${GITHUB_ENV}
-      - name: Build and export
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          build-args: |
-            "HASH_PASSWORD=${{ secrets.DOCKER_UID_HASH_PASSWORD }}"
-          load: true
-          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/rest.fastapi-orm-template:cache-latest
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/rest.fastapi-orm-template:test
+      # - name: Build and export
+      #   uses: docker/build-push-action@v6
+      #   with:
+      #     context: .
+      #     build-args: |
+      #       "HASH_PASSWORD=${{ secrets.DOCKER_UID_HASH_PASSWORD }}"
+      #     load: true
+      #     cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/rest.fastapi-orm-template:cache-latest
+      #     tags: ${{ secrets.DOCKERHUB_USERNAME }}/rest.fastapi-orm-template:test
       # - name: Test docker image
       #   run: |
       #     docker run --rm -dt -p 8000:8000 ${{ secrets.DOCKERHUB_USERNAME }}/rest.fastapi-orm-template:test

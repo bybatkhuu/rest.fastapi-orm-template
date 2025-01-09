@@ -199,7 +199,19 @@ docker compose up -d --remove-orphans --force-recreate && \
     docker compose logs -f --tail 100
 ```
 
-#### Standalone runtime (PM2)
+#### Standalone runtime
+
+> [!IMPORTANT]
+> Before running, make sure database is up and running.
+
+Run alembic migration to create or update database schema to the latest version:
+
+```sh
+./scripts/migrate.sh up
+# Or:
+cd ./src
+alembic -x data=true upgrade head
+```
 
 **OPTION B.** Run with **PM2**:
 

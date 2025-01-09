@@ -6,7 +6,7 @@ hide:
 
 # Introduction
 
-This is a template repo for FastAPI web service projects.
+This is a template repository for FastAPI with ORM (SQLAlchemy) projects.
 
 ## ✨ Features
 

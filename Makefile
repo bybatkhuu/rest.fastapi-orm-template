@@ -1,8 +1,9 @@
-.PHONY: help validate start stop compose clean get-version test bump-version build docs changelog
+.PHONY: help validate migrate start stop compose clean get-version test bump-version build docs changelog
 
 help:
 	@echo "make help         -- show this help"
 	@echo "make validate     -- validate docker compose file"
+	@echo "make migrate      -- run migrations"
 	@echo "make start        -- start all services"
 	@echo "make stop         -- stop all services"
 	@echo "make compose      -- run docker-compose commands"
@@ -16,6 +17,9 @@ help:
 
 validate:
 	./compose.sh validate
+
+migrate:
+	./scripts/migrate.sh $(MAKEFLAGS)
 
 start:
 	./compose.sh start -l
