@@ -37,12 +37,6 @@ FOT_API_DATA_DIR="/var/lib/rest.fastapi-orm-template"
 # FOT_API_DOCS_OPENAPI_URL="{api_prefix}/openapi.json"
 # FOT_API_DOCS_DOCS_URL="{api_prefix}/docs"
 # FOT_API_DOCS_REDOC_URL="{api_prefix}/redoc"
-
-
-
-## -- Docker build args -- ##
-# HASH_PASSWORD="\$5\$S6d3bt3eXvBW3zT1\$GcPvS36pfZ1Sk/oE8ixklLYrvQegc1xFjtE7gxlzJU8" # !!! CHANGE THIS TO REAL HASHED PASSWORD !!!
-# IMG_ARGS="--build-arg HASH_PASSWORD=${HASH_PASSWORD}"
 ```
 
 ## 🔧 Command arguments
