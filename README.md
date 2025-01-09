@@ -218,7 +218,7 @@ alembic -x data=true upgrade head
 > [!IMPORTANT]
 > Before running, need to install [**PM2**](https://pm2.keymetrics.io/docs/usage/quick-start):
 
-```bash
+```sh
 ## 1. Configure PM2 configuration file.
 
 # Copy example PM2 configuration file:
@@ -233,12 +233,10 @@ pm2 start ./pm2-process.json && \
     pm2 logs --lines 50 fot
 ```
 
-#### Standalone runtime (Python)
-
 **OPTION C.** Run server as **python script**:
 
 ```sh
-cd src
+cd ./src
 python -u ./main.py
 ```
 
@@ -248,7 +246,7 @@ python -u ./main.py
 python -u -m src.api
 
 # Or:
-cd src
+cd ./src
 python -u -m api
 ```
 
@@ -261,7 +259,7 @@ uvicorn src.main:app --host="0.0.0.0" --port=8000 --no-access-log --no-server-he
 
 
 # Or:
-cd src
+cd ./src
 uvicorn main:app --host="0.0.0.0" --port=8000 --no-access-log --no-server-header --proxy-headers --forwarded-allow-ips="*"
 
 # For DEVELOPMENT:
@@ -280,7 +278,7 @@ fastapi dev src --host="0.0.0.0" --port=8000
 
 
 # Or:
-cd src
+cd ./src
 fastapi run --port=8000
 
 # For DEVELOPMENT:
