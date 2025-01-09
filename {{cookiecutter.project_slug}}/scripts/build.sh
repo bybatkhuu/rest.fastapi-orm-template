@@ -1,6 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
+
 ## --- Base --- ##
 # Getting path of this script file:
 _SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
@@ -25,7 +26,7 @@ fi
 # Load from envrionment variables:
 # BASE_IMAGE
 IMG_REGISTRY=${IMG_REGISTRY:-{{cookiecutter.docker_registry}}}
-IMG_REPO=${PROJECT_SLUG:-{{cookiecutter.project_slug}}}
+IMG_REPO=${PROJECT_SLUG:-{{cookiecutter.docker_repo_name}}}
 IMG_VERSION=${IMG_VERSION:-$(./scripts/get-version.sh)}
 IMG_SUBTAG=${IMG_SUBTAG:-}
 IMG_PLATFORM=${IMG_PLATFORM:-$(uname -m)}
@@ -38,7 +39,12 @@ _IS_PUSH_IMAGES=false
 _IS_CLEAN_IMAGES=false
 
 # Calculated variables:
-_IMG_NAME=${IMG_REGISTRY}/${IMG_REPO}
+_IMG_NAME=""
+if [ -n "${IMG_REGISTRY}" ]; then
+	_IMG_NAME="${IMG_REGISTRY}/${IMG_REPO}"
+else
+	_IMG_NAME="${IMG_REPO}"
+fi
 _IMG_FULLNAME=${_IMG_NAME}:${IMG_VERSION}${IMG_SUBTAG}
 _IMG_LATEST_FULLNAME=${_IMG_NAME}:latest${IMG_SUBTAG}
 ## --- Variables --- ##
@@ -162,17 +168,21 @@ main()
 	## --- Menu arguments --- ##
 
 
-	if [ -z "${IMG_REGISTRY:-}" ]; then
-		echoError "Required 'IMG_REGISTRY' environment variable or '--registry=' argument for image registry!"
-		exit 1
-	fi
+	# if [ -z "${IMG_REGISTRY:-}" ]; then
+	# 	echoError "Required 'IMG_REGISTRY' environment variable or '--registry=' argument for image registry!"
+	# 	exit 1
+	# fi
 
 	## --- Init arguments --- ##
 	if [ -n "${BASE_IMAGE:-}" ]; then
 		IMG_ARGS="${IMG_ARGS} --build-arg BASE_IMAGE=${BASE_IMAGE}"
 	fi
 
-	_IMG_NAME=${IMG_REGISTRY}/${IMG_REPO}
+	if [ -n "${IMG_REGISTRY}" ]; then
+		_IMG_NAME="${IMG_REGISTRY}/${IMG_REPO}"
+	else
+		_IMG_NAME="${IMG_REPO}"
+	fi
 	_IMG_FULLNAME=${_IMG_NAME}:${IMG_VERSION}${IMG_SUBTAG}
 	_IMG_LATEST_FULLNAME=${_IMG_NAME}:latest${IMG_SUBTAG}
 

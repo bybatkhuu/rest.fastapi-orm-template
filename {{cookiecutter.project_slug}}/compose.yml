@@ -1,0 +1,45 @@
+services:
+  db:
+    image: postgres:16.6-bookworm
+    restart: unless-stopped
+    environment:
+      TERM: ${TERM:-xterm}
+      PG_COLOR: ${PG_COLOR:-auto}
+      POSTGRES_INITDB_ARGS: "${POSTGRES_INITDB_ARGS:--E UTF8 --locale=en_US.UTF-8}"
+      POSTGRES_USER: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_USERNAME:-{{cookiecutter.project_abbr}}_admin}
+      POSTGRES_PASSWORD: "{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_PASSWORD:-{{cookiecutter.env_prefix}}DB_PASSWORD123}"
+      POSTGRES_DB: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_DATABASE:-{{cookiecutter.project_abbr}}_db}
+    volumes:
+      - "db-data:/var/lib/postgresql/data"
+    tty: true
+
+  api:
+    image: {{cookiecutter.docker_registry}}/{{cookiecutter.docker_repo_name}}:latest
+    build:
+      context: .
+    depends_on:
+      - db
+    restart: unless-stopped
+    environment:
+      TERM: ${TERM:-xterm}
+      TZ: ${TZ:-{{cookiecutter.timezone}}}
+      {{cookiecutter.env_prefix}}DB_HOST: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_HOST:-db}
+      {{cookiecutter.env_prefix}}DB_USERNAME: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_USERNAME:-{{cookiecutter.project_abbr}}_admin}
+      {{cookiecutter.env_prefix}}DB_PASSWORD: "{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_PASSWORD:-{{cookiecutter.env_prefix}}DB_PASSWORD123}"
+      {{cookiecutter.env_prefix}}DB_DATABASE: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_DATABASE:-{{cookiecutter.project_abbr}}_db}
+      {{cookiecutter.env_prefix}}API_PORT: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}API_PORT:-8000}
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - "api-logs:{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}API_LOGS_DIR:-/var/log/{{cookiecutter.project_slug}}}"
+      - "api-data:{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}API_DATA_DIR:-/var/lib/{{cookiecutter.project_slug}}}"
+    ports:
+      - "{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}API_PORT:-8000}:{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}API_PORT:-8000}"
+    tty: true
+
+
+volumes:
+  db-data:
+  api-logs:
+  api-data:
