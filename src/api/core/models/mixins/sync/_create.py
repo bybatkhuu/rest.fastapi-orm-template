@@ -32,7 +32,7 @@ from api.core.exceptions import (
 )
 from api.logger import logger
 
-from .update import UpdateMixin
+from ._update import UpdateMixin
 
 
 @declarative_mixin
