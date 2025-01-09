@@ -2,10 +2,10 @@
 
 from api.config import config
 
-from .connect import *
-from .check import *
-from .create import *
-from .close import *
+from ._connect import *
+from ._check import *
+from ._create import *
+from ._close import *
 
 
 register_orms()
