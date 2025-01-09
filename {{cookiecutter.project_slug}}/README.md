@@ -213,7 +213,7 @@ nano ./pm2-process.json
 
 ## 2. Start PM2 process:
 pm2 start ./pm2-process.json && \
-    pm2 logs --lines 50 fot
+    pm2 logs --lines 50 {{cookiecutter.project_abbr}}
 ```
 
 **OPTION C.** Run server as **python script**:
@@ -299,7 +299,7 @@ Standalone runtime (Only for **PM2**):
 
 ```sh
 pm2 stop ./pm2-process.json && \
-    pm2 flush fot && \
+    pm2 flush {{cookiecutter.project_abbr}} && \
     pm2 delete ./pm2-process.json
 ```
 
