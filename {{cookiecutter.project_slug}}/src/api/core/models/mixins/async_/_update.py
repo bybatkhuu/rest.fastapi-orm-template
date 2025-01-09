@@ -27,7 +27,7 @@ from api.core.exceptions import (
 )
 from api.logger import logger
 
-from .read import AsyncReadMixin
+from ._read import AsyncReadMixin
 
 
 @declarative_mixin

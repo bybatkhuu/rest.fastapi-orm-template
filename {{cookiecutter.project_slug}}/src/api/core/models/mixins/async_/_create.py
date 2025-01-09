@@ -33,7 +33,7 @@ from api.core.exceptions import (
 )
 from api.logger import logger
 
-from .update import AsyncUpdateMixin
+from ._update import AsyncUpdateMixin
 
 
 @declarative_mixin
