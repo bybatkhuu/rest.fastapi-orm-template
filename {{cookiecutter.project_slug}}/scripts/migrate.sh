@@ -18,6 +18,12 @@ if [ -f ".env" ]; then
 	source .env
 fi
 
+
+if [ -z "$(which alembic)" ]; then
+	echoError "'alembic' not found or not installed."
+	exit 1
+fi
+
 cd ./src || exit 2
 ## --- Base --- ##
 
