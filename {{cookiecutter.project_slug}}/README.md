@@ -19,9 +19,6 @@
 - ORM (SQLAlchemy)
 - SQL databases (RDB)
 - PostgreSQL
-- Project structure
-- Boilerplate/template
-- Best practices
 - Configuration
 - Tests
 - Build

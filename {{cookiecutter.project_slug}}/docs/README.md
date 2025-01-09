@@ -14,9 +14,6 @@ hide:
 - REST API
 - Web service
 - Microservice
-- Project structure
-- Boilerplate/template
-- Best practices
 - Configuration
 - Tests
 - Build
