@@ -24,7 +24,6 @@
 # -d=DOCKERFILE, --dockerfile=DOCKERFILE        Dockerfile path. Default is "./Dockerfile".
 # -t=CONTEXT_PATH, --context-path=CONTEXT_PATH  Docker build context path. Default is ".".
 
-
 # For example:
 ./scripts/build.sh -p=arm64 -u -c
 
