@@ -24,6 +24,7 @@
         - [build.sh](../dev/scripts/6.build.md)
         - [changelog.sh](../dev/scripts/7.changelog.md)
         - [docs.sh](../dev/scripts/8.docs.md)
+        - [migrate.sh](../dev/scripts/9.migrate.md)
     - [File structure](../dev/file-structure.md)
     - [Sitemap](../dev/sitemap.md)
     - [Related projects](../dev/related-projects.md)
