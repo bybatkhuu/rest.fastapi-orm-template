@@ -84,17 +84,11 @@ _showHeads()
 
 
 ## --- Menu arguments --- ##
-_exitOnWrongParams()
-{
-	echoInfo "USAGE: ${0}  revision | upgrade | downgrade | history | current | check | heads"
-	exit 1
-}
-
 main()
 {
 	if [ -z "${1:-}" ]; then
-		echoError "Not found any input."
-		_exitOnWrongParams
+		_createRevision
+		exit 0
 	fi
 
 	_action="${1:-}"
@@ -123,7 +117,8 @@ main()
 			;;
 		*)
 			echoError "Failed to parsing input: ${_action}"
-			_exitOnWrongParams
+			echoInfo "USAGE: ${0}  revision | upgrade | downgrade | history | current | check | heads"
+			exit 1
 			;;
 	esac
 
