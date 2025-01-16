@@ -116,6 +116,7 @@
 		"**/bower_components": true,
 		"**/env": true,
 		"**/venv": true,
+		"**/.venv": true,
 		"**/envs": true,
 		"**/dist": true,
 		"**/sdist": true,
