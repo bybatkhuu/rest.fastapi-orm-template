@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.0.2-250116 (2025-01-16)
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+### 🐛 Fixes
+* Update import paths and enhance application structure with bootstrap module by @bybatkhuu in https://github.com/bybatkhuu/rest.fastapi-orm-template/pull/19
+
+
+**Full Changelog**: https://github.com/bybatkhuu/rest.fastapi-orm-template/compare/v2.0.1-250109...v2.0.2-250116
+
 ## v2.0.1-250109 (2025-01-09)
 
 <!-- Release notes generated using configuration in .github/release.yml at main -->
