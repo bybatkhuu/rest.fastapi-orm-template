@@ -65,10 +65,11 @@ class FrozenDbConfig(DbConfig):
         )
 
         if not values["dsn_url"]:
-            _encoded_password = quote_plus(values["password"])
-            if isinstance(values["password"], SecretStr):
-                _encoded_password = quote_plus(values["password"].get_secret_value())
+            _password = values["password"]
+            if isinstance(_password, SecretStr):
+                _password = _password.get_secret_value()
 
+            _encoded_password = quote_plus(_password)
             values["dsn_url"] = _dsn_url_template.format(
                 dialect=values["dialect"],
                 driver=values["driver"],
@@ -80,24 +81,22 @@ class FrozenDbConfig(DbConfig):
             )
 
         if not values["read_dsn_url"]:
+            _read_password = ""
             if values["read_password"]:
-                _encoded_password = quote_plus(values["read_password"])
-                if isinstance(values["read_password"], SecretStr):
-                    _encoded_password = quote_plus(
-                        values["read_password"].get_secret_value()
-                    )
+                _read_password = values["read_password"]
+                if isinstance(_read_password, SecretStr):
+                    _read_password = _read_password.get_secret_value()
             else:
-                _encoded_password = quote_plus(values["password"])
-                if isinstance(values["password"], SecretStr):
-                    _encoded_password = quote_plus(
-                        values["password"].get_secret_value()
-                    )
+                _read_password = values["password"]
+                if isinstance(_read_password, SecretStr):
+                    _read_password = quote_plus(_read_password.get_secret_value())
 
+            _encoded_read_password = quote_plus(_read_password)
             values["read_dsn_url"] = _dsn_url_template.format(
                 dialect=values["dialect"],
                 driver=values["driver"],
                 username=values["read_username"] or values["username"],
-                password=_encoded_password,
+                password=_encoded_read_password,
                 host=values["read_host"] or values["host"],
                 port=values["read_port"] or values["port"],
                 database=values["read_database"] or values["database"],
