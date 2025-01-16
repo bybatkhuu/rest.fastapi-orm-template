@@ -75,28 +75,30 @@ async def get_tasks(
         )
         _orm_tasks, _all_count = _result_tuple
 
-        _url = request.url.remove_query_params(["skip", "limit"])
+        _url = request.url.remove_query_params(["skip", "limit", "is_desc"])
 
         if 0 < _all_count:
             _links["first"] = utils.get_relative_url(
-                _url.include_query_params(skip=0, limit=limit)
+                _url.include_query_params(skip=0, limit=limit, is_desc=is_desc)
             )
 
             _last_skip = max((_all_count - 1) // limit * limit, 0)
             _links["last"] = utils.get_relative_url(
-                _url.include_query_params(skip=_last_skip, limit=limit)
+                _url.include_query_params(skip=_last_skip, limit=limit, is_desc=is_desc)
             )
 
         if 0 < skip:
             _prev_skip = max(skip - limit, 0)
             _links["prev"] = utils.get_relative_url(
-                _url.include_query_params(skip=_prev_skip, limit=limit)
+                _url.include_query_params(skip=_prev_skip, limit=limit, is_desc=is_desc)
             )
 
         if limit < len(_orm_tasks):
             _orm_tasks = _orm_tasks[:limit]
             _links["next"] = utils.get_relative_url(
-                _url.include_query_params(skip=(skip + limit), limit=limit)
+                _url.include_query_params(
+                    skip=(skip + limit), limit=limit, is_desc=is_desc
+                )
             )
 
         _list_count = len(_orm_tasks)
