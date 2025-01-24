@@ -26,8 +26,8 @@ services:
   #       condition: service_healthy
   #   restart: unless-stopped
   #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-{{cookiecutter.project_abbr}}_admin@example.com}
-  #     PGADMIN_DEFAULT_PASSWORD: "${PGADMIN_PASSWORD:-{{cookiecutter.env_prefix}}PGADMIN_PASSWORD123}"
+  #     PGADMIN_DEFAULT_EMAIL: {% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_GUI_EMAIL:-{{cookiecutter.project_abbr}}_admin@example.com}
+  #     PGADMIN_DEFAULT_PASSWORD: "{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}DB_GUI_PASSWORD:-{{cookiecutter.env_prefix}}DB_GUI_PASSWORD123}"
   #   volumes:
   #     - "/etc/localtime:/etc/localtime:ro"
   #     - "db-gui-data:/var/lib/pgadmin"

@@ -23,7 +23,7 @@ class MainConfig(FrozenBaseConfig):
     version: constr(strip_whitespace=True) = Field(  # type: ignore
         default=__version__, min_length=3, max_length=32
     )
-    db: DbConfig = Field(default_factory=DbConfig)
+    db: DbConfig = Field(...)
     api: ApiConfig = Field(...)
     logger: LoggerConfigPM = Field(default_factory=LoggerConfigPM)
 
@@ -98,6 +98,17 @@ class MainConfig(FrozenBaseConfig):
         ]
 
         if (self.env == EnvEnum.STAGING) or (self.env == EnvEnum.PRODUCTION):
+            if (f"{ENV_PREFIX_DB}DSN_URL" not in os.environ) and (
+                f"{ENV_PREFIX_DB}HOST" not in os.environ
+                or f"{ENV_PREFIX_DB}PORT" not in os.environ
+                or f"{ENV_PREFIX_DB}USERNAME" not in os.environ
+                or f"{ENV_PREFIX_DB}PASSWORD" not in os.environ
+                or f"{ENV_PREFIX_DB}DATABASE" not in os.environ
+            ):
+                raise KeyError(
+                    f"Missing required '{ENV_PREFIX_DB}*' environment variables for STAGING/PRODUCTION environment!"
+                )
+
             for _required_env in _required_envs:
                 if _required_env not in os.environ:
                     raise ValueError(

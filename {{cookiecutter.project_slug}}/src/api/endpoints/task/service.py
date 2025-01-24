@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from api.core.constants import ErrorCodeEnum, WarnEnum
 from api.config import config
 from api.core.exceptions import BaseHTTPException, EmptyValueError, NullConstraintError
-from api.resources.table_stat import service as table_stat_service
+from api.endpoints.table_stat import service as table_stat_service
 from api.logger import async_log_mode
 
 from .schemas import TaskBasePM
