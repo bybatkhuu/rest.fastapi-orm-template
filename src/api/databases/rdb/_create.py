@@ -13,8 +13,8 @@ from api.logger import logger
 
 def register_orms() -> None:
     # Add all your ORM models here...
-    from api.resources.table_stat.model import TableStatORM
-    from api.resources.task.model import TaskORM
+    from api.endpoints.table_stat.model import TableStatORM
+    from api.endpoints.task.model import TaskORM
 
     return
 

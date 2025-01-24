@@ -6,7 +6,7 @@ from fastapi import FastAPI, APIRouter
 from api.config import config
 from api.core.routers.utils import router as utils_router
 from api.core.routers.default import router as default_router
-from api.resources.task.router import router as task_router
+from api.endpoints.task.router import router as task_router
 
 
 @validate_call(config={"arbitrary_types_allowed": True})

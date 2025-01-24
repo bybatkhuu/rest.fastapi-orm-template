@@ -26,8 +26,8 @@ services:
   #       condition: service_healthy
   #   restart: unless-stopped
   #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-fot_admin@example.com}
-  #     PGADMIN_DEFAULT_PASSWORD: "${PGADMIN_PASSWORD:-FOT_PGADMIN_PASSWORD123}"
+  #     PGADMIN_DEFAULT_EMAIL: ${FOT_DB_GUI_EMAIL:-fot_admin@example.com}
+  #     PGADMIN_DEFAULT_PASSWORD: "${FOT_DB_GUI_PASSWORD:-FOT_DB_GUI_PASSWORD123}"
   #   volumes:
   #     - "/etc/localtime:/etc/localtime:ro"
   #     - "db-gui-data:/var/lib/pgadmin"
