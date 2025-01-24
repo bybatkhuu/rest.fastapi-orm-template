@@ -87,7 +87,7 @@ _showHeads()
 main()
 {
 	if [ -z "${1:-}" ]; then
-		_createRevision
+		_upgradeMigration
 		exit 0
 	fi
 
