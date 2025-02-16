@@ -1,5 +1,16 @@
 # Changelog
 
+## v3.0.0-250216 (2025-02-16)
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+### 💥 Breaking Changes
+* :boom: Add new static files and update configuration for improved str… by @bybatkhuu in https://github.com/bybatkhuu/rest.fastapi-orm-template/pull/22
+
+
+**Full Changelog**: https://github.com/bybatkhuu/rest.fastapi-orm-template/compare/v2.0.3-250124...v3.0.0-250216
+
 ## v2.0.3-250124 (2025-01-24)
 
 <!-- Release notes generated using configuration in .github/release.yml at main -->
