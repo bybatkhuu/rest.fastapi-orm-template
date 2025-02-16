@@ -3,7 +3,7 @@
 from urllib.parse import quote_plus
 from typing import Any, Dict, Optional, Union
 
-from pydantic import AnyUrl, Field, conint, constr, SecretStr, model_validator
+from pydantic import Field, conint, constr, SecretStr, model_validator
 from pydantic_settings import SettingsConfigDict
 
 from api.core.constants import ENV_PREFIX_DB
@@ -20,7 +20,7 @@ class DbConfig(BaseConfig):
     username: constr(strip_whitespace=True) = Field(..., min_length=2, max_length=32)  # type: ignore
     password: SecretStr = Field(..., min_length=8, max_length=64)
     database: constr(strip_whitespace=True) = Field(..., min_length=2, max_length=128)  # type: ignore
-    dsn_url: Optional[AnyUrl] = Field(default=None)
+    dsn_url: Optional[SecretStr] = Field(default=None)
 
     read_host: Optional[
         constr(strip_whitespace=True, min_length=2, max_length=128)  # type: ignore
@@ -33,7 +33,7 @@ class DbConfig(BaseConfig):
     read_database: Optional[
         constr(strip_whitespace=True, min_length=2, max_length=128)  # type: ignore
     ] = Field(default=None)
-    read_dsn_url: Optional[AnyUrl] = Field(default=None)
+    read_dsn_url: Optional[SecretStr] = Field(default=None)
 
     connect_args: Optional[Dict[str, Any]] = Field(default=None)
     prefix: constr(strip_whitespace=True) = Field(..., max_length=16)  # type: ignore
