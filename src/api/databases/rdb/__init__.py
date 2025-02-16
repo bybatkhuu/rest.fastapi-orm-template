@@ -11,17 +11,17 @@ from ._close import *
 register_orms()
 
 ## Async
-async_write_engine = make_async_engine(dsn_url=config.db.dsn_url)
+async_write_engine = make_async_engine(dsn_url=config.db.dsn_url.get_secret_value())
 AsyncWriteSession = create_async_session_maker(async_engine=async_write_engine)
 
-async_read_engine = make_async_engine(dsn_url=config.db.read_dsn_url)
+async_read_engine = make_async_engine(dsn_url=config.db.read_dsn_url.get_secret_value())
 AsyncReadSession = create_async_session_maker(async_engine=async_read_engine)
 
 ## Sync
-# write_engine = make_engine(dsn_url=config.db.dsn_url)
+# write_engine = make_engine(dsn_url=config.db.dsn_url.get_secret_value())
 # WriteSession = create_session_maker(engine=write_engine)
 
-# read_engine = make_engine(dsn_url=config.db.read_dsn_url)
+# read_engine = make_engine(dsn_url=config.db.read_dsn_url.get_secret_value())
 # ReadSession = create_session_maker(engine=read_engine)
 
 
