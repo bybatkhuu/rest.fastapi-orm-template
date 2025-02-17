@@ -10,6 +10,7 @@ from beans_logging import LoggerConfigPM
 
 from api.__version__ import __version__
 from api.core.constants import EnvEnum, ENV_PREFIX, ENV_PREFIX_API, ENV_PREFIX_DB
+from api.core.utils import validator
 from ._base import FrozenBaseConfig
 from ._db import DbConfig, FrozenDbConfig
 from ._dev import DevConfig, FrozenDevConfig
@@ -43,6 +44,7 @@ class MainConfig(FrozenBaseConfig):
         _debug_env = "DEBUG"
         if _debug_env in os.environ:
             val = os.getenv(_debug_env)
+            val = validator.is_truthy(val)
 
         return val
 

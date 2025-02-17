@@ -48,7 +48,7 @@ def run_migrations_offline() -> None:
 
     # url = config.get_main_option("sqlalchemy.url")
 
-    url = api_config.db.dsn_url
+    url = api_config.db.dsn_url.get_secret_value()
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -76,7 +76,9 @@ def run_migrations_online() -> None:
     #     poolclass=pool.NullPool,
     # )
 
-    _engine = make_engine(dsn_url=api_config.db.dsn_url, poolclass=pool.NullPool)
+    _engine = make_engine(
+        dsn_url=api_config.db.dsn_url.get_secret_value(), poolclass=pool.NullPool
+    )
     check_db(engine=_engine)
     with _engine.connect() as connection:
         context.configure(connection=connection, target_metadata=target_metadata)
