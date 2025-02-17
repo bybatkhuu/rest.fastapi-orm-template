@@ -2,7 +2,7 @@
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit)
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/bybatkhuu/rest.fastapi-orm-template/3.create-release.yml?logo=GitHub)](https://github.com/bybatkhuu/rest.fastapi-orm-template/actions/workflows/3.create-release.yml)
-[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/bybatkhuu/rest.fastapi-orm-template?logo=GitHub&color=blue)](https://github.com/bybatkhuu/rest.fastapi-orm-template/releases)
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/bybatkhuu/rest.fastapi-orm-template?logo=GitHub)](https://github.com/bybatkhuu/rest.fastapi-orm-template/releases)
 
 This is a template repository for FastAPI with ORM (SQLAlchemy) projects.
 
