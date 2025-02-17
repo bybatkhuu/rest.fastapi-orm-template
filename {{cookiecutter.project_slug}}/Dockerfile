@@ -17,8 +17,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 WORKDIR "/usr/src/{% raw %}${{% endraw %}{{cookiecutter.env_prefix}}API_SLUG}"
 
-RUN --mount=type=cache,target=/opt/conda/pkgs,sharing=private \
-	--mount=type=cache,target=/root/.cache,sharing=locked \
+RUN --mount=type=cache,target=/root/.cache,sharing=locked \
 	_BUILD_TARGET_ARCH=$(uname -m) && \
 	echo "BUILDING TARGET ARCHITECTURE: ${_BUILD_TARGET_ARCH}" && \
 	rm -rfv /var/lib/apt/lists/* /var/cache/apt/archives/* /tmp/* && \
