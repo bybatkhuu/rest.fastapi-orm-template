@@ -10,6 +10,7 @@ This document provides an overview and usage instructions for the following scri
 - [**`build.sh`**](./6.build.md)
 - [**`changelog.sh`**](./7.changelog.md)
 - [**`docs.sh`**](./8.docs.md)
+- [**`migrate.sh`**](./9.migrate.md)
 
 All the scripts are located in the **`scripts`** directory:
 
@@ -22,6 +23,7 @@ scripts/
 ├── clean.sh
 ├── docs.sh
 ├── get-version.sh
+├── migrate.sh
 └── test.sh
 ```
 
