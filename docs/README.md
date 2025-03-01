@@ -41,5 +41,5 @@ This is a template repository for FastAPI with ORM (SQLAlchemy) projects.
     pip install cookiecutter
 
     # Generate a new project from the cookiecutter template:
-    cookiecutter -f .
+    cookiecutter -f ./rest.fastapi-orm-template
     ```
