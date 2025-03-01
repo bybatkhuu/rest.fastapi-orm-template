@@ -2,8 +2,7 @@
 
 ## 1. 🌎 Configure environment variables
 
-> [!NOTE]
-> Please, check **[environment variables](./configuration.md#-environment-variables)** section for more details.
+[NOTE] Please, check **[environment variables](./configuration.md#-environment-variables)** section for more details.
 
 ### **OPTION A.** **[RECOMMENDED]** For **docker** runtime **[5.A]**
 
@@ -27,8 +26,7 @@ nano ./src/.env
 
 ## 2. 🏁 Start the server
 
-> [!NOTE]
-> Follow the one of below instructions based on your environment **[A, B, C, D, E, F]**:
+[NOTE] Follow the one of below instructions based on your environment **[A, B, C, D, E, F]**:
 
 ### Docker runtime
 
@@ -63,8 +61,7 @@ docker compose up -d --remove-orphans --force-recreate && \
 
 #### Standalone runtime
 
-> [!IMPORTANT]
-> Before running, make sure **database** is up and running.
+[**IMPORTANT**] Before running, make sure **database** is up and running.
 
 Run `alembic migration` to create or update `database schema` to the latest version:
 
@@ -77,8 +74,7 @@ alembic -x data=true upgrade head
 
 **OPTION B.** Run with **PM2**:
 
-> [!IMPORTANT]
-> Before running, need to install [**PM2**](https://pm2.keymetrics.io/docs/usage/quick-start):
+[**IMPORTANT**] Before running, need to install [**PM2**](https://pm2.keymetrics.io/docs/usage/quick-start):
 
 ```bash
 ## 1. Configure PM2 configuration file.

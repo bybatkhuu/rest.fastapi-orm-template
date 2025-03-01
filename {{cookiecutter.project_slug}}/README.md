@@ -93,8 +93,7 @@ git clone git@github.com:{{cookiecutter.repo_owner}}/{{cookiecutter.repo_name}}.
 
 ### 3. 📦 Install dependencies
 
-> [!TIP]
-> Skip this step, if you're going to use **docker** runtime
+[TIP] Skip this step, if you're going to use **docker** runtime
 
 <!-- #### 3.1. Install base/common dependencies -->
 
@@ -123,8 +122,7 @@ pip install -r ./requirements/requirements.arm64.txt
 
 ### 4. 🌎 Configure environment variables
 
-> [!NOTE]
-> Please, check **[environment variables](#-environment-variables)** section for more details.
+[NOTE] Please, check **[environment variables](#-environment-variables)** section for more details.
 
 #### **OPTION A.** **[RECOMMENDED]** For **docker** runtime **[5.A]**
 
@@ -148,8 +146,7 @@ nano ./src/.env
 
 ### 5. 🏁 Start the server
 
-> [!NOTE]
-> Follow the one of below instructions based on your environment **[A, B, C, D, E, F]**:
+[NOTE] Follow the one of below instructions based on your environment **[A, B, C, D, E, F]**:
 
 #### Docker runtime
 
@@ -184,8 +181,7 @@ docker compose up -d --remove-orphans --force-recreate && \
 
 #### Standalone runtime
 
-> [!IMPORTANT]
-> Before running, make sure **database** is up and running.
+[**IMPORTANT**] Before running, make sure **database** is up and running.
 
 Run `alembic migration` to create or update `database schema` to the latest version:
 
@@ -198,8 +194,7 @@ alembic -x data=true upgrade head
 
 **OPTION B.** Run with **PM2**:
 
-> [!IMPORTANT]
-> Before running, need to install [**PM2**](https://pm2.keymetrics.io/docs/usage/quick-start):
+[**IMPORTANT**] Before running, need to install [**PM2**](https://pm2.keymetrics.io/docs/usage/quick-start):
 
 ```sh
 ## 1. Configure PM2 configuration file.
@@ -340,8 +335,8 @@ DEBUG=false
 
 ## -- API configs -- ##
 {{cookiecutter.env_prefix}}API_PORT=8000
-{{cookiecutter.env_prefix}}API_LOGS_DIR="/var/log/{{cookiecutter.project_slug}}"
-{{cookiecutter.env_prefix}}API_DATA_DIR="/var/lib/{{cookiecutter.project_slug}}"
+# {{cookiecutter.env_prefix}}API_LOGS_DIR="/var/log/{{cookiecutter.project_slug}}"
+# {{cookiecutter.env_prefix}}API_DATA_DIR="/var/lib/{{cookiecutter.project_slug}}"
 # {{cookiecutter.env_prefix}}API_VERSION="1"
 # {{cookiecutter.env_prefix}}API_PREFIX="/api/v{api_version}"
 # {{cookiecutter.env_prefix}}API_DOCS_ENABLED=true
