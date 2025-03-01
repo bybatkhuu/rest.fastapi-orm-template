@@ -49,6 +49,7 @@ For **standalone** runtime:
     - **[RECOMMENDED] [Docker image](https://hub.docker.com/_/postgres)** (postgres)
     - *[Packages and installers](https://www.postgresql.org/download)*
 - Install **libpq (>= v16)** for **psycopg[c]**:
+    - **[RECOMMENDED] Miniconda - [libpq](https://anaconda.org/anaconda/libpq)**
     - Debian/Ubuntu - **libpq-dev**
     - MacOS - **[libpq](https://formulae.brew.sh/formula/libpq)**
 
