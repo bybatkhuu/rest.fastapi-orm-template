@@ -61,10 +61,6 @@
          <lastmod>2025-03-01</lastmod>
     </url>
     <url>
-         <loc>https://bybatkhuu.github.io/rest.fastapi-orm-template/pages/dev/cicd/</loc>
-         <lastmod>2025-03-01</lastmod>
-    </url>
-    <url>
          <loc>https://bybatkhuu.github.io/rest.fastapi-orm-template/pages/dev/contributing/</loc>
          <lastmod>2025-03-01</lastmod>
     </url>
@@ -90,6 +86,30 @@
     </url>
     <url>
          <loc>https://bybatkhuu.github.io/rest.fastapi-orm-template/pages/dev/test/</loc>
+         <lastmod>2025-03-01</lastmod>
+    </url>
+    <url>
+         <loc>https://bybatkhuu.github.io/rest.fastapi-orm-template/pages/dev/cicd/</loc>
+         <lastmod>2025-03-01</lastmod>
+    </url>
+    <url>
+         <loc>https://bybatkhuu.github.io/rest.fastapi-orm-template/pages/dev/cicd/1.bump-version/</loc>
+         <lastmod>2025-03-01</lastmod>
+    </url>
+    <url>
+         <loc>https://bybatkhuu.github.io/rest.fastapi-orm-template/pages/dev/cicd/2.build-publish/</loc>
+         <lastmod>2025-03-01</lastmod>
+    </url>
+    <url>
+         <loc>https://bybatkhuu.github.io/rest.fastapi-orm-template/pages/dev/cicd/3.create-release/</loc>
+         <lastmod>2025-03-01</lastmod>
+    </url>
+    <url>
+         <loc>https://bybatkhuu.github.io/rest.fastapi-orm-template/pages/dev/cicd/4.update-changelog/</loc>
+         <lastmod>2025-03-01</lastmod>
+    </url>
+    <url>
+         <loc>https://bybatkhuu.github.io/rest.fastapi-orm-template/pages/dev/cicd/publish-docs/</loc>
          <lastmod>2025-03-01</lastmod>
     </url>
     <url>
