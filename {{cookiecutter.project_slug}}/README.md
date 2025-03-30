@@ -37,7 +37,7 @@
 [RECOMMENDED] For **docker** runtime:
 
 - Install [**docker** and **docker compose**](https://docs.docker.com/engine/install)
-    - Docker image: [**{{cookiecutter.docker_registry}}/{{cookiecutter.docker_repo_name}}**](https://hub.docker.com/r/{{cookiecutter.repo_owner}}/{{cookiecutter.docker_repo_name}})
+    - Docker image: [**{{cookiecutter.docker_registry}}/{{cookiecutter.docker_repo_name}}**](https://hub.docker.com/r/{{cookiecutter.docker_registry}}/{{cookiecutter.docker_repo_name}})
 
 For **standalone** runtime:
 
